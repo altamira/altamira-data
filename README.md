@@ -11,4 +11,6 @@ To build this project:
 $ mvn clean install -Parq-jbossas-remote
 ```
 
+To run the tests with Arquillian is necessary install altamira-data-x.x.x.SNAPSHOT.war in jboss because the rest service tests are make in client perspective.
+
 
