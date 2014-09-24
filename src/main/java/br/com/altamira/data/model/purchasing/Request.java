@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package br.com.altamira.data.model;
+package br.com.altamira.data.model.purchasing;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -40,7 +40,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
  * @author Alessandro
  */
 @Entity
-@Table(name = "REQUEST")
+@Table(name = "PR_REQUEST")
 @NamedQueries({
     @NamedQuery(name = "Request.list", query = "SELECT r FROM Request r"),
     @NamedQuery(name = "Request.findById", query = "SELECT r FROM Request r WHERE r.id = :id"),
@@ -77,7 +77,7 @@ public class Request implements Serializable {
     @JsonSerialize(using = NullCollectionSerializer.class)
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "request", fetch = FetchType.LAZY, orphanRemoval = true)
     //@JoinColumn(name="REQUEST")
-    private Set<RequestItem> items = new HashSet<RequestItem>();
+    private Set<RequestItem> item = new HashSet<RequestItem>();
     
     /*@ManyToOne(optional = true, fetch = FetchType.LAZY)
     private QuotationRequest quotationRequest;*/
@@ -124,12 +124,12 @@ public class Request implements Serializable {
     }
 
     @XmlTransient
-    public Set<RequestItem> getItems() {
-        return items;
+    public Set<RequestItem> getItem() {
+        return item;
     }
 
-    public void setItems(Set<RequestItem> items) {
-        this.items = items;
+    public void setItem(Set<RequestItem> items) {
+        this.item = items;
     }
 
     /*@XmlTransient

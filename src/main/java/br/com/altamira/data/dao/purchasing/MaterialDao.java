@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package br.com.altamira.data.dao;
+package br.com.altamira.data.dao.purchasing;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -17,7 +17,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
-import br.com.altamira.data.model.Material;
+import br.com.altamira.data.model.purchasing.Material;
 
 /**
  * 

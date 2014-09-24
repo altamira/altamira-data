@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package br.com.altamira.data.model;
+package br.com.altamira.data.model.purchasing;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -25,7 +25,7 @@ import javax.persistence.UniqueConstraint;
  * @author Alessandro
  */
 @Entity
-@Table(name = "MATERIAL",
+@Table(name = "PR_MATERIAL",
         uniqueConstraints = @UniqueConstraint(columnNames = {"LAMINATION", "TREATMENT", "THICKNESS", "WIDTH", "LENGTH"}))
 @NamedQueries({
     @NamedQuery(name = "Material.list", query = "SELECT m FROM Material m"),

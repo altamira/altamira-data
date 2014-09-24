@@ -36,12 +36,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
 
-import br.com.altamira.data.dao.MaterialDao;
-import br.com.altamira.data.dao.RequestDao;
-import br.com.altamira.data.dao.RequestItemDao;
-import br.com.altamira.data.model.Material;
-import br.com.altamira.data.model.Request;
-import br.com.altamira.data.model.RequestItem;
+import br.com.altamira.data.dao.purchasing.MaterialDao;
+import br.com.altamira.data.dao.purchasing.RequestDao;
+import br.com.altamira.data.dao.purchasing.RequestItemDao;
+import br.com.altamira.data.model.purchasing.Material;
+import br.com.altamira.data.model.purchasing.Request;
+import br.com.altamira.data.model.purchasing.RequestItem;
 import br.com.altamira.data.serialize.JSonViews;
 import br.com.altamira.data.serialize.NullValueSerializer;
 
@@ -160,6 +160,14 @@ public class ArquillianTest {
 	    entityManager.joinTransaction();
 	    entityManager.createQuery("DELETE FROM Material M WHERE M.lamination = 'TX' AND M.treatment = 'TR'").executeUpdate();
 	    userTransaction.commit();
+	    userTransaction.begin();
+	    entityManager.joinTransaction();
+	    entityManager.createQuery("DELETE FROM Material M WHERE M.lamination = 'LX' AND M.treatment = 'LX'").executeUpdate();
+	    userTransaction.commit();
+	    userTransaction.begin();
+	    entityManager.joinTransaction();
+	    entityManager.createQuery("DELETE FROM Material M WHERE M.lamination = 'LX' AND M.treatment = 'TX'").executeUpdate();
+	    userTransaction.commit();
 	    entityManager.clear();
 	}
 
@@ -194,10 +202,10 @@ public class ArquillianTest {
 		
 		material.setLamination("LX");
 		material.setTreatment("LX");
-		material.setThickness(new BigDecimal(2.0));
-		material.setWidth(new BigDecimal(200.0));
-		material.setLength(new BigDecimal(1000.0));
-		material.setTax(new BigDecimal(4.5));
+		material.setThickness(new BigDecimal(2.57));
+		material.setWidth(new BigDecimal(200.0057));
+		material.setLength(new BigDecimal(1000.0059));
+		material.setTax(new BigDecimal(4.599));
 		
 		Material entity = materialDao.find(material);
 		
@@ -218,14 +226,14 @@ public class ArquillianTest {
 		
 		material.setLamination("LX");
 		material.setTreatment("TX");
-		material.setThickness(new BigDecimal(3.5));
-		material.setWidth(new BigDecimal(100.5));
-		material.setLength(new BigDecimal(2000.5));
-		material.setTax(new BigDecimal(1.5));
+		material.setThickness(new BigDecimal(0.571));
+		material.setWidth(new BigDecimal(100.529));
+		material.setLength(new BigDecimal(2000.537));
+		material.setTax(new BigDecimal(1.599));
 		
 		Material updated = materialDao.update(material);
 		
-		Material found = materialDao.find(entity);
+		Material found = materialDao.find(updated);
 		
 		assertNotNull(found);
 		assertTrue(found.equals(updated));
@@ -303,13 +311,13 @@ public class ArquillianTest {
 		items.add(item);
 		
 		request.setSent(new Date());
-		request.setItems(items);
+		request.setItem(items);
 		
 		// Insert Item
 		Request entity = requestDao.update(request);
 		
 		// be sure that the item was stored correctly
-		for (RequestItem r : entity.getItems()) {
+		for (RequestItem r : entity.getItem()) {
 			assertNotNull(r.getId());
 			assertNotNull(r.getMaterial().getId());
 		}
@@ -317,12 +325,12 @@ public class ArquillianTest {
 		Request found = requestDao.find(entity.getId());
 		
 		assertTrue(entity.equals(found));
-		assertFalse(entity.getItems().isEmpty());
-		assertEquals(1, entity.getItems().size());
-		assertNotNull(entity.getItems().contains(item));
+		assertFalse(entity.getItem().isEmpty());
+		assertEquals(1, entity.getItem().size());
+		assertNotNull(entity.getItem().contains(item));
 		
 		// be sure that the item was stored correctly
-		for (RequestItem r : found.getItems()) {
+		for (RequestItem r : found.getItem()) {
 			assertNotNull(r.getId());
 			assertNotNull(r.getMaterial().getId());
 		}
@@ -569,7 +577,7 @@ public class ArquillianTest {
 		item.setWeight(new BigDecimal(8899.0));
 		item.setMaterial(material);
 		
-		request.getItems().add(item);
+		request.getItem().add(item);
 		
 		request.setCreated(new Date());
 		request.setCreator("XXXX");
@@ -603,8 +611,8 @@ public class ArquillianTest {
 		assertEquals(entity.getCreated(), request.getCreated());
 		assertEquals(entity.getCreator(), request.getCreator());
 
-		for(RequestItem i : entity.getItems()) {
-			assertTrue(entity.getItems().contains(i));
+		for(RequestItem i : entity.getItem()) {
+			assertTrue(entity.getItem().contains(i));
 		}
 
 	}

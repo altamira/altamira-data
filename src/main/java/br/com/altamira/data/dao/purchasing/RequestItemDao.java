@@ -1,4 +1,4 @@
-package br.com.altamira.data.dao;
+package br.com.altamira.data.dao.purchasing;
 
 import java.util.List;
 
@@ -12,9 +12,9 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
-import br.com.altamira.data.model.Material;
-import br.com.altamira.data.model.Request;
-import br.com.altamira.data.model.RequestItem;
+import br.com.altamira.data.model.purchasing.Material;
+import br.com.altamira.data.model.purchasing.Request;
+import br.com.altamira.data.model.purchasing.RequestItem;
 
 @Named
 @Stateless

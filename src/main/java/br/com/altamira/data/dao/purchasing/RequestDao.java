@@ -1,4 +1,4 @@
-package br.com.altamira.data.dao;
+package br.com.altamira.data.dao.purchasing;
 
 import java.util.Date;
 import java.util.List;
@@ -12,8 +12,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
-import br.com.altamira.data.model.Request;
-import br.com.altamira.data.model.RequestItem;
+import br.com.altamira.data.model.purchasing.*;
 
 @Named
 @Stateless
@@ -61,8 +60,8 @@ public class RequestDao {
         }
         
         // Lazy load of items
-        if (entity.getItems() != null) {
-        	entity.getItems().size();
+        if (entity.getItem() != null) {
+        	entity.getItem().size();
         }
 
         return entity;
@@ -150,8 +149,8 @@ public class RequestDao {
         	entity = requests.get(0);
         	
         	// Lazy load of items
-        	if (entity.getItems() != null) {
-        		entity.getItems().size();
+        	if (entity.getItem() != null) {
+        		entity.getItem().size();
         	}
         }
 

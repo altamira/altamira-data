@@ -1,7 +1,8 @@
-package br.com.altamira.data.service;
+package br.com.altamira.data.rest.purchasing;
 
 import java.io.IOException;
 import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 //import javax.validation.ConstraintViolationException;
@@ -22,8 +23,8 @@ import javax.ws.rs.core.UriBuilder;
 
 import org.hibernate.exception.ConstraintViolationException;
 
-import br.com.altamira.data.dao.MaterialDao;
-import br.com.altamira.data.model.Material;
+import br.com.altamira.data.dao.purchasing.MaterialDao;
+import br.com.altamira.data.model.purchasing.Material;
 
 /**
  *

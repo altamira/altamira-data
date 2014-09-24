@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package br.com.altamira.data.service;
+package br.com.altamira.data.rest.purchasing;
 
 import java.util.Date;
 

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package br.com.altamira.data.model;
+package br.com.altamira.data.model.purchasing;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -36,7 +36,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
  * @author Alessandro
  */
 @Entity
-@Table(name = "REQUEST_ITEM", uniqueConstraints = @UniqueConstraint(name = "UK1", columnNames = {"REQUEST", "MATERIAL", "ARRIVAL_DATE"}))
+@Table(name = "PR_REQUEST_ITEM", uniqueConstraints = @UniqueConstraint(name = "UK1", columnNames = {"REQUEST", "MATERIAL", "ARRIVAL_DATE"}))
 @NamedQueries({
     @NamedQuery(name = "RequestItem.list", query = "SELECT r FROM RequestItem r JOIN FETCH r.material JOIN r.request rq WHERE rq.id = :requestId"),
     @NamedQuery(name = "RequestItem.findById", query = "SELECT r FROM RequestItem r WHERE r.id = :id")})

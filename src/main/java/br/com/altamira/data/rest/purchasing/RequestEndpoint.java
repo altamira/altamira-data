@@ -1,4 +1,4 @@
-package br.com.altamira.data.service;
+package br.com.altamira.data.rest.purchasing;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
 import javax.ejb.Stateless;
 import javax.imageio.ImageIO;
 import javax.inject.Inject;
@@ -38,9 +39,9 @@ import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-import br.com.altamira.data.dao.RequestDao;
-import br.com.altamira.data.model.Request;
-import br.com.altamira.data.model.RequestItem;
+import br.com.altamira.data.dao.purchasing.RequestDao;
+import br.com.altamira.data.model.purchasing.Request;
+import br.com.altamira.data.model.purchasing.RequestItem;
 import br.com.altamira.data.serialize.JSonViews;
 import br.com.altamira.data.serialize.NullValueSerializer;
 
@@ -156,7 +157,7 @@ public class RequestEndpoint {
 					.build();
 		}
 
-		for (RequestItem item : entity.getItems()) {
+		for (RequestItem item : entity.getItem()) {
 			item.setRequest(entity);
 		}
 		
@@ -277,7 +278,7 @@ public class RequestEndpoint {
 			return Response.status(Status.NOT_FOUND).entity("A Requisição não foi encontrada.").build();
 		}
         
-        if (entity.getItems().size() == 0) {
+        if (entity.getItem().size() == 0) {
         	return Response.status(Status.BAD_REQUEST).entity("A Requisição não tem itens.").build();
         }
         
@@ -348,7 +349,7 @@ public class RequestEndpoint {
 	            6 = RT.WEIGHT
 	            7 = RT.ARRIVAL_DATE
             */
-            for (RequestItem item : entity.getItems()) {
+            for (RequestItem item : entity.getItem()) {
                 RequestReportData rr = new RequestReportData();
 
                 Long currentMaterialId = item.getMaterial().getId();
