@@ -1,11 +1,23 @@
 package br.com.altamira.data.model.manufacturing;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import br.com.altamira.data.serialize.JSonViews;
+import br.com.altamira.data.serialize.NullCollectionSerializer;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Entity
 @Table(name = "MN_OPERATION")
@@ -18,9 +30,21 @@ public class Operation {
 	String name;
 	String description;
 	String sketch;
+    
+	@JsonIgnore
+	@JoinColumn(name = "PROCESS", referencedColumnName = "ID")
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private Process	process;
+    
+	@JsonView(JSonViews.EntityView.class)
+    @JsonSerialize(using = NullCollectionSerializer.class)
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "operation", fetch = FetchType.LAZY, orphanRemoval = true)
+	Set<Consume> consume = new HashSet<Consume>();
 	
-	List<Consume> useconsume = new ArrayList<Consume>();
-	List<Produce> produce = new ArrayList<Produce>();
+	@JsonView(JSonViews.EntityView.class)
+    @JsonSerialize(using = NullCollectionSerializer.class)
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "operation", fetch = FetchType.LAZY, orphanRemoval = true)
+	Set<Produce> produce = new HashSet<Produce>();
 	
 	public int getSequence() {
 		return sequence;
@@ -54,19 +78,19 @@ public class Operation {
 		this.sketch = sketch;
 	}
 	
-	public List<Consume> getConsume() {
-		return useconsume;
+	public Set<Consume> getConsume() {
+		return consume;
 	}
 	
-	public void setUseconsume(List<Consume> useconsume) {
-		this.useconsume = useconsume;
+	public void setUseconsume(Set<Consume> useconsume) {
+		this.consume = useconsume;
 	}
 	
-	public List<Produce> getProduce() {
+	public Set<Produce> getProduce() {
 		return produce;
 	}
 	
-	public void setProduce(List<Produce> produce) {
+	public void setProduce(Set<Produce> produce) {
 		this.produce = produce;
 	}
 	

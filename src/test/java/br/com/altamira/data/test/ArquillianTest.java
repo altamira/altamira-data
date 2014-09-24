@@ -202,10 +202,10 @@ public class ArquillianTest {
 		
 		material.setLamination("LX");
 		material.setTreatment("LX");
-		material.setThickness(new BigDecimal(2.57));
-		material.setWidth(new BigDecimal(200.0057));
-		material.setLength(new BigDecimal(1000.0059));
-		material.setTax(new BigDecimal(4.599));
+		material.setThickness(BigDecimal.valueOf(2.57));
+		material.setWidth(BigDecimal.valueOf(200.0057));
+		material.setLength(BigDecimal.valueOf(1000.0059));
+		material.setTax(BigDecimal.valueOf(4.599));
 		
 		Material entity = materialDao.find(material);
 		
@@ -226,10 +226,10 @@ public class ArquillianTest {
 		
 		material.setLamination("LX");
 		material.setTreatment("TX");
-		material.setThickness(new BigDecimal(0.571));
-		material.setWidth(new BigDecimal(100.529));
-		material.setLength(new BigDecimal(2000.537));
-		material.setTax(new BigDecimal(1.599));
+		material.setThickness(BigDecimal.valueOf(0.571));
+		material.setWidth(BigDecimal.valueOf(100.529));
+		material.setLength(BigDecimal.valueOf(2000.537));
+		material.setTax(BigDecimal.valueOf(1.599));
 		
 		Material updated = materialDao.update(material);
 		
@@ -265,10 +265,10 @@ public class ArquillianTest {
 		material.setId(0l); // test handling with persistence detatch exception
 		material.setLamination("LX");
 		material.setTreatment("LX");
-		material.setThickness(new BigDecimal(2.0));
-		material.setWidth(new BigDecimal(200.0));
-		material.setLength(new BigDecimal(1000.0));
-		material.setTax(new BigDecimal(4.5));
+		material.setThickness(BigDecimal.valueOf(2.0));
+		material.setWidth(BigDecimal.valueOf(200.0));
+		material.setLength(BigDecimal.valueOf(1000.0));
+		material.setTax(BigDecimal.valueOf(4.5));
 		
 		Material entity = materialDao.create(material);
 		
@@ -293,10 +293,10 @@ public class ArquillianTest {
 		
 		material.setLamination("TX");
 		material.setTreatment("TR");
-		material.setThickness(new BigDecimal(2.0));
-		material.setWidth(new BigDecimal(200.0));
-		material.setLength(new BigDecimal(0));
-		material.setTax(new BigDecimal(4.5));
+		material.setThickness(BigDecimal.valueOf(2.0));
+		material.setWidth(BigDecimal.valueOf(200.0));
+		material.setLength(BigDecimal.valueOf(0));
+		material.setTax(BigDecimal.valueOf(4.5));
 
 		materialDao.create(material);
 		
@@ -304,7 +304,7 @@ public class ArquillianTest {
 		
 		item.setRequest(request);
 		item.setArrival(new Date());
-		item.setWeight(new BigDecimal(1234.0));
+		item.setWeight(BigDecimal.valueOf(1234.0));
 		item.setMaterial(material);
 		
 		Set<RequestItem> items = new HashSet<RequestItem>();
@@ -392,17 +392,17 @@ public class ArquillianTest {
 		
 		material.setLamination("FT");
 		material.setTreatment("TR");
-		material.setThickness(new BigDecimal(2.0));
-		material.setWidth(new BigDecimal(200.0));
-		material.setLength(new BigDecimal(0));
-		material.setTax(new BigDecimal(4.5));
+		material.setThickness(BigDecimal.valueOf(2.0));
+		material.setWidth(BigDecimal.valueOf(200.0));
+		material.setLength(BigDecimal.valueOf(0));
+		material.setTax(BigDecimal.valueOf(4.5));
 		
 		RequestItem entity = new RequestItem();
 		
 		entity.setRequest(request);
 		entity.setMaterial(material);
 		entity.setArrival(new Date());
-		entity.setWeight(new BigDecimal(1234.0));
+		entity.setWeight(BigDecimal.valueOf(1234.0));
 
 		requestItemDao.create(entity);
 		
@@ -417,13 +417,13 @@ public class ArquillianTest {
 		
 		material.setLamination("TT");
 		material.setTreatment("TT");
-		material.setThickness(new BigDecimal(3.5));
-		material.setWidth(new BigDecimal(100.5));
-		material.setLength(new BigDecimal(2000.5));
-		material.setTax(new BigDecimal(1.5));
+		material.setThickness(BigDecimal.valueOf(3.5));
+		material.setWidth(BigDecimal.valueOf(100.5));
+		material.setLength(BigDecimal.valueOf(2000.5));
+		material.setTax(BigDecimal.valueOf(1.5));
 		
 		entity.setArrival(new Date());
-		entity.setWeight(new BigDecimal(9999.09));
+		entity.setWeight(BigDecimal.valueOf(9999.09));
 		entity.setMaterial(material);
 		
 		requestItemDao.update(entity);
@@ -474,10 +474,10 @@ public class ArquillianTest {
 		
 		material.setLamination("FT");
 		material.setTreatment("TR");
-		material.setThickness(new BigDecimal(2.0));
-		material.setWidth(new BigDecimal(200.0));
-		material.setLength(new BigDecimal(0));
-		material.setTax(new BigDecimal(4.5));
+		material.setThickness(BigDecimal.valueOf(2.0));
+		material.setWidth(BigDecimal.valueOf(200.0));
+		material.setLength(BigDecimal.valueOf(0));
+		material.setTax(BigDecimal.valueOf(4.5));
 		
 		RequestItem requestItem = new RequestItem();
 		
@@ -485,7 +485,7 @@ public class ArquillianTest {
 		requestItem.setRequest(request);
 		requestItem.setMaterial(material);
 		requestItem.setArrival(new Date());
-		requestItem.setWeight(new BigDecimal(1234.0));
+		requestItem.setWeight(BigDecimal.valueOf(1234.0));
 
 		RequestItem entity = requestItemDao.create(requestItem);
 		
@@ -564,17 +564,17 @@ public class ArquillianTest {
 		
 		material.setLamination("NO");
 		material.setTreatment("ZU");
-		material.setThickness(new BigDecimal(2.0));
-		material.setWidth(new BigDecimal(200.0));
-		material.setLength(new BigDecimal(12.3));
-		material.setTax(new BigDecimal(4.5));
+		material.setThickness(BigDecimal.valueOf(2.0));
+		material.setWidth(BigDecimal.valueOf(200.0));
+		material.setLength(BigDecimal.valueOf(12.3));
+		material.setTax(BigDecimal.valueOf(4.5));
 		
 		material = materialDao.create(material);
 		
 		assertNotNull(material);
 		
 		item.setArrival(new Date());
-		item.setWeight(new BigDecimal(8899.0));
+		item.setWeight(BigDecimal.valueOf(8899.0));
 		item.setMaterial(material);
 		
 		request.getItem().add(item);
@@ -661,15 +661,15 @@ public class ArquillianTest {
 		
 		material.setLamination("FZ");
 		material.setTreatment("RT");
-		material.setThickness(new BigDecimal(2.0));
-		material.setWidth(new BigDecimal(200.0));
-		material.setLength(new BigDecimal(12.3));
-		material.setTax(new BigDecimal(4.5));
+		material.setThickness(BigDecimal.valueOf(2.0));
+		material.setWidth(BigDecimal.valueOf(200.0));
+		material.setLength(BigDecimal.valueOf(12.3));
+		material.setTax(BigDecimal.valueOf(4.5));
 		
 		RequestItem item = new RequestItem();
 		
 		item.setArrival(new Date());
-		item.setWeight(new BigDecimal(1234.0));
+		item.setWeight(BigDecimal.valueOf(1234.0));
 		item.setMaterial(material);
 		
 		client.body(MediaType.APPLICATION_JSON, item);
@@ -713,10 +713,10 @@ public class ArquillianTest {
 			
 			material.setLamination("FQ");
 			material.setTreatment("TO");
-			material.setThickness(new BigDecimal(2.0));
-			material.setWidth(new BigDecimal(200.0));
-			material.setLength(new BigDecimal(12.3));
-			material.setTax(new BigDecimal(4.5));
+			material.setThickness(BigDecimal.valueOf(2.0));
+			material.setWidth(BigDecimal.valueOf(200.0));
+			material.setLength(BigDecimal.valueOf(12.3));
+			material.setTax(BigDecimal.valueOf(4.5));
 			
 			Material m = materialDao.find(material);
 			
@@ -727,7 +727,7 @@ public class ArquillianTest {
 			item = new RequestItem();
 			
 			item.setArrival(new Date());
-			item.setWeight(new BigDecimal(1234.0));
+			item.setWeight(BigDecimal.valueOf(1234.0));
 			item.setMaterial(material);
 			item.setRequest(request);
 			
@@ -772,16 +772,16 @@ public class ArquillianTest {
 			
 			material.setLamination("WQ");
 			material.setTreatment("GU");
-			material.setThickness(new BigDecimal(2.0));
-			material.setWidth(new BigDecimal(200.0));
-			material.setLength(new BigDecimal(12.3));
-			material.setTax(new BigDecimal(4.5));
+			material.setThickness(BigDecimal.valueOf(2.0));
+			material.setWidth(BigDecimal.valueOf(200.0));
+			material.setLength(BigDecimal.valueOf(12.3));
+			material.setTax(BigDecimal.valueOf(4.5));
 			
 			
 			item = new RequestItem();
 			
 			item.setArrival(new Date());
-			item.setWeight(new BigDecimal(1234.0));
+			item.setWeight(BigDecimal.valueOf(1234.0));
 			item.setMaterial(material);
 			item.setRequest(request);
 			
@@ -794,13 +794,13 @@ public class ArquillianTest {
 		
 		material.setLamination("FQ");
 		material.setTreatment("PZ");
-		material.setThickness(new BigDecimal(2.0));
-		material.setWidth(new BigDecimal(200.0));
-		material.setLength(new BigDecimal(12.3));
-		material.setTax(new BigDecimal(4.5));
+		material.setThickness(BigDecimal.valueOf(2.0));
+		material.setWidth(BigDecimal.valueOf(200.0));
+		material.setLength(BigDecimal.valueOf(12.3));
+		material.setTax(BigDecimal.valueOf(4.5));
 		
 		item.setArrival(new Date());
-		item.setWeight(new BigDecimal(8899.0));
+		item.setWeight(BigDecimal.valueOf(8899.0));
 		item.setMaterial(material);
 
 		UriBuilder context = UriBuilder.fromUri(url);
@@ -864,17 +864,17 @@ public class ArquillianTest {
 		
 		material.setLamination("QQ");
 		material.setTreatment("PQ");
-		material.setThickness(new BigDecimal(2.0));
-		material.setWidth(new BigDecimal(200.0));
-		material.setLength(new BigDecimal(0));
-		material.setTax(new BigDecimal(4.5));
+		material.setThickness(BigDecimal.valueOf(2.0));
+		material.setWidth(BigDecimal.valueOf(200.0));
+		material.setLength(BigDecimal.valueOf(0));
+		material.setTax(BigDecimal.valueOf(4.5));
 		
 		RequestItem entity = new RequestItem();
 		
 		entity.setRequest(request);
 		entity.setMaterial(material);
 		entity.setArrival(new Date());
-		entity.setWeight(new BigDecimal(1234.0));
+		entity.setWeight(BigDecimal.valueOf(1234.0));
 
 		requestItemDao.create(entity);
 
@@ -952,17 +952,17 @@ public class ArquillianTest {
 		
 		material.setLamination("QQ");
 		material.setTreatment("PQ");
-		material.setThickness(new BigDecimal(2.0));
-		material.setWidth(new BigDecimal(200.0));
-		material.setLength(new BigDecimal(0));
-		material.setTax(new BigDecimal(4.5));
+		material.setThickness(BigDecimal.valueOf(2.0));
+		material.setWidth(BigDecimal.valueOf(200.0));
+		material.setLength(BigDecimal.valueOf(0));
+		material.setTax(BigDecimal.valueOf(4.5));
 		
 		RequestItem entity = new RequestItem();
 		
 		entity.setRequest(request);
 		entity.setMaterial(material);
 		entity.setArrival(new Date());
-		entity.setWeight(new BigDecimal(1234.0));
+		entity.setWeight(BigDecimal.valueOf(1234.0));
 
 		requestItemDao.create(entity);
 		

@@ -50,7 +50,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
 
 @Stateless
-@Path("request")
+@Path("purchasing/request")
 public class RequestEndpoint {
 
 	@Inject

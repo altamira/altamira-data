@@ -3,9 +3,18 @@ package br.com.altamira.data.model.manufacturing;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import br.com.altamira.data.serialize.JSonViews;
+import br.com.altamira.data.serialize.NullCollectionSerializer;
+
+import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Entity
 @Table(name = "MN_PROCESS")
@@ -22,7 +31,14 @@ public class Process {
 	float width;
 	String finish;
 	
+	@JsonView(JSonViews.EntityView.class)
+    @JsonSerialize(using = NullCollectionSerializer.class)
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "process", fetch = FetchType.LAZY, orphanRemoval = true)
 	Set<Revision> revision = new HashSet<Revision>();
+
+	@JsonView(JSonViews.EntityView.class)
+    @JsonSerialize(using = NullCollectionSerializer.class)
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "process", fetch = FetchType.LAZY, orphanRemoval = true)
 	Set<Operation> operation = new HashSet<Operation>();
 	
 	public String getCode() {

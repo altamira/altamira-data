@@ -30,7 +30,7 @@ import br.com.altamira.data.model.purchasing.Material;
  *
  */
 @Stateless
-@Path("material")
+@Path("purchasing/material")
 public class MaterialEndpoint {
 
     @Inject 
