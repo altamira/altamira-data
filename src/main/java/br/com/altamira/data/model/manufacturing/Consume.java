@@ -1,31 +1,57 @@
 package br.com.altamira.data.model.manufacturing;
 
+import java.math.BigDecimal;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-@Table(name = "MN_USECONSUME")
-public class Consume {
+@Table(name = "MN_CONSUME")
+public class Consume extends br.com.altamira.data.model.Relation {
 
-	@Id
-	Long id;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -492716374383567653L;
 	
+	@NotNull
+	@Size(min=10)
 	String code;
+	
+	@NotNull
+	@Size(min=10)
 	String description;
-	float quantity;
+	
+	@NotNull
+	@Min(0)
+	BigDecimal quantity;
+	
+	@NotNull
+	@Size(min=1)
 	String unit;
 	
 	@JsonIgnore
 	@JoinColumn(name = "OPERATION", referencedColumnName = "ID")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private Operation operation;
-	
+    private br.com.altamira.data.model.manufacturing.Operation operation;
+
+	public Operation getOperation() {
+		return operation;
+	}
+
+	public void setOperation(Operation operation) {
+		this.operation = operation;
+	}
+
 	public String getCode() {
 		return code;
 	}
@@ -42,11 +68,11 @@ public class Consume {
 		this.description = description;
 	}
 	
-	public float getQuantity() {
+	public BigDecimal getQuantity() {
 		return quantity;
 	}
 	
-	public void setQuantity(float quantity) {
+	public void setQuantity(BigDecimal quantity) {
 		this.quantity = quantity;
 	}
 	

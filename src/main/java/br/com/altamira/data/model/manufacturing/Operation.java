@@ -6,11 +6,13 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import br.com.altamira.data.serialize.JSonViews;
 import br.com.altamira.data.serialize.NullCollectionSerializer;
@@ -21,20 +23,31 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Entity
 @Table(name = "MN_OPERATION")
-public class Operation {
+public class Operation extends br.com.altamira.data.model.Operation {
 
-	@Id
-	Long id;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4778350055794788171L;
 	
+	@NotNull
+	@Min(1)
 	int sequence;
+	
+	@NotNull
+	@Size(min=3)
 	String name;
+	
+	@NotNull
+	@Size(min=1)
 	String description;
+	
 	String sketch;
     
 	@JsonIgnore
 	@JoinColumn(name = "PROCESS", referencedColumnName = "ID")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private Process	process;
+    private Process process;
     
 	@JsonView(JSonViews.EntityView.class)
     @JsonSerialize(using = NullCollectionSerializer.class)
@@ -45,7 +58,19 @@ public class Operation {
     @JsonSerialize(using = NullCollectionSerializer.class)
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "operation", fetch = FetchType.LAZY, orphanRemoval = true)
 	Set<Produce> produce = new HashSet<Produce>();
-	
+
+	public Process getProcess() {
+		return process;
+	}
+
+	public void setProcess(Process process) {
+		this.process = process;
+	}
+
+	public void setConsume(Set<Consume> consume) {
+		this.consume = consume;
+	}
+
 	public int getSequence() {
 		return sequence;
 	}

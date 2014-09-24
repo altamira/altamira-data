@@ -9,15 +9,20 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
+import java.util.logging.Logger;
 
 import javax.ejb.Stateless;
 import javax.imageio.ImageIO;
 import javax.inject.Inject;
-//import javax.validation.ConstraintViolationException;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
+import javax.validation.Validator;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -27,12 +32,11 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriBuilderException;
-
-import org.hibernate.exception.ConstraintViolationException;
 
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JasperExportManager;
@@ -52,12 +56,18 @@ import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
 @Stateless
 @Path("purchasing/request")
 public class RequestEndpoint {
+	
+    @Inject
+    private Logger log;
 
+    @Inject
+    private Validator validator;
+    
 	@Inject
 	private RequestDao requestDao;
 
 	@GET
-	@Produces("application/json")
+	@Produces(MediaType.APPLICATION_JSON)
 	public Response list(
 			@DefaultValue("0") @QueryParam("start") Integer startPosition,
 			@DefaultValue("10") @QueryParam("max") Integer maxResult)
@@ -82,8 +92,8 @@ public class RequestEndpoint {
 	}
 
 	@GET
-	@Path("{id:[0-9][0-9]*}")
-	@Produces("application/json")
+	@Path("{id:[0-9]*}")
+	@Produces(MediaType.APPLICATION_JSON)
 	public Response findById(@PathParam("id") long id)
 			throws IOException {
 		Request entity = null;
@@ -108,17 +118,29 @@ public class RequestEndpoint {
 	}
 	
 	/*@POST
-	@Produces("application/json")
-	@Consumes("application/json")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
 	public Response create(Request entity) throws IllegalArgumentException,
 			UriBuilderException, IOException {
 		
 		try {
+			// Validates member using bean validation
+            validate(entity);
+            
 			requestDao.create(entity);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return Response.status(Status.INTERNAL_SERVER_ERROR).build();
-		}
+    	} catch (ConstraintViolationException ce) {
+            // Handle bean validation issues
+            createViolationResponse(ce.getConstraintViolations()).build();
+        } catch (ValidationException e) {
+            // Handle the unique constrain violation
+            Map<String, String> responseObj = new HashMap<String, String>();
+            responseObj.put("error", e.getMessage());
+            return Response.status(Response.Status.CONFLICT).entity(responseObj).build();
+        } catch (Exception e) {
+        	Map<String, String> responseObj = new HashMap<String, String>();
+            responseObj.put("error", e.getMessage());
+    		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(responseObj).build();
+    	}
 
 		return Response
 				.created(
@@ -129,8 +151,8 @@ public class RequestEndpoint {
 
 	@PUT
 	@Path("{id:[0-9][0-9]*}")
-	@Consumes("application/json")
-	@Produces("application/json")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
 	public Response update(@PathParam("id") long id, Request entity)
 			throws IllegalArgumentException, UriBuilderException,
 			IOException {
@@ -162,18 +184,22 @@ public class RequestEndpoint {
 		}
 		
 		try {
+			// Validates member using bean validation
+            validate(entity);
+            
 			entity = requestDao.update(entity);
-		} catch (ConstraintViolationException ce) {
+    	} catch (ConstraintViolationException ce) {
             // Handle bean validation issues
-            //return createViolationResponse(ce.getConstraintViolations()).build();
-            return Response.status(Response.Status.BAD_REQUEST).entity(ce.getMessage()).build();
+            createViolationResponse(ce.getConstraintViolations()).build();
         } catch (ValidationException e) {
             // Handle the unique constrain violation
-            //Map<String, String> responseObj = new HashMap<String, String>();
-            //responseObj.put("email", "Email taken");
-            return Response.status(Response.Status.CONFLICT).entity(entity).build();
+            Map<String, String> responseObj = new HashMap<String, String>();
+            responseObj.put("error", e.getMessage());
+            return Response.status(Response.Status.CONFLICT).entity(responseObj).build();
         } catch (Exception e) {
-    		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+        	Map<String, String> responseObj = new HashMap<String, String>();
+            responseObj.put("error", e.getMessage());
+    		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(responseObj).build();
     	}
 
 		if (entity == null) {
@@ -199,17 +225,18 @@ public class RequestEndpoint {
 		
 		try {
 			entity = requestDao.remove(id);
-		} catch (ConstraintViolationException ce) {
+    	} catch (ConstraintViolationException ce) {
             // Handle bean validation issues
-            //return createViolationResponse(ce.getConstraintViolations()).build();
-			return Response.status(Response.Status.BAD_REQUEST).entity(ce.getMessage()).build();
+            createViolationResponse(ce.getConstraintViolations()).build();
         } catch (ValidationException e) {
             // Handle the unique constrain violation
-            //Map<String, String> responseObj = new HashMap<String, String>();
-            //responseObj.put("email", "Email taken");
-            return Response.status(Response.Status.CONFLICT).entity(entity).build();
+            Map<String, String> responseObj = new HashMap<String, String>();
+            responseObj.put("error", e.getMessage());
+            return Response.status(Response.Status.CONFLICT).entity(responseObj).build();
         } catch (Exception e) {
-    		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+        	Map<String, String> responseObj = new HashMap<String, String>();
+            responseObj.put("error", e.getMessage());
+    		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(responseObj).build();
     	}
 		
 		if (entity == null) {
@@ -225,7 +252,7 @@ public class RequestEndpoint {
 	
 	@GET
 	@Path("/current")
-	@Produces("application/json")
+	@Produces(MediaType.APPLICATION_JSON)
 	public Response current()
 			throws IOException {
 
@@ -233,17 +260,18 @@ public class RequestEndpoint {
 
 		try {
 			entity = requestDao.current();
-		} catch (ConstraintViolationException ce) {
+    	} catch (ConstraintViolationException ce) {
             // Handle bean validation issues
-            //return createViolationResponse(ce.getConstraintViolations()).build();
-			return Response.status(Response.Status.BAD_REQUEST).entity(ce.getMessage()).build();
+            createViolationResponse(ce.getConstraintViolations()).build();
         } catch (ValidationException e) {
             // Handle the unique constrain violation
-            //Map<String, String> responseObj = new HashMap<String, String>();
-            //responseObj.put("email", "Email taken");
-            return Response.status(Response.Status.CONFLICT).entity(entity).build();
+            Map<String, String> responseObj = new HashMap<String, String>();
+            responseObj.put("error", e.getMessage());
+            return Response.status(Response.Status.CONFLICT).entity(responseObj).build();
         } catch (Exception e) {
-    		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+        	Map<String, String> responseObj = new HashMap<String, String>();
+            responseObj.put("error", e.getMessage());
+    		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(responseObj).build();
     	}
 		
 		ObjectMapper mapper = new ObjectMapper();
@@ -456,14 +484,37 @@ public class RequestEndpoint {
     }
     
     /**
+     * <p>
+     * Validates the given Member variable and throws validation exceptions based on the type of error. If the error is standard
+     * bean validation errors then it will throw a ConstraintValidationException with the set of the constraints violated.
+     * </p>
+     * <p>
+     * If the error is caused because an existing member with the same email is registered it throws a regular validation
+     * exception so that it can be interpreted separately.
+     * </p>
+     * 
+     * @param member Member to be validated
+     * @throws ConstraintViolationException If Bean Validation errors exist
+     * @throws ValidationException If member with the same email already exists
+     */
+    private void validate(Request entity) throws ConstraintViolationException {
+        // Create a bean validator and check for issues.
+        Set<ConstraintViolation<Request>> violations = validator.validate(entity);
+
+        if (!violations.isEmpty()) {
+            throw new ConstraintViolationException(new HashSet<ConstraintViolation<?>>(violations));
+        }
+    }
+
+    /**
      * Creates a JAX-RS "Bad Request" response including a map of all violation fields, and their message. This can then be used
      * by clients to show violations.
      * 
      * @param violations A set of violations that needs to be reported
      * @return JAX-RS response containing all violations
      */
-    /*private Response.ResponseBuilder createViolationResponse(Set<ConstraintViolation<?>> violations) {
-        //log.fine("Validation completed. violations found: " + violations.size());
+    private Response.ResponseBuilder createViolationResponse(Set<ConstraintViolation<?>> violations) {
+        log.fine("Validation completed. violations found: " + violations.size());
 
         Map<String, String> responseObj = new HashMap<String, String>();
 
@@ -472,6 +523,6 @@ public class RequestEndpoint {
         }
 
         return Response.status(Response.Status.BAD_REQUEST).entity(responseObj);
-    }*/
+    }
 
 }

@@ -5,20 +5,17 @@
  */
 package br.com.altamira.data.model.purchasing;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+
+import br.com.altamira.data.model.Resource;
 
 /**
  *
@@ -37,18 +34,14 @@ import javax.persistence.UniqueConstraint;
     @NamedQuery(name = "Material.findByLength", query = "SELECT m FROM Material m WHERE m.length = :length"),
     @NamedQuery(name = "Material.findByTax", query = "SELECT m FROM Material m WHERE m.tax = :tax"),
     @NamedQuery(name = "Material.findUnique", query = "SELECT m FROM Material m WHERE m.lamination = :lamination AND m.treatment = :treatment AND m.thickness = :thickness AND m.width = :width AND m.length = :length")})
-public class Material implements Serializable {
+public class Material extends Resource {
 
-    private static final long serialVersionUID = 1L;
-    // @Max(value=?) @Min(value=?)//if you know range of your decimal fields
-    // consider using these annotations to enforce field validation
-    @Id
-    @SequenceGenerator(name = "MaterialSequence", sequenceName = "MATERIAL_SEQUENCE", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "MaterialSequence")
-    @Column(name = "ID")
-    private Long id;
-    
-    @Basic(optional = false)
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6256290660697921883L;
+
+	@Basic(optional = false)
     @Column(name = "LAMINATION", columnDefinition = "char(2)")
     private String lamination;
     
@@ -92,14 +85,6 @@ public class Material implements Serializable {
         this.thickness = thickness;
         this.width = width;
         this.length = length;
-    }
-
-    public Long getId() {
-        return id;
-    }
-    
-    public void setId(Long id) {
-    	this.id = id;
     }
 
     public String getLamination() {
@@ -188,31 +173,5 @@ public class Material implements Serializable {
         this.requestItemSet = requestItemSet;
     }*/
 
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are
-        // not set
-        if (!(object instanceof Material)) {
-            return false;
-        }
-        Material other = (Material) object;
-        if ((this.id == null && other.id != null)
-                || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        return "br.com.altamira.erp.entity.model.Material[ id=" + id + " ]";
-    }
 
 }

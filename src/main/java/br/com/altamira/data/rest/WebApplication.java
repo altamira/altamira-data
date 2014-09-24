@@ -1,4 +1,4 @@
-package br.com.altamira.data.rest.common;
+package br.com.altamira.data.rest;
 
 import java.util.Set;
 

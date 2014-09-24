@@ -6,9 +6,11 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import br.com.altamira.data.serialize.JSonViews;
 import br.com.altamira.data.serialize.NullCollectionSerializer;
@@ -18,17 +20,32 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Entity
 @Table(name = "MN_PROCESS")
-public class Process {
+public class Process extends br.com.altamira.data.model.Process {
 	
-	@Id
-	Long id;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5549369785798723928L;
 	
+	@NotNull
+	@Size(min=10)
 	String code;
+	
+	@NotNull
+	@Size(min=10)
 	String description;
+
 	String color;
+	
+	@Min(0)
 	float weight;
+	
+	@Min(0)
 	float length;
+	
+	@Min(0)
 	float width;
+	
 	String finish;
 	
 	@JsonView(JSonViews.EntityView.class)
@@ -40,7 +57,7 @@ public class Process {
     @JsonSerialize(using = NullCollectionSerializer.class)
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "process", fetch = FetchType.LAZY, orphanRemoval = true)
 	Set<Operation> operation = new HashSet<Operation>();
-	
+
 	public String getCode() {
 		return code;
 	}

@@ -5,7 +5,6 @@
  */
 package br.com.altamira.data.model.purchasing;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -13,20 +12,17 @@ import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 import javax.xml.bind.annotation.XmlTransient;
 
+import br.com.altamira.data.model.Resource;
 import br.com.altamira.data.serialize.NullCollectionSerializer;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -40,18 +36,14 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @NamedQueries({
     @NamedQuery(name = "RequestItem.list", query = "SELECT r FROM RequestItem r JOIN FETCH r.material JOIN r.request rq WHERE rq.id = :requestId"),
     @NamedQuery(name = "RequestItem.findById", query = "SELECT r FROM RequestItem r WHERE r.id = :id")})
-public class RequestItem implements Serializable {
+public class RequestItem extends Resource {
 
-    private static final long serialVersionUID = 1L;
-    // @Max(value=?) @Min(value=?)//if you know range of your decimal fields
-    // consider using these annotations to enforce field validation
-    @Id
-    @SequenceGenerator(name = "RequestItemSequence", sequenceName = "REQUEST_ITEM_SEQUENCE", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "RequestItemSequence")
-    @Column(name = "ID")
-    private Long id;
-    
-    @Basic(optional = false)
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 748027754605400931L;
+
+	@Basic(optional = false)
     @Column(name = "ARRIVAL_DATE")
     @Temporal(TemporalType.TIMESTAMP)
     private Date arrival;
@@ -79,14 +71,6 @@ public class RequestItem implements Serializable {
     public RequestItem(Date arrival, BigDecimal weight) {
         this.arrival = arrival;
         this.weight = weight;
-    }
-
-    public Long getId() {
-        return id;
-    }
-    
-    public void setId(Long id) {
-    	this.id = id;
     }
     
     public Date getArrival() {
@@ -132,32 +116,5 @@ public class RequestItem implements Serializable {
             Set<PurchasePlanningItem> purchasePlanningItem) {
         this.purchasePlanningItem = purchasePlanningItem;
     }*/
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are
-        // not set
-        if (!(object instanceof RequestItem)) {
-            return false;
-        }
-        RequestItem other = (RequestItem) object;
-        if ((this.id == null && other.id != null)
-                || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        return "br.com.altamira.erp.entity.model.RequestItem[ id=" + id + " ]";
-    }
 
 }
