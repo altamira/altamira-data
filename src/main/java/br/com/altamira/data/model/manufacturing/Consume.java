@@ -2,7 +2,6 @@ package br.com.altamira.data.model.manufacturing;
 
 import java.math.BigDecimal;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
