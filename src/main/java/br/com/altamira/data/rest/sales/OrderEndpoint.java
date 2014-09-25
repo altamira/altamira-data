@@ -28,7 +28,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.UriBuilderException;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
@@ -83,7 +85,7 @@ public class OrderEndpoint {
     @GET
     @Path("/{number:[0-9]*}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response findByNumber(@PathParam("number") long number) {
+    public Response findByNumber(@PathParam("number") long number) throws JsonProcessingException {
     	Order entity = null;
     	
     	try {
@@ -96,12 +98,18 @@ public class OrderEndpoint {
 			return Response.status(Status.NOT_FOUND).build();
 		}
 		
-        return Response.ok(entity).build();
+		ObjectMapper mapper = new ObjectMapper();
+		
+		mapper.registerModule(new Hibernate4Module());
+		mapper.getSerializerProvider().setNullValueSerializer(new NullValueSerializer());
+		ObjectWriter writer = mapper.writerWithView(JSonViews.EntityView.class);
+		
+		return Response.ok(writer.writeValueAsString(entity)).build();
     }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response create(Order entity) {
+    public Response create(Order entity) throws IllegalArgumentException, UriBuilderException, JsonProcessingException {
 
     	if (entity == null) {
     		return Response.status(Status.BAD_REQUEST).build();
@@ -130,10 +138,18 @@ public class OrderEndpoint {
     		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(responseObj).build();
     	}
 
+    	ObjectMapper mapper = new ObjectMapper();
+		
+		mapper.registerModule(new Hibernate4Module());
+		mapper.getSerializerProvider().setNullValueSerializer(new NullValueSerializer());
+		ObjectWriter writer = mapper.writerWithView(JSonViews.EntityView.class);
+		
+		//return Response.ok(writer.writeValueAsString(entity)).build();
+		
 		return Response.created(
 		        UriBuilder.fromResource(OrderEndpoint.class)
 		        .path(String.valueOf(entity.getId())).build())
-		        .entity(entity)
+		        .entity(writer.writeValueAsString(entity))
 		        .build();
     }
 

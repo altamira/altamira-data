@@ -14,7 +14,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlTransient;
@@ -27,7 +26,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Entity
-@Table(name = "SL_ORDER", uniqueConstraints = @UniqueConstraint(columnNames = {"NUMBER"}))
+@Table(name = "SL_ORDER")
 @NamedQueries({
 	@NamedQuery(name = "Order.list", query = "SELECT o FROM Order o"),
 	@NamedQuery(name = "Order.findById", query = "SELECT o FROM Order o WHERE o.id = :id"),
@@ -80,7 +79,7 @@ public class Order extends Resource {
     @JsonView(JSonViews.EntityView.class)
     @JsonSerialize(using = NullCollectionSerializer.class)
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "order", fetch = FetchType.LAZY, orphanRemoval = true)
-	private Set<OrderItem> item = new HashSet<OrderItem>();
+	private Set<OrderItem> items = new HashSet<OrderItem>();
 
 	public Long getNumber() {
 		return number;
@@ -155,12 +154,12 @@ public class Order extends Resource {
 	}
 
 	@XmlTransient
-	public Set<OrderItem> getItem() {
-		return item;
+	public Set<OrderItem> getItems() {
+		return items;
 	}
 
-	public void setItem(Set<OrderItem> item) {
-		this.item = item;
+	public void setItems(Set<OrderItem> items) {
+		this.items = items;
 	}
 
 }

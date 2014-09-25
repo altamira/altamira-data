@@ -18,8 +18,8 @@ import br.com.altamira.data.model.Resource;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-@Table(name = "SL_ORDER_ITEM_PRODUCT")
-public class OrderItemProduct extends Resource {
+@Table(name = "SL_ORDER_ITEM_PART")
+public class OrderItemPart extends Resource {
 	
 	/**
 	 * 
@@ -71,7 +71,7 @@ public class OrderItemProduct extends Resource {
 
 	@JoinColumn(name = "PRODUCT", referencedColumnName = "ID")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
-    private Product product = new Product();
+    private Product product;
     
 	public String getCode() {
 		return code;

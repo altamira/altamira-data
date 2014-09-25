@@ -14,7 +14,7 @@ import javax.persistence.TypedQuery;
 
 import br.com.altamira.data.model.sales.Order;
 import br.com.altamira.data.model.sales.OrderItem;
-import br.com.altamira.data.model.sales.OrderItemProduct;
+import br.com.altamira.data.model.sales.OrderItemPart;
 import br.com.altamira.data.model.sales.Product;
 
 @Named
@@ -75,21 +75,21 @@ public class OrderItemDao {
 		
 		entity.setId(null);
 		
-		for (OrderItemProduct itemProduct : entity.getProduct()) {
-			itemProduct.setOrderItem(entity);
-				Product product = productDao.findByCode(itemProduct.getCode());
+		for (OrderItemPart part : entity.getParts()) {
+			part.setOrderItem(entity);
+			Product product = productDao.findByCode(part.getCode());
 			if (product == null) {
 				product = new Product(
-						itemProduct.getCode(),
-						itemProduct.getDescription(),
-						itemProduct.getColor(),
-						itemProduct.getWidth(),
-						itemProduct.getHeight(),
-						itemProduct.getLength(),
-						itemProduct.getWeight());
+						part.getCode(),
+						part.getDescription(),
+						part.getColor(),
+						part.getWidth(),
+						part.getHeight(),
+						part.getLength(),
+						part.getWeight());
 				product = productDao.create(product);
 			}
-			itemProduct.setProduct(product);
+			part.setProduct(product);
 		}
 		
 		entityManager.persist(entity);
@@ -120,7 +120,7 @@ public class OrderItemDao {
 			throw new IllegalArgumentException("Update item of non current Order is not allowed. Your id " + entity.getOrder().getId() + ", expected id " + order.getId());
 		}
 		
-		if (entity.getProduct() == null) {
+		if (entity.getParts() == null) {
 			throw new IllegalArgumentException("Product is required.");
 		}
 		

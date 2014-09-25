@@ -13,7 +13,6 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -60,7 +59,7 @@ public class OrderItem extends Resource {
     @JsonView(JSonViews.EntityView.class)
     @JsonSerialize(using = NullCollectionSerializer.class)
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "orderItem", fetch = FetchType.EAGER, orphanRemoval = true)
-    private Set<OrderItemProduct> product = new HashSet<OrderItemProduct>();
+    private Set<OrderItemPart> parts = new HashSet<OrderItemPart>();
 
     @JsonIgnore
     @XmlTransient
@@ -88,12 +87,12 @@ public class OrderItem extends Resource {
 		this.description = description;
 	}
 	
-	public Set<OrderItemProduct> getProduct() {
-		return product;
+	public Set<OrderItemPart> getParts() {
+		return parts;
 	}
 	
-	public void setProduct(Set<OrderItemProduct> product) {
-		this.product = product;
+	public void setPart(Set<OrderItemPart> parts) {
+		this.parts = parts;
 	}
 
 }

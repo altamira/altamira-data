@@ -12,9 +12,10 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
+import br.com.altamira.data.dao.sales.ProductDao;
 import br.com.altamira.data.model.sales.Order;
 import br.com.altamira.data.model.sales.OrderItem;
-import br.com.altamira.data.model.sales.OrderItemProduct;
+import br.com.altamira.data.model.sales.OrderItemPart;
 import br.com.altamira.data.model.sales.Product;
 
 @Named
@@ -50,8 +51,8 @@ public class OrderDao {
         }
         
         // Lazy load of items
-        if (entity.getItem() != null) {
-        	entity.getItem().size();
+        if (entity.getItems() != null) {
+        	entity.getItems().size();
         }
 
         return entity;
@@ -67,23 +68,23 @@ public class OrderDao {
 		}
     	
     	// Resolve dependencies
-    	for (OrderItem item : entity.getItem()) {
+    	for (OrderItem item : entity.getItems()) {
     		item.setOrder(entity);
-    		for (OrderItemProduct itemProduct : item.getProduct()) {
-    			itemProduct.setOrderItem(item);
-   				Product product = productDao.findByCode(itemProduct.getCode());
+    		for (OrderItemPart part : item.getParts()) {
+    			part.setOrderItem(item);
+   				Product product = productDao.findByCode(part.getCode());
     			if (product == null) {
     				product = new Product(
-    						itemProduct.getCode(),
-    						itemProduct.getDescription(),
-    						itemProduct.getColor(),
-    						itemProduct.getWidth(),
-    						itemProduct.getHeight(),
-    						itemProduct.getLength(),
-    						itemProduct.getWeight());
+    						part.getCode(),
+    						part.getDescription(),
+    						part.getColor(),
+    						part.getWidth(),
+    						part.getHeight(),
+    						part.getLength(),
+    						part.getWeight());
     				product = productDao.create(product);
     			}
-    			itemProduct.setProduct(product);
+    			part.setProduct(product);
     		}
     	}
     	
