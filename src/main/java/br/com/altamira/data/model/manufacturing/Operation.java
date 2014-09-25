@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -32,17 +33,20 @@ public class Operation extends br.com.altamira.data.model.Operation {
 	
 	@NotNull
 	@Min(1)
-	int sequence;
+	@Column(name = "SEQUENCE")
+	private int sequence;
 	
 	@NotNull
 	@Size(min=3)
-	String name;
+	@Column(name = "NAME", columnDefinition = "nvarchar2(255)")
+	private String name;
 	
 	@NotNull
 	@Size(min=1)
-	String description;
+	@Column(name = "DESCRIPTION", columnDefinition = "nvarchar2(255)")
+	private String description;
 	
-	String sketch;
+	private String sketch;
     
 	@JsonIgnore
 	@JoinColumn(name = "PROCESS", referencedColumnName = "ID")
@@ -52,12 +56,12 @@ public class Operation extends br.com.altamira.data.model.Operation {
 	@JsonView(JSonViews.EntityView.class)
     @JsonSerialize(using = NullCollectionSerializer.class)
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "operation", fetch = FetchType.LAZY, orphanRemoval = true)
-	Set<Consume> consume = new HashSet<Consume>();
+	private Set<Consume> consume = new HashSet<Consume>();
 	
 	@JsonView(JSonViews.EntityView.class)
     @JsonSerialize(using = NullCollectionSerializer.class)
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "operation", fetch = FetchType.LAZY, orphanRemoval = true)
-	Set<Produce> produce = new HashSet<Produce>();
+	private Set<Produce> produce = new HashSet<Produce>();
 
 	public Process getProcess() {
 		return process;

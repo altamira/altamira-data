@@ -5,6 +5,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -13,12 +14,17 @@ import javax.persistence.TypedQuery;
 
 import br.com.altamira.data.model.sales.Order;
 import br.com.altamira.data.model.sales.OrderItem;
+import br.com.altamira.data.model.sales.OrderItemProduct;
+import br.com.altamira.data.model.sales.Product;
 
 @Named
 @Stateless
 public class OrderDao {
 	@PersistenceContext
 	private EntityManager entityManager;
+	
+	@Inject 
+	private ProductDao productDao;
 
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) 
 	public List<Order> list(int startPosition, int maxResult) {
@@ -31,26 +37,14 @@ public class OrderDao {
 		return findAllQuery.getResultList();
 	}
 	
-	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) 
-	public List<OrderItem> listItems(Long requestId, int startPosition, int maxResult) {
-
-		TypedQuery<OrderItem> findAllQuery = entityManager.createNamedQuery("Order.items", OrderItem.class);
-		findAllQuery.setParameter("requestId", requestId);
-		
-		findAllQuery.setFirstResult(startPosition);
-		findAllQuery.setMaxResults(maxResult);
-
-		return findAllQuery.getResultList();
-	}
-	
-	public Order find(long id) {
+	public Order findByNumber(long number) {
         Order entity;
 
-		TypedQuery<Order> findByIdQuery = entityManager.createNamedQuery("Order.findById", Order.class);
-        findByIdQuery.setParameter("id", id);
+		TypedQuery<Order> findByNumberQuery = entityManager.createNamedQuery("Order.findByNumber", Order.class);
+        findByNumberQuery.setParameter("number", number);
         
         try {
-            entity = findByIdQuery.getSingleResult();
+            entity = findByNumberQuery.getSingleResult();
         } catch (NoResultException nre) {
             return null;
         }
@@ -71,7 +65,28 @@ public class OrderDao {
 		if (entity.getId() != null && entity.getId() > 0) {
 			throw new IllegalArgumentException("To create this entity, id must be null or zero.");
 		}
-		
+    	
+    	// Resolve dependencies
+    	for (OrderItem item : entity.getItem()) {
+    		item.setOrder(entity);
+    		for (OrderItemProduct itemProduct : item.getProduct()) {
+    			itemProduct.setOrderItem(item);
+   				Product product = productDao.findByCode(itemProduct.getCode());
+    			if (product == null) {
+    				product = new Product(
+    						itemProduct.getCode(),
+    						itemProduct.getDescription(),
+    						itemProduct.getColor(),
+    						itemProduct.getWidth(),
+    						itemProduct.getHeight(),
+    						itemProduct.getLength(),
+    						itemProduct.getWeight());
+    				product = productDao.create(product);
+    			}
+    			itemProduct.setProduct(product);
+    		}
+    	}
+    	
 		entity.setId(null);
 
 		entityManager.persist(entity);

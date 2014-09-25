@@ -53,18 +53,18 @@ public class Request extends Resource {
     @Basic(optional = false)
     @Column(name = "CREATED")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date created;
+    private Date created = new Date();
 
     @NotNull
     @Size(min = 3, max = 50)
     @Basic(optional = false)
     @Column(name = "CREATOR", columnDefinition = "nvarchar2(255)")
-    private String creator;
+    private String creator = "";
     
     //@JsonSerialize(using = DateSerializer.class)
     @Column(name = "SENT")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date sent;
+    private Date sent = new Date();
     
     @JsonView(JSonViews.EntityView.class)
     @JsonSerialize(using = NullCollectionSerializer.class)

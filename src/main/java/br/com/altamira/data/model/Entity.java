@@ -1,6 +1,7 @@
 package br.com.altamira.data.model;
 
 import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -25,6 +26,7 @@ public abstract class Entity implements Serializable {
     private Long id;
 	
 	@NotNull
+	@Column(name = "LAST_MODIFIED")
 	Long lastModified = System.currentTimeMillis();
     
     public Long getId() {

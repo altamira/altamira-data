@@ -4,15 +4,20 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlTransient;
 
 import br.com.altamira.data.model.Resource;
 import br.com.altamira.data.serialize.JSonViews;
@@ -23,7 +28,11 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Entity
-@Table(name = "SL_ORDER_ITEM")
+@Table(name = "SL_ORDER_ITEM"/*, uniqueConstraints = @UniqueConstraint(columnNames = {"\"ORDER\"", "ITEM"})*/)
+@NamedQueries({
+	@NamedQuery(name = "OrderItem.list", query = "SELECT i FROM OrderItem i WHERE i.order.number = :number"),
+	@NamedQuery(name = "OrderItem.findById", query = "SELECT i FROM OrderItem i WHERE i.id = :id"),
+	@NamedQuery(name = "OrderItem.findByItem", query = "SELECT i FROM OrderItem i WHERE i.order.number = :number AND i.item = :item")})
 public class OrderItem extends Resource {
 
 	/**
@@ -31,26 +40,30 @@ public class OrderItem extends Resource {
 	 */
 	private static final long serialVersionUID = 7448803904699786256L;
 
-	@NotNull
-	@Min(1)
-	int item;
-	
-	@NotNull
-	@Size(min = 10)
-	String description;
-	
-    @NotNull
-    @JsonIgnore
-	@JoinColumn(name = "ORDER", referencedColumnName = "ID")
+	@JsonIgnore
+	@XmlTransient
+	@JsonView(JSonViews.EntityView.class)
+	@JoinColumn(name = "\"ORDER\"", referencedColumnName = "ID")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Order order;
     
-    @NotNull
+	@NotNull
+	@Min(1)
+	@Column(name = "ITEM")
+	private int item = 0;
+	
+	@NotNull
+	@Size(min = 10)
+	@Column(name = "DESCRIPTION")
+	private String description = "";
+	
     @JsonView(JSonViews.EntityView.class)
     @JsonSerialize(using = NullCollectionSerializer.class)
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "orderItem", fetch = FetchType.LAZY, orphanRemoval = true)
-    Set<Product> product = new HashSet<Product>();
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "orderItem", fetch = FetchType.EAGER, orphanRemoval = true)
+    private Set<OrderItemProduct> product = new HashSet<OrderItemProduct>();
 
+    @JsonIgnore
+    @XmlTransient
 	public Order getOrder() {
 		return order;
 	}
@@ -75,11 +88,11 @@ public class OrderItem extends Resource {
 		this.description = description;
 	}
 	
-	public Set<Product> getProduct() {
+	public Set<OrderItemProduct> getProduct() {
 		return product;
 	}
 	
-	public void setProduct(Set<Product> product) {
+	public void setProduct(Set<OrderItemProduct> product) {
 		this.product = product;
 	}
 

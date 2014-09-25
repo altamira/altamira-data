@@ -1,6 +1,5 @@
 package br.com.altamira.data.dao.sales;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -8,6 +7,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
@@ -36,30 +36,25 @@ public class ProductDao {
 	}
 
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) 
-	public Product find(String lamination, String treatment,
-			BigDecimal thickness, BigDecimal width, BigDecimal length) {
-
-		List<Product> materials = entityManager
-				.createNamedQuery("Product.findUnique", Product.class)
-				.setParameter("lamination", lamination)
-				.setParameter("treatment", treatment)
-				.setParameter("thickness", thickness)
-				.setParameter("width", width)
-				.setParameter("length", length)
-				.getResultList();
-
-		if (materials.isEmpty()) {
-			return null;
-		}
-
-		return materials.get(0);
-	}
-
-	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) 
-	public Product find(long id) {
+	public Product findById(long id) {
 		return entityManager.find(Product.class, id);
 	}
 
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) 
+	public Product findByCode(String code) {
+		
+		try {
+			return entityManager
+					.createNamedQuery("Product.findByCode", Product.class)
+					.setParameter("code", code)
+					.getSingleResult();
+			
+		} catch (NoResultException e) {
+			return null;
+		}
+
+	}
+	
 	public Product create(Product entity) {
 		if (entity == null) {
 			throw new IllegalArgumentException("Entity can't be null.");
@@ -96,7 +91,10 @@ public class ProductDao {
 			throw new IllegalArgumentException("Entity id can't be null or zero.");
 		}
 		
-		return remove(entity.getId());
+		entityManager.remove(entity);
+        entityManager.flush();
+		
+		return entity;
 	}
 	
 	public Product remove(long id) {
@@ -115,5 +113,21 @@ public class ProductDao {
 		
 		return entity;
 	}
+	
+	public Product remove(String code) {
+		if (code.length() == 0) {
+			throw new IllegalArgumentException("Entity code can't be zero.");
+		}
+		
+		Product entity = findByCode(code);
+        
+		if (entity == null) {
+			throw new IllegalArgumentException("Entity not found.");
+		}
 
+        entityManager.remove(entity);
+        entityManager.flush();
+		
+		return entity;
+	}
 }

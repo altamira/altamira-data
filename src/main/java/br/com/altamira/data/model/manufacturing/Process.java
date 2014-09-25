@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
@@ -29,34 +30,41 @@ public class Process extends br.com.altamira.data.model.Process {
 	
 	@NotNull
 	@Size(min=10)
-	String code;
+	@Column(name = "CODE", columnDefinition = "nvarchar2(255)")
+	private String code;
 	
 	@NotNull
 	@Size(min=10)
-	String description;
+	@Column(name = "DESCRIPTION", columnDefinition = "nvarchar2(255)")
+	private String description;
 
-	String color;
+	@Column(name = "COLOR", columnDefinition = "nvarchar2(255)")
+	private String color;
 	
 	@Min(0)
-	float weight;
+	@Column(name = "WEIGHT")
+	private float weight;
 	
 	@Min(0)
-	float length;
+	@Column(name = "LENGTH")
+	private float length;
 	
 	@Min(0)
-	float width;
+	@Column(name = "WIDTH")
+	private float width;
 	
-	String finish;
+	@Column(name = "FINISH", columnDefinition = "nvarchar2(255)")
+	private String finish;
 	
 	@JsonView(JSonViews.EntityView.class)
     @JsonSerialize(using = NullCollectionSerializer.class)
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "process", fetch = FetchType.LAZY, orphanRemoval = true)
-	Set<Revision> revision = new HashSet<Revision>();
+	private Set<Revision> revision = new HashSet<Revision>();
 
 	@JsonView(JSonViews.EntityView.class)
     @JsonSerialize(using = NullCollectionSerializer.class)
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "process", fetch = FetchType.LAZY, orphanRemoval = true)
-	Set<Operation> operation = new HashSet<Operation>();
+	private Set<Operation> operation = new HashSet<Operation>();
 
 	public String getCode() {
 		return code;

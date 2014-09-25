@@ -1,29 +1,37 @@
 package br.com.altamira.data.dao.sales;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
+import br.com.altamira.data.model.sales.Order;
 import br.com.altamira.data.model.sales.OrderItem;
+import br.com.altamira.data.model.sales.OrderItemProduct;
+import br.com.altamira.data.model.sales.Product;
 
 @Named
 @Stateless
 public class OrderItemDao {
-	
+
 	@PersistenceContext
 	private EntityManager entityManager;
-
+	
+	@Inject
+	private ProductDao productDao;
+	
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) 
-	public List<OrderItem> list(int startPosition, int maxResult) {
+	public List<OrderItem> list(Long number, int startPosition, int maxResult) {
 
 		TypedQuery<OrderItem> findAllQuery = entityManager.createNamedQuery("OrderItem.list", OrderItem.class);
+		findAllQuery.setParameter("number", number);
 
 		findAllQuery.setFirstResult(startPosition);
 		findAllQuery.setMaxResults(maxResult);
@@ -32,36 +40,21 @@ public class OrderItemDao {
 	}
 	
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) 
-	public OrderItem find(OrderItem material) {
-		return null;
-	}
-
-	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) 
-	public OrderItem find(String lamination, String treatment,
-			BigDecimal thickness, BigDecimal width, BigDecimal length) {
-
-		List<OrderItem> materials = entityManager
-				.createNamedQuery("OrderItem.findUnique", OrderItem.class)
-				.setParameter("lamination", lamination)
-				.setParameter("treatment", treatment)
-				.setParameter("thickness", thickness)
-				.setParameter("width", width)
-				.setParameter("length", length)
-				.getResultList();
-
-		if (materials.isEmpty()) {
-			return null;
-		}
-
-		return materials.get(0);
-	}
-
-	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) 
 	public OrderItem find(long id) {
-		return entityManager.find(OrderItem.class, id);
-	}
+        OrderItem entity;
 
-	public OrderItem create(OrderItem entity) {
+		TypedQuery<OrderItem> findByIdQuery = entityManager.createNamedQuery("OrderItem.findById", OrderItem.class);
+        findByIdQuery.setParameter("id", id);
+        try {
+            entity = findByIdQuery.getSingleResult();
+        } catch (NoResultException nre) {
+            return null;
+        }
+
+        return entity;
+	}
+	
+	public OrderItem create(Order order, OrderItem entity) {
 		if (entity == null) {
 			throw new IllegalArgumentException("Entity can't be null.");
 		}
@@ -70,24 +63,75 @@ public class OrderItemDao {
 			throw new IllegalArgumentException("To create this entity, id must be null or zero.");
 		}
 		
+		if (entity.getOrder() == null) {
+			//throw new IllegalArgumentException("Order parent not assigned");
+			
+			entity.setOrder(order);
+		}
+		
+		if (!entity.getOrder().getId().equals(order.getId())) {
+			throw new IllegalArgumentException("Insert item to non current Order is not allowed. Your id " + entity.getOrder().getId() + ", expected id " + order.getId());
+		}
+		
 		entity.setId(null);
+		
+		for (OrderItemProduct itemProduct : entity.getProduct()) {
+			itemProduct.setOrderItem(entity);
+				Product product = productDao.findByCode(itemProduct.getCode());
+			if (product == null) {
+				product = new Product(
+						itemProduct.getCode(),
+						itemProduct.getDescription(),
+						itemProduct.getColor(),
+						itemProduct.getWidth(),
+						itemProduct.getHeight(),
+						itemProduct.getLength(),
+						itemProduct.getWeight());
+				product = productDao.create(product);
+			}
+			itemProduct.setProduct(product);
+		}
 		
 		entityManager.persist(entity);
 		entityManager.flush();
 		
+		// Reload to update child references
+
 		return entityManager.find(OrderItem.class, entity.getId());
 	}
-
-	public OrderItem update(OrderItem entity) {
+	
+	public OrderItem update(Order order, OrderItem entity) {
+		
 		if (entity == null) {
 			throw new IllegalArgumentException("Entity can't be null.");
 		}
+		
 		if (entity.getId() == null || entity.getId() == 0l) {
 			throw new IllegalArgumentException("Entity id can't be null or zero.");
 		}
-		return entityManager.contains(entity) ? null : entityManager.merge(entity);
-	}
+		
+		if (entity.getOrder() == null) {
+			//throw new IllegalArgumentException("Order parent not assigned");
+			
+			entity.setOrder(order);
+		}
+		
+		if (!entity.getOrder().getId().equals(order.getId())) {
+			throw new IllegalArgumentException("Update item of non current Order is not allowed. Your id " + entity.getOrder().getId() + ", expected id " + order.getId());
+		}
+		
+		if (entity.getProduct() == null) {
+			throw new IllegalArgumentException("Product is required.");
+		}
+		
+	
+		entityManager.merge(entity);
 
+		// Reload to update child references
+
+		return entityManager.find(OrderItem.class, entity.getId());
+	}
+	
 	public OrderItem remove(OrderItem entity) {
 		if (entity == null) {
 			throw new IllegalArgumentException("Entity can't be null.");
@@ -105,17 +149,19 @@ public class OrderItemDao {
 			throw new IllegalArgumentException("Entity id can't be zero.");
 		}
 		
+		//entityManager.remove(entityManager.contains(entity) ? entity : entityManager.merge(entity));
+
 		OrderItem entity = entityManager.find(OrderItem.class, id);
         
 		if (entity == null) {
 			throw new IllegalArgumentException("Entity not found.");
 		}
-
-        entityManager.remove(entity);
-        entityManager.flush();
+		
+	    entityManager.remove(entity);
+	    entityManager.flush();
 		
 		return entity;
 	}
 
-	
+
 }

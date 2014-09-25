@@ -1,4 +1,4 @@
-package br.com.altamira.data.rest.purchasing;
+package br.com.altamira.data.rest.sales;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -30,18 +30,18 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriBuilderException;
 
-import br.com.altamira.data.dao.purchasing.RequestDao;
-import br.com.altamira.data.dao.purchasing.RequestItemDao;
-import br.com.altamira.data.model.purchasing.Request;
-import br.com.altamira.data.model.purchasing.RequestItem;
+import br.com.altamira.data.dao.sales.OrderDao;
+import br.com.altamira.data.dao.sales.OrderItemDao;
+import br.com.altamira.data.model.sales.Order;
+import br.com.altamira.data.model.sales.OrderItem;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
 
 @Stateless
-@Path("purchasing/request/{requestId:[0-9]*}")
-public class RequestItemEndpoint {
+@Path("sales/order/{number:[0-9]*}")
+public class OrderItemEndpoint {
 	
     @Inject
     private Logger log;
@@ -50,23 +50,23 @@ public class RequestItemEndpoint {
     private Validator validator;
     	
 	@Inject
-	private RequestDao requestDao;
+	private OrderDao orderDao;
 	
 	@Inject
-	private RequestItemDao requestItemDao;
+	private OrderItemDao orderItemDao;
 
 	@GET
 	@Path("item")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response list(@PathParam("requestId") long requestId,
+	public Response list(@PathParam("number") long number,
 			@DefaultValue("0") @QueryParam("start") Integer startPosition,
 			@DefaultValue("10") @QueryParam("max") Integer maxResult)
 			throws IOException {
 
-		List<RequestItem> list;
+		List<OrderItem> list;
 		
 		try {
-			list = requestItemDao.list(requestId, startPosition, maxResult);
+			list = orderItemDao.list(number, startPosition, maxResult);
 		} catch (Exception e) {
     		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
     	}
@@ -81,11 +81,11 @@ public class RequestItemEndpoint {
 	@GET
 	@Path("{id:[0-9]*}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response findById(@PathParam("requestId") long requestId, @PathParam("id") long id) throws IOException {
-		RequestItem entity = null;
+	public Response findById(@PathParam("number") long number, @PathParam("id") long id) throws IOException {
+		OrderItem entity = null;
 		
 		try {
-			entity = requestItemDao.find(id);
+			entity = orderItemDao.find(id);
 		} catch (Exception e) {
     		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
     	}
@@ -105,8 +105,8 @@ public class RequestItemEndpoint {
 	@Path("item")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response create(@PathParam("requestId") long requestId, RequestItem entity) throws IllegalArgumentException, UriBuilderException, JsonProcessingException {
-		Request request = null;
+	public Response create(@PathParam("number") long number,  OrderItem entity) throws IllegalArgumentException, UriBuilderException, JsonProcessingException {
+		Order order = null;
 		
 		if (entity == null) {
 			return Response.status(Status.BAD_REQUEST).build();
@@ -119,7 +119,7 @@ public class RequestItemEndpoint {
 		}
 
 		try {
-			request = requestDao.current();
+			order = orderDao.findByNumber(number);
 		} catch (ConstraintViolationException ce) {
             // Handle bean validation issues
             //return createViolationResponse(ce.getConstraintViolations()).build();
@@ -133,22 +133,22 @@ public class RequestItemEndpoint {
     		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
     	}
 		
-		if (request == null) {
+		if (order == null) {
 			return Response.status(Status.BAD_REQUEST).build();
 		}
 		
-		if (request.getId() == null || request.getId().longValue() != requestId) {
+		/*if (order.getId() == null || order.getId().longValue() != number) {
 			return Response.status(Status.CONFLICT)
 					.entity("entity id doesn't match with resource path id")
 					.build();
-		}
+		}*/
 		
 		try {
 			// Validates member using bean validation
             validate(entity);
             
-			entity.setRequest(request);
-			requestItemDao.create(entity);
+			entity.setOrder(order);
+			orderItemDao.create(order, entity);
     	} catch (ConstraintViolationException ce) {
             // Handle bean validation issues
             createViolationResponse(ce.getConstraintViolations()).build();
@@ -168,8 +168,8 @@ public class RequestItemEndpoint {
 		mapper.registerModule(new Hibernate4Module());
 		
 		return Response
-				.created(UriBuilder.fromResource(RequestItemEndpoint.class)
-				.path(String.valueOf(entity.getId())).build(requestId))
+				.created(UriBuilder.fromResource(OrderItemEndpoint.class)
+				.path(String.valueOf(entity.getId())).build(number))
 				.entity(mapper.writeValueAsString(entity)).build();
 	}
 
@@ -177,8 +177,8 @@ public class RequestItemEndpoint {
 	@Path("{id:[0-9]*}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response update(@PathParam("requestId") long requestId, @PathParam("id") long id, RequestItem entity) throws IllegalArgumentException, UriBuilderException, JsonProcessingException {
-		Request request = null;
+	public Response update(@PathParam("number") long number, @PathParam("id") long id, OrderItem entity) throws IllegalArgumentException, UriBuilderException, JsonProcessingException {
+		Order order = null;
 		
 		if (entity == null) {
 			return Response.status(Status.BAD_REQUEST).build();
@@ -194,7 +194,7 @@ public class RequestItemEndpoint {
 			// Validates member using bean validation
             validate(entity);
             
-			request = requestDao.current();
+			order = orderDao.findByNumber(number);
 		} catch (ConstraintViolationException ce) {
             // Handle bean validation issues
             //return createViolationResponse(ce.getConstraintViolations()).build();
@@ -208,19 +208,19 @@ public class RequestItemEndpoint {
     		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
     	}
 		
-		if (request == null) {
+		if (order == null) {
 			return Response.status(Status.BAD_REQUEST).build();
 		}
 		
-		if (request.getId() == null || request.getId().longValue() != requestId) {
+		if (order.getId() == null || order.getId().longValue() != number) {
 			return Response.status(Status.CONFLICT)
 					.entity("entity id doesn't match with resource path id")
 					.build();
 		}
 		
 		try {
-			entity.setRequest(request);
-			entity = requestItemDao.update(entity);
+			entity.setOrder(order);
+			entity = orderItemDao.update(order, entity);
     	} catch (ConstraintViolationException ce) {
             // Handle bean validation issues
             createViolationResponse(ce.getConstraintViolations()).build();
@@ -244,18 +244,18 @@ public class RequestItemEndpoint {
 		mapper.registerModule(new Hibernate4Module());
 		
 		return Response
-				.ok(UriBuilder.fromResource(RequestItemEndpoint.class)
-				.path(String.valueOf(entity.getId())).build(requestId))
+				.ok(UriBuilder.fromResource(OrderItemEndpoint.class)
+				.path(String.valueOf(entity.getId())).build(number))
 				.entity(mapper.writeValueAsString(entity)).build();
 	}
 
 	@DELETE
 	@Path("{id:[0-9]*}")
-	public Response removeById(@PathParam("requestId") long requestId, @PathParam("id") long id) {
-		RequestItem entity = null;
+	public Response removeById(@PathParam("number") long number, @PathParam("id") long id) {
+		OrderItem entity = null;
 		
 		try {
-			entity = requestItemDao.remove(id);
+			entity = orderItemDao.remove(id);
     	} catch (ConstraintViolationException ce) {
             // Handle bean validation issues
             createViolationResponse(ce.getConstraintViolations()).build();
@@ -290,9 +290,9 @@ public class RequestItemEndpoint {
      * @throws ConstraintViolationException If Bean Validation errors exist
      * @throws ValidationException If member with the same email already exists
      */
-    private void validate(RequestItem entity) throws ConstraintViolationException {
+    private void validate(OrderItem entity) throws ConstraintViolationException {
         // Create a bean validator and check for issues.
-        Set<ConstraintViolation<RequestItem>> violations = validator.validate(entity);
+        Set<ConstraintViolation<OrderItem>> violations = validator.validate(entity);
 
         if (!violations.isEmpty()) {
             throw new ConstraintViolationException(new HashSet<ConstraintViolation<?>>(violations));
@@ -300,7 +300,7 @@ public class RequestItemEndpoint {
     }
 
     /**
-     * Creates a JAX-RS "Bad Request" response including a map of all violation fields, and their message. This can then be used
+     * Creates a JAX-RS "Bad Order" response including a map of all violation fields, and their message. This can then be used
      * by clients to show violations.
      * 
      * @param violations A set of violations that needs to be reported

@@ -2,6 +2,7 @@ package br.com.altamira.data.model.manufacturing;
 
 import java.math.BigDecimal;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -24,19 +25,23 @@ public class Consume extends br.com.altamira.data.model.Relation {
 	
 	@NotNull
 	@Size(min=10)
-	String code;
+	@Column(name = "CODE", columnDefinition = "nvarchar2(255)")
+	private String code;
 	
 	@NotNull
 	@Size(min=10)
-	String description;
+	@Column(name = "DESCRIPTION", columnDefinition = "nvarchar2(255)")
+	private String description;
 	
 	@NotNull
 	@Min(0)
-	BigDecimal quantity;
+	@Column(name = "QUANTITY")
+	private BigDecimal quantity;
 	
 	@NotNull
 	@Size(min=1)
-	String unit;
+	@Column(name = "UNIT")
+	private String unit;
 	
 	@JsonIgnore
 	@JoinColumn(name = "OPERATION", referencedColumnName = "ID")

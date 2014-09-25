@@ -44,15 +44,14 @@ public class RequestItem extends Resource {
 	private static final long serialVersionUID = 748027754605400931L;
 
 	@Basic(optional = false)
-    @Column(name = "ARRIVAL_DATE")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date arrival;
+    @Column(name = "ARRIVAL_DATE")
+    private Date arrival = new Date();
     
     @Basic(optional = false)
     @Column(name = "WEIGHT")
-    private BigDecimal weight;
+    private BigDecimal weight = BigDecimal.valueOf(0);
 
-    @JsonIgnore
 	@JoinColumn(name = "REQUEST", referencedColumnName = "ID")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Request request;

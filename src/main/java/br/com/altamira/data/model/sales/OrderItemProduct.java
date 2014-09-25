@@ -4,23 +4,22 @@ import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlTransient;
 
 import br.com.altamira.data.model.Resource;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
-@Table(name = "SL_PRODUCT", uniqueConstraints = @UniqueConstraint(columnNames = {"CODE", "DESCRIPTION"}))
-@NamedQueries({
-	@NamedQuery(name = "Product.list", query = "SELECT p FROM Product p"),
-	@NamedQuery(name = "Product.findById", query = "SELECT p FROM Product p WHERE p.id = :id"),
-	@NamedQuery(name = "Product.findByCode", query = "SELECT p FROM Product p WHERE p.code = :code")})
-public class Product extends Resource {
+@Table(name = "SL_ORDER_ITEM_PRODUCT")
+public class OrderItemProduct extends Resource {
 	
 	/**
 	 * 
@@ -29,16 +28,21 @@ public class Product extends Resource {
 
 	@NotNull
 	@Size(min=10)
-	@Column(name = "CODE", unique=true, nullable=false) 
+	@Column(name = "CODE")
 	private String code = "";
 	
 	@NotNull
 	@Size(min=10)
-	@Column(name = "DESCRIPTION", unique=true, nullable=false) 
+	@Column(name = "DESCRIPTION")
 	private String description = "";
 	
 	@Column(name = "COLOR")
 	private String color = "";
+	
+	@NotNull
+	@Min(0)
+	@Column(name = "QUANTITY")
+	private BigDecimal quantity = BigDecimal.valueOf(0);
 	
 	@NotNull
 	@Min(0)
@@ -60,23 +64,15 @@ public class Product extends Resource {
 	@Column(name = "WEIGHT")
 	private BigDecimal weight = BigDecimal.valueOf(0);
 
-	public Product() {
-		
-	}
-	
-	public Product(String code, String description, String color,
-			BigDecimal width, BigDecimal height, BigDecimal length,
-			BigDecimal weight) {
-		super();
-		this.code = code;
-		this.description = description;
-		this.color = color;
-		this.width = width;
-		this.height = height;
-		this.length = length;
-		this.weight = weight;
-	}
+    @JsonIgnore
+	@JoinColumn(name = "ORDER_ITEM", referencedColumnName = "ID")
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private OrderItem orderItem;
 
+	@JoinColumn(name = "PRODUCT", referencedColumnName = "ID")
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    private Product product = new Product();
+    
 	public String getCode() {
 		return code;
 	}
@@ -99,6 +95,14 @@ public class Product extends Resource {
 
 	public void setColor(String color) {
 		this.color = color;
+	}
+
+	public BigDecimal getQuantity() {
+		return quantity;
+	}
+
+	public void setQuantity(BigDecimal quantity) {
+		this.quantity = quantity;
 	}
 
 	public BigDecimal getWidth() {
@@ -131,6 +135,24 @@ public class Product extends Resource {
 
 	public void setWeight(BigDecimal weight) {
 		this.weight = weight;
+	}
+	
+    @JsonIgnore
+	@XmlTransient
+	public OrderItem getOrderItem() {
+		return orderItem;
+	}
+
+	public void setOrderItem(OrderItem orderItem) {
+		this.orderItem = orderItem;
+	}
+
+	public Product getProduct() {
+		return product;
+	}
+
+	public void setProduct(Product product) {
+		this.product = product;
 	}
 
 }
