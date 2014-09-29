@@ -1,4 +1,4 @@
-package br.com.altamira.data.rest.purchasing;
+package br.com.altamira.data.rest.purchasing.request;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -30,8 +30,8 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriBuilderException;
 
-import br.com.altamira.data.dao.purchasing.RequestDao;
-import br.com.altamira.data.dao.purchasing.RequestItemDao;
+import br.com.altamira.data.dao.purchasing.request.RequestDao;
+import br.com.altamira.data.dao.purchasing.request.RequestItemDao;
 import br.com.altamira.data.model.purchasing.Request;
 import br.com.altamira.data.model.purchasing.RequestItem;
 

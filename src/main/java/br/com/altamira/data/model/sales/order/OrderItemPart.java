@@ -1,4 +1,4 @@
-package br.com.altamira.data.model.sales;
+package br.com.altamira.data.model.sales.order;
 
 import java.math.BigDecimal;
 

@@ -1,4 +1,4 @@
-package br.com.altamira.data.rest.purchasing;
+package br.com.altamira.data.rest.purchasing.request;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -43,7 +43,7 @@ import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-import br.com.altamira.data.dao.purchasing.RequestDao;
+import br.com.altamira.data.dao.purchasing.request.RequestDao;
 import br.com.altamira.data.model.purchasing.Request;
 import br.com.altamira.data.model.purchasing.RequestItem;
 import br.com.altamira.data.serialize.JSonViews;

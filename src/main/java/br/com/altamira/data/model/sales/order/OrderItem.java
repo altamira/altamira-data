@@ -1,7 +1,8 @@
-package br.com.altamira.data.model.sales;
+package br.com.altamira.data.model.sales.order;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;

@@ -155,7 +155,7 @@ public class MaterialEndpoint {
 		}
 
 		return Response
-				.ok(UriBuilder.fromResource(RequestEndpoint.class)
+				.ok(UriBuilder.fromResource(MaterialEndpoint.class)
 						.path(String.valueOf(entity.getId())).build())
 				.entity(entity).build();
     }

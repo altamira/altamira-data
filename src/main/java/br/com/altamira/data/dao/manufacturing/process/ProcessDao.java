@@ -1,24 +1,27 @@
-package br.com.altamira.data.dao.manufacturing;
+package br.com.altamira.data.dao.manufacturing.process;
 
 import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
-import br.com.altamira.data.model.manufacturing.*;
-import br.com.altamira.data.model.manufacturing.Process;
+import br.com.altamira.data.model.manufacturing.process.Consume;
+import br.com.altamira.data.model.manufacturing.process.Operation;
+import br.com.altamira.data.model.manufacturing.process.Process;
+import br.com.altamira.data.model.manufacturing.process.Produce;
+import br.com.altamira.data.model.manufacturing.process.Revision;
 
 @Named
 @Stateless
 public class ProcessDao {
 	
-	@PersistenceContext
+	@Inject
 	private EntityManager entityManager;
 
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) 

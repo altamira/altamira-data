@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package br.com.altamira.data.rest.purchasing;
+package br.com.altamira.data.rest.purchasing.request;
 
 import java.math.BigDecimal;
 import java.util.Date;

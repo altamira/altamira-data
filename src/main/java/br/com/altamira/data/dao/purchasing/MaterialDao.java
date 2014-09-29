@@ -12,9 +12,9 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
 import br.com.altamira.data.model.purchasing.Material;
@@ -27,7 +27,7 @@ import br.com.altamira.data.model.purchasing.Material;
 @Stateless
 public class MaterialDao {
 
-	@PersistenceContext
+	@Inject
 	private EntityManager entityManager;
 
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) 

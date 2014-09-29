@@ -1,4 +1,4 @@
-package br.com.altamira.data.model.manufacturing;
+package br.com.altamira.data.model.manufacturing.process;
 
 import java.math.BigDecimal;
 
@@ -46,7 +46,7 @@ public class Consume extends br.com.altamira.data.model.Relation {
 	@JsonIgnore
 	@JoinColumn(name = "OPERATION", referencedColumnName = "ID")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private br.com.altamira.data.model.manufacturing.Operation operation;
+    private br.com.altamira.data.model.manufacturing.process.Operation operation;
 
 	public Operation getOperation() {
 		return operation;

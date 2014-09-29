@@ -1,4 +1,4 @@
-package br.com.altamira.data.dao.manufacturing;
+package br.com.altamira.data.dao.manufacturing.process;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -6,18 +6,18 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
-import br.com.altamira.data.model.manufacturing.Operation;
+import br.com.altamira.data.model.manufacturing.process.Operation;
 
 @Named
 @Stateless
 public class OperationDao {
 	
-	@PersistenceContext
+	@Inject
 	private EntityManager entityManager;
 
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) 

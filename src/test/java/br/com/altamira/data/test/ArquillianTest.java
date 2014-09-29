@@ -37,12 +37,12 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
 
 import br.com.altamira.data.dao.purchasing.MaterialDao;
-import br.com.altamira.data.dao.purchasing.RequestDao;
-import br.com.altamira.data.dao.purchasing.RequestItemDao;
+import br.com.altamira.data.dao.purchasing.request.RequestDao;
+import br.com.altamira.data.dao.purchasing.request.RequestItemDao;
 import br.com.altamira.data.model.purchasing.Material;
 import br.com.altamira.data.model.purchasing.Request;
 import br.com.altamira.data.model.purchasing.RequestItem;
-import br.com.altamira.data.model.sales.Order;
+import br.com.altamira.data.model.sales.order.Order;
 import br.com.altamira.data.serialize.JSonViews;
 import br.com.altamira.data.serialize.NullValueSerializer;
 
@@ -73,8 +73,6 @@ public class ArquillianTest {
 				// add your own classes (could be done one by one as well)
 				// not recursive to skip package 'nonarquillian'
 				.addPackages(true, "br.com.altamira.data")
-				/*.addPackage("br.com.altamira.data.model")
-				.addPackage("br.com.altamira.data.serialize")*/
 		// now you can add additional stuff required for your test case
 		;
 	}

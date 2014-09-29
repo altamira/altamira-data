@@ -1,4 +1,4 @@
-package br.com.altamira.data.dao.purchasing;
+package br.com.altamira.data.dao.purchasing.request;
 
 import java.util.List;
 
@@ -9,9 +9,9 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
+import br.com.altamira.data.dao.purchasing.MaterialDao;
 import br.com.altamira.data.model.purchasing.Material;
 import br.com.altamira.data.model.purchasing.Request;
 import br.com.altamira.data.model.purchasing.RequestItem;
@@ -20,7 +20,7 @@ import br.com.altamira.data.model.purchasing.RequestItem;
 @Stateless
 public class RequestItemDao {
 
-	@PersistenceContext
+	@Inject
 	private EntityManager entityManager;
 	
 	@Inject

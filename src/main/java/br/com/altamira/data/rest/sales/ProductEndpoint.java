@@ -35,7 +35,6 @@ import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
 
 import br.com.altamira.data.dao.sales.ProductDao;
 import br.com.altamira.data.model.sales.Product;
-import br.com.altamira.data.rest.purchasing.RequestEndpoint;
 import br.com.altamira.data.serialize.JSonViews;
 import br.com.altamira.data.serialize.NullValueSerializer;
 
@@ -173,7 +172,7 @@ public class ProductEndpoint {
 		}
 
 		return Response
-				.ok(UriBuilder.fromResource(RequestEndpoint.class)
+				.ok(UriBuilder.fromResource(ProductEndpoint.class)
 						.path(String.valueOf(entity.getId())).build())
 				.entity(entity).build();
     }

@@ -1,4 +1,4 @@
-package br.com.altamira.data.dao.sales;
+package br.com.altamira.data.dao.sales.order;
 
 import java.util.List;
 
@@ -9,23 +9,19 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
-import br.com.altamira.data.model.sales.Order;
-import br.com.altamira.data.model.sales.OrderItem;
-import br.com.altamira.data.model.sales.OrderItemPart;
-import br.com.altamira.data.model.sales.Product;
+import br.com.altamira.data.model.sales.order.*;
 
 @Named
 @Stateless
 public class OrderItemDao {
 
-	@PersistenceContext
+	@Inject
 	private EntityManager entityManager;
 	
-	@Inject
-	private ProductDao productDao;
+	/*@Inject
+	private ProductDao productDao;*/
 	
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) 
 	public List<OrderItem> list(Long number, int startPosition, int maxResult) {

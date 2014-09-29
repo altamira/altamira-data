@@ -1,4 +1,4 @@
-package br.com.altamira.data.rest.manufacturing;
+package br.com.altamira.data.rest.manufacturing.process;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -26,8 +26,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.Response.Status;
 
-import br.com.altamira.data.dao.manufacturing.ProcessDao;
-import br.com.altamira.data.model.manufacturing.Process;
+import br.com.altamira.data.dao.manufacturing.process.ProcessDao;
+import br.com.altamira.data.model.manufacturing.process.Process;
 
 @Stateless
 @Path("manufacturing/process")

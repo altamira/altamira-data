@@ -1,4 +1,4 @@
-package br.com.altamira.data.model.manufacturing;
+package br.com.altamira.data.model.manufacturing.process;
 
 import java.util.HashSet;
 import java.util.Set;
