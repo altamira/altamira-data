@@ -5,18 +5,15 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
-import br.com.altamira.data.dao.sales.ProductDao;
 import br.com.altamira.data.model.sales.Order;
 import br.com.altamira.data.model.sales.OrderItem;
 import br.com.altamira.data.model.sales.OrderItemPart;
-import br.com.altamira.data.model.sales.Product;
 
 @Named
 @Stateless
@@ -24,8 +21,8 @@ public class OrderDao {
 	@PersistenceContext
 	private EntityManager entityManager;
 	
-	@Inject 
-	private ProductDao productDao;
+	/*@Inject 
+	private ProductDao productDao;*/
 
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) 
 	public List<Order> list(int startPosition, int maxResult) {
@@ -72,7 +69,7 @@ public class OrderDao {
     		item.setOrder(entity);
     		for (OrderItemPart part : item.getParts()) {
     			part.setOrderItem(item);
-   				Product product = productDao.findByCode(part.getCode());
+    			/*Product product = productDao.findByCode(part.getCode());
     			if (product == null) {
     				product = new Product(
     						part.getCode(),
@@ -84,7 +81,7 @@ public class OrderDao {
     						part.getWeight());
     				product = productDao.create(product);
     			}
-    			part.setProduct(product);
+    			part.setProduct(product);*/
     		}
     	}
     	

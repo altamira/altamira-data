@@ -69,9 +69,10 @@ public class OrderItemPart extends Resource {
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private OrderItem orderItem;
 
-	@JoinColumn(name = "PRODUCT", referencedColumnName = "ID")
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
-    private Product product;
+	//@JoinColumn(name = "CODE", referencedColumnName = "CODE", insertable=false, updatable=false)
+    /*@JoinColumn(name = "PRODUCT", referencedColumnName = "ID", insertable = false, updatable = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private Product product;*/
     
 	public String getCode() {
 		return code;
@@ -147,12 +148,12 @@ public class OrderItemPart extends Resource {
 		this.orderItem = orderItem;
 	}
 
-	public Product getProduct() {
+	/*public Product getProduct() {
 		return product;
 	}
 
 	public void setProduct(Product product) {
 		this.product = product;
-	}
+	}*/
 
 }

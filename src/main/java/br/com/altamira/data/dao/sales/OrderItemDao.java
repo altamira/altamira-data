@@ -77,7 +77,7 @@ public class OrderItemDao {
 		
 		for (OrderItemPart part : entity.getParts()) {
 			part.setOrderItem(entity);
-			Product product = productDao.findByCode(part.getCode());
+			/*Product product = productDao.findByCode(part.getCode());
 			if (product == null) {
 				product = new Product(
 						part.getCode(),
@@ -89,7 +89,7 @@ public class OrderItemDao {
 						part.getWeight());
 				product = productDao.create(product);
 			}
-			part.setProduct(product);
+			part.setProduct(product);*/
 		}
 		
 		entityManager.persist(entity);

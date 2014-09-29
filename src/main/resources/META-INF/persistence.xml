@@ -6,7 +6,7 @@
 		Note that the following is written for JBoss AS 7 -->
 	<persistence-unit name="ProcessEngine"
 		transaction-type="JTA">
-		<jta-data-source>java:jboss/datasources/ProcessEngine</jta-data-source>
+		<jta-data-source>java:jboss/datasources/ExampleDS</jta-data-source>
 
 		<properties>
             <property name="hibernate.hbm2ddl.auto" value="create" />

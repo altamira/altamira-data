@@ -1,17 +1,17 @@
 {  
-   "number":72511,
+   "number":72510,
    "customer":"SOCIEDADE BRAS. DE DEF. DA TRAD. FAMILIA PROPRIED.",
-   "representative":"SUPORTE COM√âRCIO E REPRESENTA√á√ÉO LTDA",
+   "representative":"SUPORTE COM…RCIO E REPRESENTA«√O LTDA",
    "created":"2014-09-23T00:00:00",
    "delivery":"2014-11-27T00:00:00",
    "quotation":"00087776",
    "comment":" ",
-   "finish":"PINTURA A P√ì",
+   "finish":"PINTURA A P”",
    "project":72510,
    "items":[  
       {  
          "item":1,
-         "description":"√ÅREA I COMPONENTES DE PORTA-PALETES   MONTANTES  10 montantes para porta-paletes medindo 1000 x 3360 mm. Colunas no padr√£o Altamira 80 mm.   Aten√ß√£o: Verificar no item 'COR DA PINTURA' os acess√≥rios que ser√£o galvanizados e sem pintura.",
+         "description":"¡REA I COMPONENTES DE PORTA-PALETES   MONTANTES  10 montantes para porta-paletes medindo 1000 x 3360 mm. Colunas no padr„o Altamira 80 mm.   AtenÁ„o: Verificar no item 'COR DA PINTURA' os acessÛrios que ser„o galvanizados e sem pintura.",
          "parts":[  
             {  
                "code":"PPLCOL00080180000000",
@@ -57,7 +57,7 @@
       },
       {  
          "item":5,
-         "description":"LONGARINAS  56 pares de longarinas medindo 1500 mm aptos a suportar uma carga uniformemente distribuida de 1000 kgf cada. OBS: Garras para encaixe em colunas padr√£o Altamira 80 mm.  Aten√ß√£o: Verificar no item 'COR DA PINTURA' os acess√≥rios que ser√£o galvanizados e sem pintura.",
+         "description":"LONGARINAS  56 pares de longarinas medindo 1500 mm aptos a suportar uma carga uniformemente distribuida de 1000 kgf cada. OBS: Garras para encaixe em colunas padr„o Altamira 80 mm.  AtenÁ„o: Verificar no item 'COR DA PINTURA' os acessÛrios que ser„o galvanizados e sem pintura.",
          "parts":[  
             {  
                "code":"PPLLOZCJ087000140000",
@@ -73,7 +73,7 @@
       },
       {  
          "item":12,
-         "description":"√ÅREA II COMPONENTES DE PORTA-PALETES  MONTANTES  4 montantes para porta-paletes medindo 1000 x 960 mm. Colunas no padr√£o Altamira 80 mm.  Aten√ß√£o: Verificar no item 'COR DA PINTURA' os acess√≥rios que ser√£o galvanizados e sem pintura.",
+         "description":"¡REA II COMPONENTES DE PORTA-PALETES  MONTANTES  4 montantes para porta-paletes medindo 1000 x 960 mm. Colunas no padr„o Altamira 80 mm.  AtenÁ„o: Verificar no item 'COR DA PINTURA' os acessÛrios que ser„o galvanizados e sem pintura.",
          "parts":[  
             {  
                "code":"PPLCOL00080180000000",
@@ -119,7 +119,7 @@
       },
       {  
          "item":16,
-         "description":"LONGARINAS  3 pares de longarinas medindo 2400 mm aptos a suportar uma carga uniformemente distribuida de 500 kgf cada. OBS: Garras para encaixe em colunas padr√£o Altamira 80 mm. Acompanham 3 transversinas por par de longarinas.  Aten√ß√£o: Verificar no item 'COR DA PINTURA' os acess√≥rios que ser√£o galvanizados e sem pintura.",
+         "description":"LONGARINAS  3 pares de longarinas medindo 2400 mm aptos a suportar uma carga uniformemente distribuida de 500 kgf cada. OBS: Garras para encaixe em colunas padr„o Altamira 80 mm. Acompanham 3 transversinas por par de longarinas.  AtenÁ„o: Verificar no item 'COR DA PINTURA' os acessÛrios que ser„o galvanizados e sem pintura.",
          "parts":[  
             {  
                "code":"PPLLOZCJ087000140000",
@@ -155,7 +155,7 @@
       },
       {  
          "item":20,
-         "description":"MONTANTES ( IMPRESSORAS E DUPLICADORES )  3 montantes para porta-paletes, sendo: 2 montantes 420 x 2000 mm com extens√£o tripla medindo 420 x 800 mm e 1 montante medindo 420 x 2000 mm com extens√£o tripla medindo 420 x 640 mm. Colunas padr√£o Altamira 80 mm.  Aten√ß√£o: Verificar no item 'COR DA PINTURA' os acess√≥rios que ser√£o galvanizados e sem pintura.",
+         "description":"MONTANTES ( IMPRESSORAS E DUPLICADORES )  3 montantes para porta-paletes, sendo: 2 montantes 420 x 2000 mm com extens„o tripla medindo 420 x 800 mm e 1 montante medindo 420 x 2000 mm com extens„o tripla medindo 420 x 640 mm. Colunas padr„o Altamira 80 mm.  AtenÁ„o: Verificar no item 'COR DA PINTURA' os acessÛrios que ser„o galvanizados e sem pintura.",
          "parts":[  
             {  
                "code":"PPLCOL00080180000000",

@@ -13,9 +13,6 @@ import javax.persistence.TypedQuery;
 
 import br.com.altamira.data.model.manufacturing.*;
 import br.com.altamira.data.model.manufacturing.Process;
-import br.com.altamira.data.model.sales.OrderItem;
-import br.com.altamira.data.model.sales.OrderItemPart;
-import br.com.altamira.data.model.sales.Product;
 
 @Named
 @Stateless
