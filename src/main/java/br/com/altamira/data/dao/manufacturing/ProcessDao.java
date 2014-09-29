@@ -80,8 +80,17 @@ public class ProcessDao {
     	for (Revision revision : entity.getRevision()) {
     		revision.setProcess(entity);	
     	}
+    	for (Operation operation : entity.getOperation()) {
+    		operation.setProcess(entity);
+    		for (Consume consume : operation.getConsume()) {
+    			consume.setOperation(operation);
+   				
+    		}
+    		for (Produce produce : operation.getProduce()) {
+    			produce.setOperation(operation);
+    		}
+    	}
     	
-		
 		entity.setId(null);
 
 		entityManager.persist(entity);
