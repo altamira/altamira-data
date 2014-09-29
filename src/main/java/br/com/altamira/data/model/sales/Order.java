@@ -1,7 +1,9 @@
 package br.com.altamira.data.model.sales;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -79,7 +81,7 @@ public class Order extends Resource {
     @JsonView(JSonViews.EntityView.class)
     @JsonSerialize(using = NullCollectionSerializer.class)
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "order", fetch = FetchType.LAZY, orphanRemoval = true)
-	private Set<OrderItem> items = new HashSet<OrderItem>();
+	private List<OrderItem> items = new ArrayList<OrderItem>();
 
 	public Long getNumber() {
 		return number;
@@ -154,12 +156,12 @@ public class Order extends Resource {
 	}
 
 	@XmlTransient
-	public Set<OrderItem> getItems() {
+	public List<OrderItem> getItems() {
 		return items;
 	}
 
-	public void setItems(Set<OrderItem> items) {
-		this.items = items;
+	public void setItems(List<OrderItem> items) {
+		this.items = (List<OrderItem>) items;
 	}
 
 }
