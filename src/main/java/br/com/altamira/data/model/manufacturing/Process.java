@@ -1,6 +1,8 @@
 package br.com.altamira.data.model.manufacturing;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -59,7 +61,7 @@ public class Process extends br.com.altamira.data.model.Process {
 	@JsonView(JSonViews.EntityView.class)
     @JsonSerialize(using = NullCollectionSerializer.class)
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "process", fetch = FetchType.LAZY, orphanRemoval = true)
-	private Set<Revision> revision = new HashSet<Revision>();
+	private List<Revision> revision = new ArrayList<Revision>();
 
 	@JsonView(JSonViews.EntityView.class)
     @JsonSerialize(using = NullCollectionSerializer.class)
@@ -122,11 +124,11 @@ public class Process extends br.com.altamira.data.model.Process {
 		this.finish = finish;
 	}
 	
-	public Set<Revision> getRevision() {
+	public List<Revision> getRevision() {
 		return revision;
 	}
 	
-	public void setRevision(Set<Revision> revision) {
+	public void setRevision(List<Revision> revision) {
 		this.revision = revision;
 	}
 	
