@@ -1,6 +1,8 @@
 package br.com.altamira.data.model.sales;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -59,7 +61,7 @@ public class OrderItem extends Resource {
     @JsonView(JSonViews.EntityView.class)
     @JsonSerialize(using = NullCollectionSerializer.class)
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "orderItem", fetch = FetchType.EAGER, orphanRemoval = true)
-    private Set<OrderItemPart> parts = new HashSet<OrderItemPart>();
+    private List<OrderItemPart> parts = new ArrayList<OrderItemPart>();
 
     @JsonIgnore
     @XmlTransient
@@ -87,11 +89,11 @@ public class OrderItem extends Resource {
 		this.description = description;
 	}
 	
-	public Set<OrderItemPart> getParts() {
+	public List<OrderItemPart> getParts() {
 		return parts;
 	}
 	
-	public void setPart(Set<OrderItemPart> parts) {
+	public void setPart(List<OrderItemPart> parts) {
 		this.parts = parts;
 	}
 
