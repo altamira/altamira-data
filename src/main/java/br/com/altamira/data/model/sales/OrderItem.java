@@ -54,7 +54,7 @@ public class OrderItem extends Resource {
 	private int item = 0;
 	
 	@NotNull
-	@Size(min = 10)
+	@Size(min = 10, max = 500)
 	@Column(name = "DESCRIPTION")
 	private String description = "";
 	
