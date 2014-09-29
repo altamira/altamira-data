@@ -43,9 +43,10 @@ public class Operation extends br.com.altamira.data.model.Operation {
 	
 	@NotNull
 	@Size(min=1)
-	@Column(name = "DESCRIPTION", columnDefinition = "nvarchar2(255)")
+	@Column(name = "DESCRIPTION", columnDefinition = "nvarchar2(500)")
 	private String description;
 	
+	@Column(name = "SKETCH", columnDefinition = "nvarchar2(500)")
 	private String sketch;
     
 	@JsonIgnore
