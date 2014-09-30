@@ -1,8 +1,7 @@
 package br.com.altamira.data.model.manufacturing.process;
 
-import java.util.HashSet;
-import java.util.Set;
-
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -57,12 +56,12 @@ public class Operation extends br.com.altamira.data.model.Operation {
 	@JsonView(JSonViews.EntityView.class)
     @JsonSerialize(using = NullCollectionSerializer.class)
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "operation", fetch = FetchType.LAZY, orphanRemoval = true)
-	private Set<Consume> consume = new HashSet<Consume>();
+	private List<Consume> consume = new ArrayList<Consume>();
 	
 	@JsonView(JSonViews.EntityView.class)
     @JsonSerialize(using = NullCollectionSerializer.class)
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "operation", fetch = FetchType.LAZY, orphanRemoval = true)
-	private Set<Produce> produce = new HashSet<Produce>();
+	private List<Produce> produce = new ArrayList<Produce>();
 
 	public Process getProcess() {
 		return process;
@@ -72,7 +71,7 @@ public class Operation extends br.com.altamira.data.model.Operation {
 		this.process = process;
 	}
 
-	public void setConsume(Set<Consume> consume) {
+	public void setConsume(List<Consume> consume) {
 		this.consume = consume;
 	}
 
@@ -108,19 +107,19 @@ public class Operation extends br.com.altamira.data.model.Operation {
 		this.sketch = sketch;
 	}
 	
-	public Set<Consume> getConsume() {
+	public List<Consume> getConsume() {
 		return consume;
 	}
 	
-	public void setUseconsume(Set<Consume> useconsume) {
+	public void setUseconsume(List<Consume> useconsume) {
 		this.consume = useconsume;
 	}
 	
-	public Set<Produce> getProduce() {
+	public List<Produce> getProduce() {
 		return produce;
 	}
 	
-	public void setProduce(Set<Produce> produce) {
+	public void setProduce(List<Produce> produce) {
 		this.produce = produce;
 	}
 	
