@@ -107,6 +107,7 @@ public class OrderEndpoint {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response create(Order entity) throws IllegalArgumentException, UriBuilderException, JsonProcessingException {
 
     	if (entity == null) {
