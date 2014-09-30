@@ -101,6 +101,14 @@ public class OrderDao {
 			throw new IllegalArgumentException("Entity id can't be null or zero.");
 		}
 		
+		// Resolve dependencies
+    	for (OrderItem item : entity.getItems()) {
+    		item.setOrder(entity);
+    		for (OrderItemPart part : item.getParts()) {
+    			part.setOrderItem(item);
+    		}
+    	}
+		
 		entityManager.merge(entity);
 
 		// Reload to update child references
