@@ -18,6 +18,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
+import javax.ws.rs.OPTIONS;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -40,7 +41,7 @@ import br.com.altamira.data.model.sales.order.Order;
 import br.com.altamira.data.serialize.JSonViews;
 
 @Stateless
-@Path("sales/order")
+@Path("/sales/order")
 public class OrderEndpoint {
 	
     @Inject
@@ -67,17 +68,15 @@ public class OrderEndpoint {
     		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
     	}
 		
-		if (list.size() == 0) {
-			return Response.status(Status.NOT_FOUND).build();
-		}
-		
 		ObjectMapper mapper = new ObjectMapper();
 		
 		mapper.registerModule(new Hibernate4Module());
-		//mapper.getSerializerProvider().setNullValueSerializer(new NullValueSerializer());
 		ObjectWriter writer = mapper.writerWithView(JSonViews.ListView.class);
 
-		return Response.ok(writer.writeValueAsString(list)).build();
+		return Response.ok(writer.writeValueAsString(list))
+				.header("Access-Control-Allow-Origin", "http://192.168.0.16:8100")
+				.header("Access-Control-Allow-Credentials", "true")
+				.build();
 	}
 	
     @GET
@@ -89,22 +88,56 @@ public class OrderEndpoint {
     	try {
     		entity = orderDao.findByNumber(number);
     	} catch (Exception e) {
-    		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+    		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage())
+    				.header("Access-Control-Allow-Origin", "http://192.168.0.16:8100")
+    				.header("Access-Control-Allow-Credentials", "true")
+    				.build();
     	}
 
 		if (entity == null) {
-			return Response.status(Status.NOT_FOUND).build();
+			return Response.status(Status.NOT_FOUND)
+					.header("Access-Control-Allow-Origin", "http://192.168.0.16:8100")
+					.header("Access-Control-Allow-Credentials", "true")
+					.build();
 		}
 		
 		ObjectMapper mapper = new ObjectMapper();
 		
 		mapper.registerModule(new Hibernate4Module());
-		//mapper.getSerializerProvider().setNullValueSerializer(new NullValueSerializer());
 		ObjectWriter writer = mapper.writerWithView(JSonViews.EntityView.class);
 		
-		return Response.ok(writer.writeValueAsString(entity)).build();
+		return Response.ok(writer.writeValueAsString(entity))
+				.header("Access-Control-Allow-Origin", "http://192.168.0.16:8100")
+	            .header("Access-Control-Allow-Headers", "Access-Control-Allow-Origin, Origin, Content-Type, Content-Length, Accept, Authorization, X-Requested-With")
+	            .header("Access-Control-Allow-Credentials", "true")
+	            .header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD")
+	            .header("Access-Control-Max-Age", "1209600")
+				.build();
+    }
+    
+    @OPTIONS
+    public Response getCORSHeadersFromPath() {
+    	return Response.ok()
+    			.header("Access-Control-Allow-Origin", "http://192.168.0.16:8100")
+	            .header("Access-Control-Allow-Headers", "Access-Control-Allow-Origin, Origin, Content-Type, Content-Length, Accept, Authorization, X-Requested-With")
+	            .header("Access-Control-Allow-Credentials", "true")
+	            .header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD")
+	            .header("Access-Control-Max-Age", "1209600")
+	            .build();
     }
 
+    @OPTIONS
+    @Path("/{number:[0-9][0-9]*}")
+    public Response getCORSHeadersFromNumberPath(@PathParam("number") long number) {
+    	return Response.ok()
+		        .header("Access-Control-Allow-Origin", "http://192.168.0.16:8100")
+	            .header("Access-Control-Allow-Headers", "Access-Control-Allow-Origin, Origin, Content-Type, Content-Length, Accept, Authorization, X-Requested-With")
+	            .header("Access-Control-Allow-Credentials", "true")
+	            .header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD")
+	            .header("Access-Control-Max-Age", "1209600")
+	            .build();
+    }
+    
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response create(Order entity) throws IllegalArgumentException, UriBuilderException, JsonProcessingException {
@@ -148,6 +181,8 @@ public class OrderEndpoint {
 		        UriBuilder.fromResource(OrderEndpoint.class)
 		        .path(String.valueOf(entity.getId())).build())
 		        .entity(writer.writeValueAsString(entity))
+		        .header("Access-Control-Allow-Origin", "http://192.168.0.16:8100")
+    			.header("Access-Control-Allow-Credentials", "true")
 		        .build();
     }
 
@@ -188,8 +223,11 @@ public class OrderEndpoint {
 
 		return Response
 				.ok(UriBuilder.fromResource(OrderEndpoint.class)
-						.path(String.valueOf(entity.getId())).build())
-				.entity(entity).build();
+				.path(String.valueOf(entity.getId())).build())
+				.entity(entity)
+				.header("Access-Control-Allow-Origin", "http://192.168.0.16:8100")
+    			.header("Access-Control-Allow-Credentials", "true")
+				.build();
     }
 
     @DELETE
@@ -215,7 +253,10 @@ public class OrderEndpoint {
 		if (entity == null) {
 			return Response.noContent().status(Status.NOT_FOUND).build();
 		}
-		return Response.noContent().build();
+		return Response.noContent()
+				.header("Access-Control-Allow-Origin", "http://192.168.0.16:8100")
+				.header("Access-Control-Allow-Credentials", "true")
+				.build();
     }
 
     /**

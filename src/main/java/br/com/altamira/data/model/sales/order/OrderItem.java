@@ -20,11 +20,8 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import br.com.altamira.data.model.Resource;
 import br.com.altamira.data.serialize.JSonViews;
-import br.com.altamira.data.serialize.NullCollectionSerializer;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Entity
 @Table(name = "SL_ORDER_ITEM"/*, uniqueConstraints = @UniqueConstraint(columnNames = {"\"ORDER\"", "ITEM"})*/)
@@ -57,7 +54,6 @@ public class OrderItem extends Resource {
 	private String description = "";
 	
     @JsonView(JSonViews.EntityView.class)
-    @JsonSerialize(using = NullCollectionSerializer.class)
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "orderItem", fetch = FetchType.EAGER, orphanRemoval = true)
     private List<OrderItemPart> parts = new ArrayList<OrderItemPart>();
 

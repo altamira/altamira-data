@@ -36,7 +36,6 @@ import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
 import br.com.altamira.data.dao.sales.ProductDao;
 import br.com.altamira.data.model.sales.Product;
 import br.com.altamira.data.serialize.JSonViews;
-import br.com.altamira.data.serialize.NullValueSerializer;
 
 @Stateless
 @Path("sales/product")
@@ -66,14 +65,9 @@ public class ProductEndpoint {
     		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
     	}
 		
-		if (list.size() == 0) {
-			return Response.status(Status.NOT_FOUND).build();
-		}
-		
 		ObjectMapper mapper = new ObjectMapper();
 		
 		mapper.registerModule(new Hibernate4Module());
-		mapper.getSerializerProvider().setNullValueSerializer(new NullValueSerializer());
 		ObjectWriter writer = mapper.writerWithView(JSonViews.ListView.class);
 
 		return Response.ok(writer.writeValueAsString(list)).build();

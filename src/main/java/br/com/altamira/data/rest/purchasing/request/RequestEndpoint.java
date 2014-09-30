@@ -88,7 +88,6 @@ public class RequestEndpoint {
 		ObjectWriter writer = mapper.writerWithView(JSonViews.ListView.class);
 
 		return Response.ok(writer.writeValueAsString(list)).build();
-		//return Response.ok(list).build();
 	}
 
 	@GET

@@ -34,13 +34,15 @@ import br.com.altamira.data.dao.sales.order.OrderDao;
 import br.com.altamira.data.dao.sales.order.OrderItemDao;
 import br.com.altamira.data.model.sales.order.Order;
 import br.com.altamira.data.model.sales.order.OrderItem;
+import br.com.altamira.data.serialize.JSonViews;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
 
 @Stateless
-@Path("sales/order/{number:[0-9]*}")
+@Path("sales/orderitem/{number:[0-9]*}")
 public class OrderItemEndpoint {
 	
     @Inject
@@ -74,8 +76,9 @@ public class OrderItemEndpoint {
 		ObjectMapper mapper = new ObjectMapper();
 		
 		mapper.registerModule(new Hibernate4Module());
-		
-		return Response.ok(mapper.writeValueAsString(list)).build();
+		ObjectWriter writer = mapper.writerWithView(JSonViews.ListView.class);
+
+		return Response.ok(writer.writeValueAsString(list)).build();
 	}
 	
 	@GET

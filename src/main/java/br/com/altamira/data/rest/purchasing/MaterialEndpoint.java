@@ -63,10 +63,6 @@ public class MaterialEndpoint {
     		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
     	}
 		
-		if (list.size() == 0) {
-			return Response.status(Status.NOT_FOUND).build();
-		}
-		
 		return Response.ok(list).build();
 	}
 	

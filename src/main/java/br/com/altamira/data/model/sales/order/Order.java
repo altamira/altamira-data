@@ -19,10 +19,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import br.com.altamira.data.model.Resource;
 import br.com.altamira.data.serialize.JSonViews;
-import br.com.altamira.data.serialize.NullCollectionSerializer;
-
 import com.fasterxml.jackson.annotation.JsonView;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Entity
 @Table(name = "SL_ORDER")
@@ -76,7 +73,6 @@ public class Order extends Resource {
 	private Long project = 0l;
 	
     @JsonView(JSonViews.EntityView.class)
-    @JsonSerialize(using = NullCollectionSerializer.class)
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "order", fetch = FetchType.LAZY, orphanRemoval = true)
 	private List<OrderItem> items = new ArrayList<OrderItem>();
 
