@@ -109,6 +109,21 @@ public class ProcessDao {
 			throw new IllegalArgumentException("Entity id can't be null or zero.");
 		}
 		
+		// Resolve dependencies
+    	for (Revision revision : entity.getRevision()) {
+    		revision.setProcess(entity);	
+    	}
+    	for (Operation operation : entity.getOperation()) {
+    		operation.setProcess(entity);
+    		for (Consume consume : operation.getConsume()) {
+    			consume.setOperation(operation);
+   				
+    		}
+    		for (Produce produce : operation.getProduce()) {
+    			produce.setOperation(operation);
+    		}
+    	}
+    	
 		entityManager.merge(entity);
 
 		// Reload to update child references
