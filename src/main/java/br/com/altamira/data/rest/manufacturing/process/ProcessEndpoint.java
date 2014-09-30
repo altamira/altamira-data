@@ -15,6 +15,7 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 import javax.validation.Validator;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -190,6 +191,32 @@ public class ProcessEndpoint {
 		ObjectWriter writer = mapper.writerWithView(JSonViews.EntityView.class);
 		
 		return Response.ok(writer.writeValueAsString(entity)).build();
+    }
+    
+    @DELETE
+    @Path("/{id:[0-9]*}")
+    public Response deleteById(@PathParam("id") long id) {
+    	Process entity = null;
+    	try {
+    		entity = processDao.remove(id);
+    	} catch (ConstraintViolationException ce) {
+            // Handle bean validation issues
+            return createViolationResponse(ce.getConstraintViolations()).build();
+        } catch (ValidationException e) {
+            // Handle the unique constrain violation
+            Map<String, String> responseObj = new HashMap<String, String>();
+            responseObj.put("error", e.getMessage());
+            return Response.status(Response.Status.CONFLICT).entity(responseObj).build();
+        } catch (Exception e) {
+        	Map<String, String> responseObj = new HashMap<String, String>();
+            responseObj.put("error", e.getMessage());
+    		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+    	}
+    	
+		if (entity == null) {
+			return Response.noContent().status(Status.NOT_FOUND).build();
+		}
+		return Response.noContent().build();
     }
     
     /**
