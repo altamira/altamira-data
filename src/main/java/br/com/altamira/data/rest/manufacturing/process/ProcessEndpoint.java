@@ -103,6 +103,7 @@ public class ProcessEndpoint {
     
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response create(Process entity) throws IllegalArgumentException, UriBuilderException, JsonProcessingException {
     	//log.info("This is a log");
     	if (entity == null) {
