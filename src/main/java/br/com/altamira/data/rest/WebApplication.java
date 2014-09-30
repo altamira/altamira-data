@@ -4,6 +4,8 @@ import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
 @ApplicationPath("/rest")
-public class JaxRsActivator extends Application {
-
+public class WebApplication extends Application {
+	
+	public static final String ACCESS_CONTROL_ALLOW_ORIGIN = "http://localhost:8100";
+	
 }

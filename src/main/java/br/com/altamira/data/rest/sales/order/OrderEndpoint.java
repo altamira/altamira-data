@@ -38,6 +38,7 @@ import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
 
 import br.com.altamira.data.dao.sales.order.OrderDao;
 import br.com.altamira.data.model.sales.order.Order;
+import br.com.altamira.data.rest.WebApplication;
 import br.com.altamira.data.serialize.JSonViews;
 
 @Stateless
@@ -74,7 +75,7 @@ public class OrderEndpoint {
 		ObjectWriter writer = mapper.writerWithView(JSonViews.ListView.class);
 
 		return Response.ok(writer.writeValueAsString(list))
-				.header("Access-Control-Allow-Origin", "http://192.168.0.16:8100")
+				.header("Access-Control-Allow-Origin", WebApplication.ACCESS_CONTROL_ALLOW_ORIGIN)
 				.header("Access-Control-Allow-Credentials", "true")
 				.build();
 	}
@@ -89,14 +90,14 @@ public class OrderEndpoint {
     		entity = orderDao.findByNumber(number);
     	} catch (Exception e) {
     		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage())
-    				.header("Access-Control-Allow-Origin", "http://192.168.0.16:8100")
+    				.header("Access-Control-Allow-Origin", WebApplication.ACCESS_CONTROL_ALLOW_ORIGIN)
     				.header("Access-Control-Allow-Credentials", "true")
     				.build();
     	}
 
 		if (entity == null) {
 			return Response.status(Status.NOT_FOUND)
-					.header("Access-Control-Allow-Origin", "http://192.168.0.16:8100")
+					.header("Access-Control-Allow-Origin", WebApplication.ACCESS_CONTROL_ALLOW_ORIGIN)
 					.header("Access-Control-Allow-Credentials", "true")
 					.build();
 		}
@@ -107,7 +108,7 @@ public class OrderEndpoint {
 		ObjectWriter writer = mapper.writerWithView(JSonViews.EntityView.class);
 		
 		return Response.ok(writer.writeValueAsString(entity))
-				.header("Access-Control-Allow-Origin", "http://192.168.0.16:8100")
+				.header("Access-Control-Allow-Origin", WebApplication.ACCESS_CONTROL_ALLOW_ORIGIN)
 	            .header("Access-Control-Allow-Headers", "Access-Control-Allow-Origin, Origin, Content-Type, Content-Length, Accept, Authorization, X-Requested-With")
 	            .header("Access-Control-Allow-Credentials", "true")
 	            .header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD")
@@ -118,7 +119,7 @@ public class OrderEndpoint {
     @OPTIONS
     public Response getCORSHeadersFromPath() {
     	return Response.ok()
-    			.header("Access-Control-Allow-Origin", "http://192.168.0.16:8100")
+    			.header("Access-Control-Allow-Origin", WebApplication.ACCESS_CONTROL_ALLOW_ORIGIN)
 	            .header("Access-Control-Allow-Headers", "Access-Control-Allow-Origin, Origin, Content-Type, Content-Length, Accept, Authorization, X-Requested-With")
 	            .header("Access-Control-Allow-Credentials", "true")
 	            .header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD")
@@ -130,7 +131,7 @@ public class OrderEndpoint {
     @Path("/{number:[0-9][0-9]*}")
     public Response getCORSHeadersFromNumberPath(@PathParam("number") long number) {
     	return Response.ok()
-		        .header("Access-Control-Allow-Origin", "http://192.168.0.16:8100")
+		        .header("Access-Control-Allow-Origin", WebApplication.ACCESS_CONTROL_ALLOW_ORIGIN)
 	            .header("Access-Control-Allow-Headers", "Access-Control-Allow-Origin, Origin, Content-Type, Content-Length, Accept, Authorization, X-Requested-With")
 	            .header("Access-Control-Allow-Credentials", "true")
 	            .header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD")
@@ -182,7 +183,7 @@ public class OrderEndpoint {
 		        UriBuilder.fromResource(OrderEndpoint.class)
 		        .path(String.valueOf(entity.getId())).build())
 		        .entity(writer.writeValueAsString(entity))
-		        .header("Access-Control-Allow-Origin", "http://192.168.0.16:8100")
+		        .header("Access-Control-Allow-Origin", WebApplication.ACCESS_CONTROL_ALLOW_ORIGIN)
     			.header("Access-Control-Allow-Credentials", "true")
 		        .build();
     }
@@ -226,7 +227,7 @@ public class OrderEndpoint {
 				.ok(UriBuilder.fromResource(OrderEndpoint.class)
 				.path(String.valueOf(entity.getId())).build())
 				.entity(entity)
-				.header("Access-Control-Allow-Origin", "http://192.168.0.16:8100")
+				.header("Access-Control-Allow-Origin", WebApplication.ACCESS_CONTROL_ALLOW_ORIGIN)
     			.header("Access-Control-Allow-Credentials", "true")
 				.build();
     }
@@ -255,7 +256,7 @@ public class OrderEndpoint {
 			return Response.noContent().status(Status.NOT_FOUND).build();
 		}
 		return Response.noContent()
-				.header("Access-Control-Allow-Origin", "http://192.168.0.16:8100")
+				.header("Access-Control-Allow-Origin", WebApplication.ACCESS_CONTROL_ALLOW_ORIGIN)
 				.header("Access-Control-Allow-Credentials", "true")
 				.build();
     }

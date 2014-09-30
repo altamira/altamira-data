@@ -11,7 +11,10 @@ import java.util.Set;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import javax.transaction.UserTransaction;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
@@ -21,10 +24,9 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
 import org.jboss.resteasy.client.ClientRequest;
 import org.jboss.resteasy.client.ClientResponse;
-import org.jboss.resteasy.util.GenericType;
+import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -43,6 +45,7 @@ import br.com.altamira.data.model.purchasing.Material;
 import br.com.altamira.data.model.purchasing.Request;
 import br.com.altamira.data.model.purchasing.RequestItem;
 import br.com.altamira.data.model.sales.order.Order;
+import br.com.altamira.data.rest.purchasing.request.RequestEndpoint;
 import br.com.altamira.data.serialize.JSonViews;
 import br.com.altamira.data.serialize.NullValueSerializer;
 
@@ -621,22 +624,15 @@ public class ArquillianTest {
 	public void RequestEndpointListTest() throws Exception {
 		UriBuilder context = UriBuilder.fromUri(url);
 		
-		ClientRequest client = new ClientRequest(context.build().toString());
-		client.accept(MediaType.APPLICATION_JSON);
-		client.header("Content-Type", MediaType.APPLICATION_JSON);
-
-		ClientResponse<String> response = client.get(new GenericType<String>(){});
-		//ClientResponse<List<Request>> response = client.get(new GenericType<List<Request>>(){});
+		Client client = ClientBuilder.newBuilder().build();
+		WebTarget target = client.target(context.build().toString());
+		ResteasyWebTarget rtarget = (ResteasyWebTarget)target;
 		
-		assertEquals(200, response.getStatus());
+		RequestEndpoint r = rtarget.proxy(RequestEndpoint.class);
 		
-		ObjectMapper mapper = new ObjectMapper();
+		Response response = r.list(0, 10);
 		
-		mapper.registerModule(new Hibernate4Module());
-		mapper.getSerializerProvider().setNullValueSerializer(new NullValueSerializer());
-		
-		//List<Request> list = response.getEntity();
-		List<Request> list = new ObjectMapper().readValue(response.getEntity(), new TypeReference<List<Request>>() { });
+		List<Request> list = response.readEntity(new GenericType<List<Request>>(){});
 		
 		Assert.assertNotNull(list);
 		

@@ -30,15 +30,14 @@ import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriBuilderException;
 import javax.ws.rs.core.Response.Status;
 
+import br.com.altamira.data.model.manufacturing.process.Process;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
 
 import br.com.altamira.data.dao.manufacturing.process.ProcessDao;
-import br.com.altamira.data.model.manufacturing.process.Process;
-import br.com.altamira.data.model.sales.order.Order;
-import br.com.altamira.data.rest.sales.order.OrderEndpoint;
 import br.com.altamira.data.serialize.JSonViews;
 
 @Stateless
@@ -98,7 +97,6 @@ public class ProcessEndpoint {
 		ObjectMapper mapper = new ObjectMapper();
 		
 		mapper.registerModule(new Hibernate4Module());
-		//mapper.getSerializerProvider().setNullValueSerializer(new NullValueSerializer());
 		ObjectWriter writer = mapper.writerWithView(JSonViews.EntityView.class);
 		
 		return Response.ok(writer.writeValueAsString(entity)).build();
