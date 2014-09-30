@@ -9,6 +9,8 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Min;
@@ -23,6 +25,9 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Entity
 @Table(name = "MN_PROCESS")
+@NamedQueries({
+	@NamedQuery(name = "Process.list", query = "SELECT p FROM Process p"),
+	@NamedQuery(name = "Process.findById", query = "SELECT p FROM Process p WHERE p.id = :id")})
 public class Process extends br.com.altamira.data.model.Process {
 	
 	/**
@@ -66,7 +71,7 @@ public class Process extends br.com.altamira.data.model.Process {
 	@JsonView(JSonViews.EntityView.class)
     @JsonSerialize(using = NullCollectionSerializer.class)
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "process", fetch = FetchType.LAZY, orphanRemoval = true)
-	private Set<Operation> operation = new HashSet<Operation>();
+	private List<Operation> operation = new ArrayList<Operation>();
 
 	public String getCode() {
 		return code;
@@ -132,11 +137,11 @@ public class Process extends br.com.altamira.data.model.Process {
 		this.revision = revision;
 	}
 	
-	public Set<Operation> getOperation() {
+	public List<Operation> getOperation() {
 		return operation;
 	}
 	
-	public void setOperation(Set<Operation> operation) {
+	public void setOperation(List<Operation> operation) {
 		this.operation = operation;
 	}
 
