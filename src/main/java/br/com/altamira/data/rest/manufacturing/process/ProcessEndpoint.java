@@ -19,15 +19,24 @@ import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.UriBuilderException;
 import javax.ws.rs.core.Response.Status;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
 
 import br.com.altamira.data.dao.manufacturing.process.ProcessDao;
 import br.com.altamira.data.model.manufacturing.process.Process;
+import br.com.altamira.data.model.sales.order.Order;
+import br.com.altamira.data.serialize.JSonViews;
 
 @Stateless
 @Path("manufacturing/process")
@@ -60,13 +69,49 @@ public class ProcessEndpoint {
 			return Response.status(Status.NOT_FOUND).build();
 		}
 		
-		return Response.ok(list).build();
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.registerModule(new Hibernate4Module());
+		ObjectWriter writer = mapper.writerWithView(JSonViews.ListView.class);
+		
+		return Response.ok(writer.writeValueAsString(list)).build();
 	}
+    
+    @GET
+    @Path("/{id:[0-9]*}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response findById(@PathParam("id") long id) throws JsonProcessingException {
+    	Process entity = null;
+    	
+    	try {
+    		entity = processDao.find(id);
+    	} catch (Exception e) {
+    		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+    	}
+
+		if (entity == null) {
+			return Response.status(Status.NOT_FOUND).build();
+		}
+		
+		ObjectMapper mapper = new ObjectMapper();
+		
+		mapper.registerModule(new Hibernate4Module());
+		//mapper.getSerializerProvider().setNullValueSerializer(new NullValueSerializer());
+		ObjectWriter writer = mapper.writerWithView(JSonViews.EntityView.class);
+		
+		return Response.ok(writer.writeValueAsString(entity)).build();
+    }
     
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response create(Process entity) {
+    public Response create(Process entity) throws IllegalArgumentException, UriBuilderException, JsonProcessingException {
     	//log.info("This is a log");
+    	if (entity == null) {
+    		return Response.status(Status.BAD_REQUEST).build();
+    	}
+    	
+    	if (entity.getId() != null && entity.getId() > 0) {
+    		return Response.status(Status.BAD_REQUEST).build();
+    	}
     	try {
     		// Validates member using bean validation
             validate(entity);
@@ -85,11 +130,20 @@ public class ProcessEndpoint {
             responseObj.put("error", e.getMessage());
     		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(responseObj).build();
     	}
+    	
+    	ObjectMapper mapper = new ObjectMapper();
+		
+		mapper.registerModule(new Hibernate4Module());
+		//mapper.getSerializerProvider().setNullValueSerializer(new NullValueSerializer());
+		ObjectWriter writer = mapper.writerWithView(JSonViews.EntityView.class);
+		
+		//return Response.ok(writer.writeValueAsString(entity)).build();
+		
 
 		return Response.created(
 		        UriBuilder.fromResource(ProcessEndpoint.class)
 		        .path(String.valueOf(entity.getId())).build())
-		        .entity(entity)
+		        .entity(writer.writeValueAsString(entity))
 		        .build();
     }
     
