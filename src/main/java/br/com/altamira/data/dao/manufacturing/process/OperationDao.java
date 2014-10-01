@@ -9,9 +9,13 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 
+import br.com.altamira.data.model.manufacturing.process.Consume;
 import br.com.altamira.data.model.manufacturing.process.Operation;
+import br.com.altamira.data.model.manufacturing.process.Produce;
+import br.com.altamira.data.model.manufacturing.process.Process;
 
 @Named
 @Stateless
@@ -58,7 +62,27 @@ public class OperationDao {
 
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) 
 	public Operation find(long id) {
-		return entityManager.find(Operation.class, id);
+		//return entityManager.find(Operation.class, id);
+		Operation entity;
+
+		TypedQuery<Operation> findByIdQuery = entityManager.createNamedQuery("Operation.findById", Operation.class);
+        findByIdQuery.setParameter("id", id);
+        
+        try {
+            entity = findByIdQuery.getSingleResult();
+        } catch (NoResultException nre) {
+            return null;
+        }
+        
+        // Lazy load of items
+        if (entity.getConsume() != null) {
+        	entity.getConsume().size();
+        }
+        if (entity.getProduce() != null) {
+        	entity.getProduce().size();
+        }
+
+        return entity;
 	}
 
 	public Operation create(Operation entity) {
@@ -70,6 +94,16 @@ public class OperationDao {
 			throw new IllegalArgumentException("To create this entity, id must be null or zero.");
 		}
 		
+		Process process = entity.getProcess();
+		entity.setProcess(process);
+		
+		for (Consume consume : entity.getConsume()) {
+			consume.setOperation(entity);
+				
+		}
+		for (Produce produce : entity.getProduce()) {
+			produce.setOperation(entity);
+		}
 		entity.setId(null);
 		
 		entityManager.persist(entity);
@@ -85,6 +119,18 @@ public class OperationDao {
 		if (entity.getId() == null || entity.getId() == 0l) {
 			throw new IllegalArgumentException("Entity id can't be null or zero.");
 		}
+		
+		Process process = entity.getProcess();
+		entity.setProcess(process);
+		
+		for (Consume consume : entity.getConsume()) {
+			consume.setOperation(entity);
+				
+		}
+		for (Produce produce : entity.getProduce()) {
+			produce.setOperation(entity);
+		}
+		
 		return entityManager.contains(entity) ? null : entityManager.merge(entity);
 	}
 
