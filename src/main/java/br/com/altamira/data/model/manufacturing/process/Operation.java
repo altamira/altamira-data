@@ -2,12 +2,15 @@ package br.com.altamira.data.model.manufacturing.process;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Min;
@@ -23,6 +26,9 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Entity
 @Table(name = "MN_OPERATION")
+@NamedQueries({
+	@NamedQuery(name = "Operation.list", query = "SELECT o FROM Operation o"),
+	@NamedQuery(name = "Operation.findById", query = "SELECT o FROM Operation o WHERE o.id = :id")})
 public class Operation extends br.com.altamira.data.model.Operation {
 
 	/**
@@ -50,7 +56,7 @@ public class Operation extends br.com.altamira.data.model.Operation {
     
 	@JsonIgnore
 	@JoinColumn(name = "PROCESS", referencedColumnName = "ID")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = true, fetch = FetchType.LAZY)
     private Process process;
     
 	@JsonView(JSonViews.EntityView.class)
