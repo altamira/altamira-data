@@ -37,11 +37,8 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
 
 import br.com.altamira.data.dao.manufacturing.process.OperationDao;
-import br.com.altamira.data.dao.manufacturing.process.ProcessDao;
 import br.com.altamira.data.model.manufacturing.process.Operation;
-import br.com.altamira.data.model.manufacturing.process.Process;
 import br.com.altamira.data.rest.WebApplication;
-import br.com.altamira.data.rest.sales.order.OrderEndpoint;
 import br.com.altamira.data.serialize.JSonViews;
 
 @Stateless
