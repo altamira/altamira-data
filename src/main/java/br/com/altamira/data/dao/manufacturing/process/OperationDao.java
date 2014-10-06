@@ -60,7 +60,7 @@ public class OperationDao {
 		return materials.get(0);
 	}
 
-	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) 
+
 	public Operation find(long id) {
 		//return entityManager.find(Operation.class, id);
 		Operation entity;
@@ -73,7 +73,7 @@ public class OperationDao {
         } catch (NoResultException nre) {
             return null;
         }
-        
+
         // Lazy load of items
         if (entity.getConsume() != null) {
         	entity.getConsume().size();
