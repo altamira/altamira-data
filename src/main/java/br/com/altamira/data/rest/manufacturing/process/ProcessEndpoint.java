@@ -18,6 +18,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
+import javax.ws.rs.OPTIONS;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -38,6 +39,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
 
 import br.com.altamira.data.dao.manufacturing.process.ProcessDao;
+import br.com.altamira.data.rest.WebApplication;
 import br.com.altamira.data.serialize.JSonViews;
 
 @Stateless
@@ -64,18 +66,27 @@ public class ProcessEndpoint {
 		try {
 			list = processDao.list(startPosition, maxResult);
 		} catch (Exception e) {
-    		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+    		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage())
+    				.header("Access-Control-Allow-Origin", WebApplication.ACCESS_CONTROL_ALLOW_ORIGIN)
+    				.header("Access-Control-Allow-Credentials", "true")
+    				.build();
     	}
 		
 		if (list.size() == 0) {
-			return Response.status(Status.NOT_FOUND).build();
+			return Response.status(Status.NOT_FOUND)
+					.header("Access-Control-Allow-Origin", WebApplication.ACCESS_CONTROL_ALLOW_ORIGIN)
+    				.header("Access-Control-Allow-Credentials", "true")
+    				.build();
 		}
 		
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.registerModule(new Hibernate4Module());
 		ObjectWriter writer = mapper.writerWithView(JSonViews.ListView.class);
 		
-		return Response.ok(writer.writeValueAsString(list)).build();
+		return Response.ok(writer.writeValueAsString(list))
+				.header("Access-Control-Allow-Origin", WebApplication.ACCESS_CONTROL_ALLOW_ORIGIN)
+				.header("Access-Control-Allow-Credentials", "true")
+				.build();
 	}
     
     @GET
@@ -87,11 +98,17 @@ public class ProcessEndpoint {
     	try {
     		entity = processDao.find(id);
     	} catch (Exception e) {
-    		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+    		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage())
+    				.header("Access-Control-Allow-Origin", WebApplication.ACCESS_CONTROL_ALLOW_ORIGIN)
+    				.header("Access-Control-Allow-Credentials", "true")
+    				.build();
     	}
 
 		if (entity == null) {
-			return Response.status(Status.NOT_FOUND).build();
+			return Response.status(Status.NOT_FOUND)
+					.header("Access-Control-Allow-Origin", WebApplication.ACCESS_CONTROL_ALLOW_ORIGIN)
+    				.header("Access-Control-Allow-Credentials", "true")
+    				.build();
 		}
 		
 		ObjectMapper mapper = new ObjectMapper();
@@ -99,7 +116,13 @@ public class ProcessEndpoint {
 		mapper.registerModule(new Hibernate4Module());
 		ObjectWriter writer = mapper.writerWithView(JSonViews.EntityView.class);
 		
-		return Response.ok(writer.writeValueAsString(entity)).build();
+		return Response.ok(writer.writeValueAsString(entity))
+				.header("Access-Control-Allow-Origin", WebApplication.ACCESS_CONTROL_ALLOW_ORIGIN)
+	            .header("Access-Control-Allow-Headers", "Access-Control-Allow-Origin, Origin, Content-Type, Content-Length, Accept, Authorization, X-Requested-With")
+	            .header("Access-Control-Allow-Credentials", "true")
+	            .header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD")
+	            .header("Access-Control-Max-Age", "1209600")
+	            .build();
     }
     
     @POST
@@ -108,11 +131,17 @@ public class ProcessEndpoint {
     public Response create(Process entity) throws IllegalArgumentException, UriBuilderException, JsonProcessingException {
     	//log.info("This is a log");
     	if (entity == null) {
-    		return Response.status(Status.BAD_REQUEST).build();
+    		return Response.status(Status.BAD_REQUEST)
+    				.header("Access-Control-Allow-Origin", WebApplication.ACCESS_CONTROL_ALLOW_ORIGIN)
+        			.header("Access-Control-Allow-Credentials", "true")
+    		        .build();
     	}
     	
     	if (entity.getId() != null && entity.getId() > 0) {
-    		return Response.status(Status.BAD_REQUEST).build();
+    		return Response.status(Status.BAD_REQUEST)
+    				.header("Access-Control-Allow-Origin", WebApplication.ACCESS_CONTROL_ALLOW_ORIGIN)
+        			.header("Access-Control-Allow-Credentials", "true")
+    		        .build();
     	}
     	try {
     		// Validates member using bean validation
@@ -126,11 +155,17 @@ public class ProcessEndpoint {
             // Handle the unique constrain violation
             Map<String, String> responseObj = new HashMap<String, String>();
             responseObj.put("error", e.getMessage());
-            return Response.status(Response.Status.CONFLICT).entity(responseObj).build();
+            return Response.status(Response.Status.CONFLICT).entity(responseObj)
+            		.header("Access-Control-Allow-Origin", WebApplication.ACCESS_CONTROL_ALLOW_ORIGIN)
+        			.header("Access-Control-Allow-Credentials", "true")
+    		        .build();
         } catch (Exception e) {
         	Map<String, String> responseObj = new HashMap<String, String>();
             responseObj.put("error", e.getMessage());
-    		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(responseObj).build();
+    		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(responseObj)
+    				.header("Access-Control-Allow-Origin", WebApplication.ACCESS_CONTROL_ALLOW_ORIGIN)
+        			.header("Access-Control-Allow-Credentials", "true")
+    		        .build();
     	}
     	
     	ObjectMapper mapper = new ObjectMapper();
@@ -146,7 +181,32 @@ public class ProcessEndpoint {
 		        UriBuilder.fromResource(ProcessEndpoint.class)
 		        .path(String.valueOf(entity.getId())).build())
 		        .entity(writer.writeValueAsString(entity))
+		        .header("Access-Control-Allow-Origin", WebApplication.ACCESS_CONTROL_ALLOW_ORIGIN)
+    			.header("Access-Control-Allow-Credentials", "true")
 		        .build();
+    }
+    
+    @OPTIONS
+    public Response getCORSHeadersFromPath() {
+    	return Response.ok()
+    			.header("Access-Control-Allow-Origin", WebApplication.ACCESS_CONTROL_ALLOW_ORIGIN)
+	            .header("Access-Control-Allow-Headers", "Access-Control-Allow-Origin, Origin, Content-Type, Content-Length, Accept, Authorization, X-Requested-With")
+	            .header("Access-Control-Allow-Credentials", "true")
+	            .header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD")
+	            .header("Access-Control-Max-Age", "1209600")
+	            .build();
+    }
+
+    @OPTIONS
+    @Path("/{number:[0-9][0-9]*}")
+    public Response getCORSHeadersFromNumberPath(@PathParam("number") long number) {
+    	return Response.ok()
+		        .header("Access-Control-Allow-Origin", WebApplication.ACCESS_CONTROL_ALLOW_ORIGIN)
+	            .header("Access-Control-Allow-Headers", "Access-Control-Allow-Origin, Origin, Content-Type, Content-Length, Accept, Authorization, X-Requested-With")
+	            .header("Access-Control-Allow-Credentials", "true")
+	            .header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD")
+	            .header("Access-Control-Max-Age", "1209600")
+	            .build();
     }
     
     @PUT
@@ -188,7 +248,10 @@ public class ProcessEndpoint {
 		mapper.registerModule(new Hibernate4Module());
 		ObjectWriter writer = mapper.writerWithView(JSonViews.EntityView.class);
 		
-		return Response.ok(writer.writeValueAsString(entity)).build();
+		return Response.ok(writer.writeValueAsString(entity))
+				.header("Access-Control-Allow-Origin", WebApplication.ACCESS_CONTROL_ALLOW_ORIGIN)
+    			.header("Access-Control-Allow-Credentials", "true")
+    			.build();
     }
     
     @DELETE
@@ -214,7 +277,10 @@ public class ProcessEndpoint {
 		if (entity == null) {
 			return Response.noContent().status(Status.NOT_FOUND).build();
 		}
-		return Response.noContent().build();
+		return Response.noContent()
+				.header("Access-Control-Allow-Origin", WebApplication.ACCESS_CONTROL_ALLOW_ORIGIN)
+    			.header("Access-Control-Allow-Credentials", "true")
+    			.build();
     }
     
     /**
