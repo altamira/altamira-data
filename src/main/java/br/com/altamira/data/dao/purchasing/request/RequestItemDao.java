@@ -16,6 +16,10 @@ import br.com.altamira.data.model.purchasing.Material;
 import br.com.altamira.data.model.purchasing.Request;
 import br.com.altamira.data.model.purchasing.RequestItem;
 
+/**
+ *
+ * @author alessandro.holanda
+ */
 @Named
 @Stateless
 public class RequestItemDao {
@@ -29,7 +33,14 @@ public class RequestItemDao {
 	@Inject
 	private MaterialDao materialDao;
 
-	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) 
+    /**
+     *
+     * @param requestId
+     * @param startPosition
+     * @param maxResult
+     * @return
+     */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) 
 	public List<RequestItem> list(Long requestId, int startPosition, int maxResult) {
 
 		TypedQuery<RequestItem> findAllQuery = entityManager.createNamedQuery("RequestItem.list", RequestItem.class);
@@ -41,7 +52,12 @@ public class RequestItemDao {
 		return findAllQuery.getResultList();
 	}
 	
-	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) 
+    /**
+     *
+     * @param id
+     * @return
+     */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) 
 	public RequestItem find(long id) {
         RequestItem entity;
 
@@ -56,7 +72,12 @@ public class RequestItemDao {
         return entity;
 	}
 	
-	public RequestItem create(RequestItem entity) {
+    /**
+     *
+     * @param entity
+     * @return
+     */
+    public RequestItem create(RequestItem entity) {
 		if (entity == null) {
 			throw new IllegalArgumentException("Entity can't be null.");
 		}
@@ -107,7 +128,12 @@ public class RequestItemDao {
 		return entityManager.find(RequestItem.class, entity.getId());
 	}
 	
-	public RequestItem update(RequestItem entity) {
+    /**
+     *
+     * @param entity
+     * @return
+     */
+    public RequestItem update(RequestItem entity) {
 		
 		if (entity == null) {
 			throw new IllegalArgumentException("Entity can't be null.");
@@ -170,7 +196,12 @@ public class RequestItemDao {
 		return entityManager.find(RequestItem.class, entity.getId());
 	}
 	
-	public RequestItem remove(RequestItem entity) {
+    /**
+     *
+     * @param entity
+     * @return
+     */
+    public RequestItem remove(RequestItem entity) {
 		if (entity == null) {
 			throw new IllegalArgumentException("Entity can't be null.");
 		}
@@ -182,7 +213,12 @@ public class RequestItemDao {
 		return remove(entity.getId());
 	}
 	
-	public RequestItem remove(long id) {
+    /**
+     *
+     * @param id
+     * @return
+     */
+    public RequestItem remove(long id) {
 		if (id == 0) {
 			throw new IllegalArgumentException("Entity id can't be zero.");
 		}

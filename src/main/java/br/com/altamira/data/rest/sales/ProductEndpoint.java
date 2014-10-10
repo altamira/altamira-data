@@ -37,6 +37,10 @@ import br.com.altamira.data.dao.sales.ProductDao;
 import br.com.altamira.data.model.sales.Product;
 import br.com.altamira.data.serialize.JSonViews;
 
+/**
+ *
+ * @author alessandro.holanda
+ */
 @Stateless
 @Path("sales/product")
 public class ProductEndpoint {
@@ -50,7 +54,14 @@ public class ProductEndpoint {
     @Inject 
     private ProductDao productDao;
 
-	@GET
+    /**
+     *
+     * @param startPosition
+     * @param maxResult
+     * @return
+     * @throws IOException
+     */
+    @GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response list(
 			@DefaultValue("0") @QueryParam("start") Integer startPosition,
@@ -73,6 +84,11 @@ public class ProductEndpoint {
 		return Response.ok(writer.writeValueAsString(list)).build();
 	}
 	
+    /**
+     *
+     * @param code
+     * @return
+     */
     @GET
     @Path("/{code:[a-zA-Z0-9]*}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -92,6 +108,11 @@ public class ProductEndpoint {
         return Response.ok(entity).build();
     }
 
+    /**
+     *
+     * @param entity
+     * @return
+     */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response create(Product entity) {
@@ -130,6 +151,12 @@ public class ProductEndpoint {
 		        .build();
     }
 
+    /**
+     *
+     * @param code
+     * @param entity
+     * @return
+     */
     @PUT
     @Path("/{code:[a-zA-Z0-9]*}")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -171,6 +198,11 @@ public class ProductEndpoint {
 				.entity(entity).build();
     }
 
+    /**
+     *
+     * @param code
+     * @return
+     */
     @DELETE
     @Path("/{code:[a-zA-Z0-9]*}")
     public Response deleteById(@PathParam("code") String code) {

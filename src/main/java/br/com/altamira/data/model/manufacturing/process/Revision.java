@@ -15,6 +15,10 @@ import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+/**
+ *
+ * @author alessandro.holanda
+ */
 @Entity
 @Table(name = "MN_REVISION")
 public class Revision extends br.com.altamira.data.model.Resource {
@@ -39,27 +43,51 @@ public class Revision extends br.com.altamira.data.model.Resource {
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Process	process;
 
-	public Process getProcess() {
+    /**
+     *
+     * @return
+     */
+    public Process getProcess() {
 		return process;
 	}
 
-	public void setProcess(Process process) {
+    /**
+     *
+     * @param process
+     */
+    public void setProcess(Process process) {
 		this.process = process;
 	}
 
-	public Date getDate() {
+    /**
+     *
+     * @return
+     */
+    public Date getDate() {
 		return date;
 	}
 	
-	public void setDate(Date date) {
+    /**
+     *
+     * @param date
+     */
+    public void setDate(Date date) {
 		this.date = date;
 	}
 	
-	public String getBy() {
+    /**
+     *
+     * @return
+     */
+    public String getBy() {
 		return by;
 	}
 	
-	public void setBy(String by) {
+    /**
+     *
+     * @param by
+     */
+    public void setBy(String by) {
 		this.by = by;
 	}
 	

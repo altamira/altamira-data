@@ -24,6 +24,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+/**
+ *
+ * @author alessandro.holanda
+ */
 @Entity
 @Table(name = "MN_OPERATION")
 @NamedQueries({
@@ -69,63 +73,123 @@ public class Operation extends br.com.altamira.data.model.Operation {
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "operation", fetch = FetchType.LAZY, orphanRemoval = true)
 	private List<Produce> produce = new ArrayList<Produce>();
 
-	public Process getProcess() {
+    /**
+     *
+     * @return
+     */
+    public Process getProcess() {
 		return process;
 	}
 
-	public void setProcess(Process process) {
+    /**
+     *
+     * @param process
+     */
+    public void setProcess(Process process) {
 		this.process = process;
 	}
 
-	public void setConsume(List<Consume> consume) {
+    /**
+     *
+     * @param consume
+     */
+    public void setConsume(List<Consume> consume) {
 		this.consume = consume;
 	}
 
-	public int getSequence() {
+    /**
+     *
+     * @return
+     */
+    public int getSequence() {
 		return sequence;
 	}
 	
-	public void setSequence(int sequence) {
+    /**
+     *
+     * @param sequence
+     */
+    public void setSequence(int sequence) {
 		this.sequence = sequence;
 	}
 	
-	public String getName() {
+    /**
+     *
+     * @return
+     */
+    public String getName() {
 		return name;
 	}
 	
-	public void setName(String name) {
+    /**
+     *
+     * @param name
+     */
+    public void setName(String name) {
 		this.name = name;
 	}
 	
-	public String getDescription() {
+    /**
+     *
+     * @return
+     */
+    public String getDescription() {
 		return description;
 	}
 	
-	public void setDescription(String description) {
+    /**
+     *
+     * @param description
+     */
+    public void setDescription(String description) {
 		this.description = description;
 	}
 	
-	public String getSketch() {
+    /**
+     *
+     * @return
+     */
+    public String getSketch() {
 		return sketch;
 	}
 	
-	public void setSketch(String sketch) {
+    /**
+     *
+     * @param sketch
+     */
+    public void setSketch(String sketch) {
 		this.sketch = sketch;
 	}
 	
-	public List<Consume> getConsume() {
+    /**
+     *
+     * @return
+     */
+    public List<Consume> getConsume() {
 		return consume;
 	}
 	
-	public void setUseconsume(List<Consume> useconsume) {
+    /**
+     *
+     * @param useconsume
+     */
+    public void setUseconsume(List<Consume> useconsume) {
 		this.consume = useconsume;
 	}
 	
-	public List<Produce> getProduce() {
+    /**
+     *
+     * @return
+     */
+    public List<Produce> getProduce() {
 		return produce;
 	}
 	
-	public void setProduce(List<Produce> produce) {
+    /**
+     *
+     * @param produce
+     */
+    public void setProduce(List<Produce> produce) {
 		this.produce = produce;
 	}
 	

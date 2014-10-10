@@ -17,6 +17,10 @@ import br.com.altamira.data.model.manufacturing.process.Process;
 import br.com.altamira.data.model.manufacturing.process.Produce;
 import br.com.altamira.data.model.manufacturing.process.Revision;
 
+/**
+ *
+ * @author alessandro.holanda
+ */
 @Named
 @Stateless
 public class ProcessDao {
@@ -24,7 +28,13 @@ public class ProcessDao {
 	@Inject
 	private EntityManager entityManager;
 
-	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) 
+    /**
+     *
+     * @param startPosition
+     * @param maxResult
+     * @return
+     */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) 
 	public List<Process> list(int startPosition, int maxResult) {
 
 		TypedQuery<Process> findAllQuery = entityManager.createNamedQuery("Process.list", Process.class);
@@ -35,7 +45,14 @@ public class ProcessDao {
 		return findAllQuery.getResultList();
 	}
 	
-	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) 
+    /**
+     *
+     * @param requestId
+     * @param startPosition
+     * @param maxResult
+     * @return
+     */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) 
 	public List<Operation> listOperations(Long requestId, int startPosition, int maxResult) {
 
 		TypedQuery<Operation> findAllQuery = entityManager.createNamedQuery("Process.items", Operation.class);
@@ -47,7 +64,12 @@ public class ProcessDao {
 		return findAllQuery.getResultList();
 	}
 	
-	public Process find(long id) {
+    /**
+     *
+     * @param id
+     * @return
+     */
+    public Process find(long id) {
         Process entity;
 
 		TypedQuery<Process> findByIdQuery = entityManager.createNamedQuery("Process.findById", Process.class);
@@ -67,7 +89,12 @@ public class ProcessDao {
         return entity;
 	}
 	
-	public Process create(Process entity) {
+    /**
+     *
+     * @param entity
+     * @return
+     */
+    public Process create(Process entity) {
 		if (entity == null) {
 			throw new IllegalArgumentException("Entity can't be null.");
 		}
@@ -101,7 +128,12 @@ public class ProcessDao {
 		return entityManager.find(Process.class, entity.getId());
 	}
 	
-	public Process update(Process entity) {
+    /**
+     *
+     * @param entity
+     * @return
+     */
+    public Process update(Process entity) {
 		if (entity == null) {
 			throw new IllegalArgumentException("Entity can't be null.");
 		}
@@ -131,7 +163,12 @@ public class ProcessDao {
 		return entityManager.find(Process.class, entity.getId());
 	}
 	
-	public Process remove(Process entity) {
+    /**
+     *
+     * @param entity
+     * @return
+     */
+    public Process remove(Process entity) {
 		if (entity == null) {
 			throw new IllegalArgumentException("Entity can't be null.");
 		}
@@ -143,7 +180,12 @@ public class ProcessDao {
 		return remove(entity.getId());
 	}
 	
-	public Process remove(long id) {
+    /**
+     *
+     * @param id
+     * @return
+     */
+    public Process remove(long id) {
 		if (id == 0) {
 			throw new IllegalArgumentException("Entity id can't be zero.");
 		}

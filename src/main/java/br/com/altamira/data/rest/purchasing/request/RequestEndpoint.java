@@ -38,11 +38,11 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriBuilderException;
 
-import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.JasperExportManager;
-import net.sf.jasperreports.engine.JasperFillManager;
-import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+//import net.sf.jasperreports.engine.JRDataSource;
+//import net.sf.jasperreports.engine.JasperExportManager;
+//import net.sf.jasperreports.engine.JasperFillManager;
+//import net.sf.jasperreports.engine.JasperPrint;
+//import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import br.com.altamira.data.dao.purchasing.request.RequestDao;
 import br.com.altamira.data.model.purchasing.Request;
 import br.com.altamira.data.model.purchasing.RequestItem;
@@ -53,6 +53,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
 
+/**
+ *
+ * @author alessandro.holanda
+ */
 @Stateless
 @Path("purchasing/request")
 public class RequestEndpoint {
@@ -66,7 +70,14 @@ public class RequestEndpoint {
 	@Inject
 	private RequestDao requestDao;
 
-	@GET
+    /**
+     *
+     * @param startPosition
+     * @param maxResult
+     * @return
+     * @throws IOException
+     */
+    @GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response list(
 			@DefaultValue("0") @QueryParam("start") Integer startPosition,
@@ -90,7 +101,13 @@ public class RequestEndpoint {
 		return Response.ok(writer.writeValueAsString(list)).build();
 	}
 
-	@GET
+    /**
+     *
+     * @param id
+     * @return
+     * @throws IOException
+     */
+    @GET
 	@Path("{id:[0-9]*}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response findById(@PathParam("id") long id)
@@ -147,6 +164,17 @@ public class RequestEndpoint {
 								.path(String.valueOf(entity.getId())).build())
 				.entity(serialize(entity)).build();
 	}*/
+
+    /**
+     *
+     * @param id
+     * @param entity
+     * @return
+     * @throws IllegalArgumentException
+     * @throws UriBuilderException
+     * @throws IOException
+     */
+    
 
 	@PUT
 	@Path("{id:[0-9][0-9]*}")
@@ -217,7 +245,12 @@ public class RequestEndpoint {
 				.entity(writer.writeValueAsString(entity)).build();
 	}
 
-	@DELETE
+    /**
+     *
+     * @param id
+     * @return
+     */
+    @DELETE
 	@Path("{id:[0-9][0-9]*}")
 	public Response removeById(@PathParam("id") long id) {
 		Request entity = null;
@@ -248,6 +281,13 @@ public class RequestEndpoint {
 	/* 
 	 * Custom methods 
 	 */
+
+    /**
+     *
+     * @return
+     * @throws IOException
+     */
+    
 	
 	@GET
 	@Path("/current")
@@ -286,201 +326,206 @@ public class RequestEndpoint {
                 .build();
 	}
 
-    @GET
-    @Path("{id:[0-9][0-9]*}/report")
-    @Produces("application/pdf")
-    public Response reportInPdf(@PathParam("id") long id) {
-    	Request entity = null;
-    	
-        // generate report
-        JasperPrint jasperPrint = null;
-
-        try {
-        	entity = requestDao.find(id);
-        } catch (Exception e) {
-    		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
-    	}
-        
-        if (entity == null) {
-			return Response.status(Status.NOT_FOUND).entity("A Requisição não foi encontrada.").build();
-		}
-        
-        if (entity.getItem().size() == 0) {
-        	return Response.status(Status.BAD_REQUEST).entity("A Requisição não tem itens.").build();
-        }
-        
-        try {
-            //byte[] requestReportJasper = requestDao.getRequestReportJasperFile();
-            //byte[] requestReportAltamiraimage = requestDao.getRequestReportAltamiraImage();
-            byte[] pdf = null;
-
-            //ByteArrayInputStream reportStream = new ByteArrayInputStream(requestReportJasper);
-            InputStream reportStream = Request.class.getResourceAsStream("/request.jasper");
-            
-            if (reportStream == null) {
-            	reportStream = Request.class.getResourceAsStream("request.jasper");
-            }
-            
-            if (reportStream == null) {
-            	reportStream = this.getClass().getResourceAsStream("/request.jasper");
-            }
-            
-            if (reportStream == null) {
-            	reportStream = this.getClass().getResourceAsStream("request.jasper");
-            }
-            
-            if (reportStream == null) {
-            	reportStream = Thread.currentThread().getClass().getResourceAsStream("/request.jasper");
-            }
-            
-            if (reportStream == null) {
-            	reportStream = Thread.currentThread().getClass().getResourceAsStream("request.jasper");
-            }
-           
-            if (reportStream == null) {
-            	return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Não foi possivel carregar o relatorio !").build();
-            }
-            
-            Map<String, Object> parameters = new HashMap<String, Object>();
-
-            //List<Object[]> list = requestDao.selectRequestReportDataById(id);
-
-            //Vector requestReportList = new Vector();
-            ArrayList<RequestReportData> requestReportList = new ArrayList<RequestReportData>();
-            List<Date> dateList = new ArrayList<Date>();
-
-            Long lastMaterialId = new Long(0);
-            int count = 0;
-            BigDecimal sumRequestWeight = new BigDecimal(0);
-            BigDecimal totalWeight = new BigDecimal(0);
-
-            RequestReportData r = new RequestReportData();
-            r.setId(null);
-            r.setLamination(null);
-            r.setLength(null);
-            r.setThickness(null);
-            r.setTreatment(null);
-            r.setWidth(null);
-            r.setArrivalDate(null);
-            r.setWeight(null);
-
-            requestReportList.add(r);
-
-            /* 
-				0 = M.ID
-	            1 = M.LAMINATION
-	            2 = M.TREATMENT
-	            3 = M.THICKNESS
-	            4 = M.WIDTH
-	            5 = M.LENGTH
-	            6 = RT.WEIGHT
-	            7 = RT.ARRIVAL_DATE
-            */
-            for (RequestItem item : entity.getItem()) {
-                RequestReportData rr = new RequestReportData();
-
-                Long currentMaterialId = item.getMaterial().getId();
-
-                if (lastMaterialId.compareTo(currentMaterialId) == 0) {
-                    rr.setWeight(item.getWeight());
-                    rr.setArrivalDate(item.getArrival());
-
-                    // copy REQUEST_DATE into dateList
-                    dateList.add(item.getArrival());
-
-                    totalWeight = totalWeight.add(item.getWeight());
-                    sumRequestWeight = sumRequestWeight.add(item.getWeight());
-                    count++;
-                } else {
-                    rr.setId(entity.getId());
-                    rr.setLamination(item.getMaterial().getLamination());
-                    rr.setTreatment(item.getMaterial().getTreatment());
-                    rr.setThickness(item.getMaterial().getThickness());
-                    rr.setWidth(item.getMaterial().getWidth());
-
-                    if (item.getMaterial().getLength() != null) {
-                        rr.setLength(item.getMaterial().getLength());
-                    }
-
-                    rr.setWeight(item.getWeight());
-                    rr.setArrivalDate(item.getArrival());
-
-                    // copy ARRIVAL_DATE into dateList
-                    dateList.add(item.getArrival());
-
-                    totalWeight = totalWeight.add(item.getWeight());
-                    lastMaterialId = currentMaterialId;
-
-                    if (count != 0) {
-                        RequestReportData addition = new RequestReportData();
-                        addition.setWeight(sumRequestWeight);
-
-                        requestReportList.add(addition);
-                    }
-
-                    sumRequestWeight = item.getWeight();
-                    count = 0;
-                }
-
-                requestReportList.add(rr);
-            }
-
-            if (count > 0) {
-                RequestReportData addition = new RequestReportData();
-                addition.setWeight(sumRequestWeight);
-
-                requestReportList.add(addition);
-            }
-
-            InputStream reportLogo = RequestEndpoint.class.getResourceAsStream("/report-logo.png");
-            
-            BufferedImage imfg = null;
-            try {
-                //InputStream in = new ByteArrayInputStream(requestReportAltamiraimage);
-                imfg = ImageIO.read(reportLogo);
-            } catch (Exception e1) {
-                e1.printStackTrace();
-            }
-
-            Collections.sort(dateList);
-
-            parameters.put("REQUEST_START_DATE", dateList.get(0));
-            parameters.put("REQUEST_END_DATE", dateList.get(dateList.size() - 1));
-            parameters.put("REQUEST_ID", id);
-            parameters.put("TOTAL_WEIGHT", totalWeight);
-            parameters.put("altamira_logo", imfg);
-            //parameters.put("USERNAME", httpRequest.getUserPrincipal() == null ? "" : httpRequest.getUserPrincipal().getName());
-
-            Locale locale = new Locale.Builder().setLanguage("pt").setRegion("BR").build();
-            parameters.put("REPORT_LOCALE", locale);
-
-            JRDataSource dataSource = new JRBeanCollectionDataSource(requestReportList, false);
-
-            jasperPrint = JasperFillManager.fillReport(reportStream, parameters, dataSource);
-
-            pdf = JasperExportManager.exportReportToPdf(jasperPrint);
-
-            ByteArrayInputStream pdfStream = new ByteArrayInputStream(pdf);
-
-            Response.ResponseBuilder response = Response.ok(pdfStream);
-            response.header("Content-Disposition", "inline; filename=Request Report.pdf");
-
-            return response.build();
-
-        } catch (Exception e) {
-    		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
-        } finally {
-            try {
-                /*if (jasperPrint != null) {
-                    // store generated report in database
-                    requestDao.insertGeneratedRequestReport(jasperPrint);
-                }*/
-            } catch (Exception e) {
-                e.printStackTrace();
-                System.out.println("Could not insert generated report in database.");
-            }
-        }
-    }
+    /**
+     *
+     * @param id
+     * @return
+     */
+//    @GET
+//    @Path("{id:[0-9][0-9]*}/report")
+//    @Produces("application/pdf")
+//    public Response reportInPdf(@PathParam("id") long id) {
+//    	Request entity = null;
+//    	
+//        // generate report
+//        JasperPrint jasperPrint = null;
+//
+//        try {
+//        	entity = requestDao.find(id);
+//        } catch (Exception e) {
+//    		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+//    	}
+//        
+//        if (entity == null) {
+//			return Response.status(Status.NOT_FOUND).entity("A Requisição não foi encontrada.").build();
+//		}
+//        
+//        if (entity.getItem().size() == 0) {
+//        	return Response.status(Status.BAD_REQUEST).entity("A Requisição não tem itens.").build();
+//        }
+//        
+//        try {
+//            //byte[] requestReportJasper = requestDao.getRequestReportJasperFile();
+//            //byte[] requestReportAltamiraimage = requestDao.getRequestReportAltamiraImage();
+//            byte[] pdf = null;
+//
+//            //ByteArrayInputStream reportStream = new ByteArrayInputStream(requestReportJasper);
+//            InputStream reportStream = Request.class.getResourceAsStream("/request.jasper");
+//            
+//            if (reportStream == null) {
+//            	reportStream = Request.class.getResourceAsStream("request.jasper");
+//            }
+//            
+//            if (reportStream == null) {
+//            	reportStream = this.getClass().getResourceAsStream("/request.jasper");
+//            }
+//            
+//            if (reportStream == null) {
+//            	reportStream = this.getClass().getResourceAsStream("request.jasper");
+//            }
+//            
+//            if (reportStream == null) {
+//            	reportStream = Thread.currentThread().getClass().getResourceAsStream("/request.jasper");
+//            }
+//            
+//            if (reportStream == null) {
+//            	reportStream = Thread.currentThread().getClass().getResourceAsStream("request.jasper");
+//            }
+//           
+//            if (reportStream == null) {
+//            	return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Não foi possivel carregar o relatorio !").build();
+//            }
+//            
+//            Map<String, Object> parameters = new HashMap<String, Object>();
+//
+//            //List<Object[]> list = requestDao.selectRequestReportDataById(id);
+//
+//            //Vector requestReportList = new Vector();
+//            ArrayList<RequestReportData> requestReportList = new ArrayList<RequestReportData>();
+//            List<Date> dateList = new ArrayList<Date>();
+//
+//            Long lastMaterialId = new Long(0);
+//            int count = 0;
+//            BigDecimal sumRequestWeight = new BigDecimal(0);
+//            BigDecimal totalWeight = new BigDecimal(0);
+//
+//            RequestReportData r = new RequestReportData();
+//            r.setId(null);
+//            r.setLamination(null);
+//            r.setLength(null);
+//            r.setThickness(null);
+//            r.setTreatment(null);
+//            r.setWidth(null);
+//            r.setArrivalDate(null);
+//            r.setWeight(null);
+//
+//            requestReportList.add(r);
+//
+//            /* 
+//				0 = M.ID
+//	            1 = M.LAMINATION
+//	            2 = M.TREATMENT
+//	            3 = M.THICKNESS
+//	            4 = M.WIDTH
+//	            5 = M.LENGTH
+//	            6 = RT.WEIGHT
+//	            7 = RT.ARRIVAL_DATE
+//            */
+//            for (RequestItem item : entity.getItem()) {
+//                RequestReportData rr = new RequestReportData();
+//
+//                Long currentMaterialId = item.getMaterial().getId();
+//
+//                if (lastMaterialId.compareTo(currentMaterialId) == 0) {
+//                    rr.setWeight(item.getWeight());
+//                    rr.setArrivalDate(item.getArrival());
+//
+//                    // copy REQUEST_DATE into dateList
+//                    dateList.add(item.getArrival());
+//
+//                    totalWeight = totalWeight.add(item.getWeight());
+//                    sumRequestWeight = sumRequestWeight.add(item.getWeight());
+//                    count++;
+//                } else {
+//                    rr.setId(entity.getId());
+//                    rr.setLamination(item.getMaterial().getLamination());
+//                    rr.setTreatment(item.getMaterial().getTreatment());
+//                    rr.setThickness(item.getMaterial().getThickness());
+//                    rr.setWidth(item.getMaterial().getWidth());
+//
+//                    if (item.getMaterial().getLength() != null) {
+//                        rr.setLength(item.getMaterial().getLength());
+//                    }
+//
+//                    rr.setWeight(item.getWeight());
+//                    rr.setArrivalDate(item.getArrival());
+//
+//                    // copy ARRIVAL_DATE into dateList
+//                    dateList.add(item.getArrival());
+//
+//                    totalWeight = totalWeight.add(item.getWeight());
+//                    lastMaterialId = currentMaterialId;
+//
+//                    if (count != 0) {
+//                        RequestReportData addition = new RequestReportData();
+//                        addition.setWeight(sumRequestWeight);
+//
+//                        requestReportList.add(addition);
+//                    }
+//
+//                    sumRequestWeight = item.getWeight();
+//                    count = 0;
+//                }
+//
+//                requestReportList.add(rr);
+//            }
+//
+//            if (count > 0) {
+//                RequestReportData addition = new RequestReportData();
+//                addition.setWeight(sumRequestWeight);
+//
+//                requestReportList.add(addition);
+//            }
+//
+//            InputStream reportLogo = RequestEndpoint.class.getResourceAsStream("/report-logo.png");
+//            
+//            BufferedImage imfg = null;
+//            try {
+//                //InputStream in = new ByteArrayInputStream(requestReportAltamiraimage);
+//                imfg = ImageIO.read(reportLogo);
+//            } catch (Exception e1) {
+//                e1.printStackTrace();
+//            }
+//
+//            Collections.sort(dateList);
+//
+//            parameters.put("REQUEST_START_DATE", dateList.get(0));
+//            parameters.put("REQUEST_END_DATE", dateList.get(dateList.size() - 1));
+//            parameters.put("REQUEST_ID", id);
+//            parameters.put("TOTAL_WEIGHT", totalWeight);
+//            parameters.put("altamira_logo", imfg);
+//            //parameters.put("USERNAME", httpRequest.getUserPrincipal() == null ? "" : httpRequest.getUserPrincipal().getName());
+//
+//            Locale locale = new Locale.Builder().setLanguage("pt").setRegion("BR").build();
+//            parameters.put("REPORT_LOCALE", locale);
+//
+//            JRDataSource dataSource = new JRBeanCollectionDataSource(requestReportList, false);
+//
+//            jasperPrint = JasperFillManager.fillReport(reportStream, parameters, dataSource);
+//
+//            pdf = JasperExportManager.exportReportToPdf(jasperPrint);
+//
+//            ByteArrayInputStream pdfStream = new ByteArrayInputStream(pdf);
+//
+//            Response.ResponseBuilder response = Response.ok(pdfStream);
+//            response.header("Content-Disposition", "inline; filename=Request Report.pdf");
+//
+//            return response.build();
+//
+//        } catch (Exception e) {
+//    		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+//        } finally {
+//            try {
+//                /*if (jasperPrint != null) {
+//                    // store generated report in database
+//                    requestDao.insertGeneratedRequestReport(jasperPrint);
+//                }*/
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//                System.out.println("Could not insert generated report in database.");
+//            }
+//        }
+//    }
     
     /**
      * <p>

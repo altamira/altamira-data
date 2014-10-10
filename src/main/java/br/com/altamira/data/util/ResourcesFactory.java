@@ -17,11 +17,14 @@
 package br.com.altamira.data.util;
 
 import java.util.logging.Logger;
-
+import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.Produces;
+
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+
+
 
 /**
  * This class uses CDI to alias Java EE resources, such as the persistence context, to CDI beans
@@ -35,12 +38,17 @@ import javax.persistence.PersistenceContext;
  * private EntityManager em;
  * </pre>
  */
-public class Resources {
+public class ResourcesFactory {
     // use @SuppressWarnings to tell IDE to ignore warnings about field not being referenced directly
     @Produces
     @PersistenceContext
     private EntityManager entityManager;
 
+    /**
+     *
+     * @param injectionPoint
+     * @return
+     */
     @Produces
     public Logger produceLog(InjectionPoint injectionPoint) {
         return Logger.getLogger(injectionPoint.getMember().getDeclaringClass().getName());

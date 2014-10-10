@@ -42,6 +42,10 @@ import br.com.altamira.data.dao.manufacturing.process.ProcessDao;
 import br.com.altamira.data.rest.WebApplication;
 import br.com.altamira.data.serialize.JSonViews;
 
+/**
+ *
+ * @author alessandro.holanda
+ */
 @Stateless
 @Path("manufacturing/process")
 public class ProcessEndpoint {
@@ -54,6 +58,13 @@ public class ProcessEndpoint {
     @Inject 
     private ProcessDao processDao;
     
+    /**
+     *
+     * @param startPosition
+     * @param maxResult
+     * @return
+     * @throws IOException
+     */
     @GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response list(
@@ -89,6 +100,12 @@ public class ProcessEndpoint {
 				.build();
 	}
     
+    /**
+     *
+     * @param id
+     * @return
+     * @throws JsonProcessingException
+     */
     @GET
     @Path("/{id:[0-9]*}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -125,6 +142,14 @@ public class ProcessEndpoint {
 	            .build();
     }
     
+    /**
+     *
+     * @param entity
+     * @return
+     * @throws IllegalArgumentException
+     * @throws UriBuilderException
+     * @throws JsonProcessingException
+     */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -186,6 +211,10 @@ public class ProcessEndpoint {
 		        .build();
     }
     
+    /**
+     *
+     * @return
+     */
     @OPTIONS
     public Response getCORSHeadersFromPath() {
     	return Response.ok()
@@ -197,6 +226,11 @@ public class ProcessEndpoint {
 	            .build();
     }
 
+    /**
+     *
+     * @param number
+     * @return
+     */
     @OPTIONS
     @Path("/{number:[0-9][0-9]*}")
     public Response getCORSHeadersFromNumberPath(@PathParam("number") long number) {
@@ -209,6 +243,13 @@ public class ProcessEndpoint {
 	            .build();
     }
     
+    /**
+     *
+     * @param id
+     * @param entity
+     * @return
+     * @throws JsonProcessingException
+     */
     @PUT
     @Path("/{id:[0-9][0-9]*}")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -254,6 +295,11 @@ public class ProcessEndpoint {
     			.build();
     }
     
+    /**
+     *
+     * @param id
+     * @return
+     */
     @DELETE
     @Path("/{id:[0-9]*}")
     public Response deleteById(@PathParam("id") long id) {

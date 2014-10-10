@@ -14,6 +14,10 @@ import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+/**
+ *
+ * @author alessandro.holanda
+ */
 @Entity
 @Table(name = "MN_CONSUME")
 public class Consume extends br.com.altamira.data.model.Relation {
@@ -48,43 +52,83 @@ public class Consume extends br.com.altamira.data.model.Relation {
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private br.com.altamira.data.model.manufacturing.process.Operation operation;
 
-	public Operation getOperation() {
+    /**
+     *
+     * @return
+     */
+    public Operation getOperation() {
 		return operation;
 	}
 
-	public void setOperation(Operation operation) {
+    /**
+     *
+     * @param operation
+     */
+    public void setOperation(Operation operation) {
 		this.operation = operation;
 	}
 
-	public String getCode() {
+    /**
+     *
+     * @return
+     */
+    public String getCode() {
 		return code;
 	}
 	
-	public void setCode(String code) {
+    /**
+     *
+     * @param code
+     */
+    public void setCode(String code) {
 		this.code = code;
 	}
 	
-	public String getDescription() {
+    /**
+     *
+     * @return
+     */
+    public String getDescription() {
 		return description;
 	}
 	
-	public void setDescription(String description) {
+    /**
+     *
+     * @param description
+     */
+    public void setDescription(String description) {
 		this.description = description;
 	}
 	
-	public BigDecimal getQuantity() {
+    /**
+     *
+     * @return
+     */
+    public BigDecimal getQuantity() {
 		return quantity;
 	}
 	
-	public void setQuantity(BigDecimal quantity) {
+    /**
+     *
+     * @param quantity
+     */
+    public void setQuantity(BigDecimal quantity) {
 		this.quantity = quantity;
 	}
 	
-	public String getUnit() {
+    /**
+     *
+     * @return
+     */
+    public String getUnit() {
 		return unit;
 	}
 	
-	public void setUnit(String unit) {
+    /**
+     *
+     * @param unit
+     */
+    public void setUnit(String unit) {
 		this.unit = unit;
 	}
 	

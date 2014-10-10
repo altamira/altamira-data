@@ -34,18 +34,34 @@ public class RequestReportLog {
     @Temporal(TemporalType.DATE)
     private Date dateTime;
 
+    /**
+     *
+     * @return
+     */
     public byte[] getReportInstance() {
         return reportInstance;
     }
 
+    /**
+     *
+     * @param reportInstance
+     */
     public void setReportInstance(byte[] reportInstance) {
         this.reportInstance = reportInstance;
     }
 
+    /**
+     *
+     * @return
+     */
     public Date getDateTime() {
         return dateTime;
     }
 
+    /**
+     *
+     * @param dateTime
+     */
     public void setDateTime(Date dateTime) {
         this.dateTime = dateTime;
     }

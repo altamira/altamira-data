@@ -17,6 +17,10 @@ import br.com.altamira.data.model.manufacturing.process.Operation;
 import br.com.altamira.data.model.manufacturing.process.Produce;
 import br.com.altamira.data.model.manufacturing.process.Process;
 
+/**
+ *
+ * @author alessandro.holanda
+ */
 @Named
 @Stateless
 public class OperationDao {
@@ -24,7 +28,13 @@ public class OperationDao {
 	@Inject
 	private EntityManager entityManager;
 
-	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) 
+    /**
+     *
+     * @param startPosition
+     * @param maxResult
+     * @return
+     */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) 
 	public List<Operation> list(int startPosition, int maxResult) {
 
 		TypedQuery<Operation> findAllQuery = entityManager.createNamedQuery("Operation.list", Operation.class);
@@ -35,12 +45,26 @@ public class OperationDao {
 		return findAllQuery.getResultList();
 	}
 	
-	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) 
+    /**
+     *
+     * @param material
+     * @return
+     */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) 
 	public Operation find(Operation material) {
 		return null;
 	}
 
-	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) 
+    /**
+     *
+     * @param lamination
+     * @param treatment
+     * @param thickness
+     * @param width
+     * @param length
+     * @return
+     */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) 
 	public Operation find(String lamination, String treatment,
 			BigDecimal thickness, BigDecimal width, BigDecimal length) {
 
@@ -60,8 +84,12 @@ public class OperationDao {
 		return materials.get(0);
 	}
 
-
-	public Operation find(long id) {
+    /**
+     *
+     * @param id
+     * @return
+     */
+    public Operation find(long id) {
 		//return entityManager.find(Operation.class, id);
 		Operation entity;
 
@@ -85,7 +113,12 @@ public class OperationDao {
         return entity;
 	}
 
-	public Operation create(Operation entity) {
+    /**
+     *
+     * @param entity
+     * @return
+     */
+    public Operation create(Operation entity) {
 		if (entity == null) {
 			throw new IllegalArgumentException("Entity can't be null.");
 		}
@@ -112,7 +145,12 @@ public class OperationDao {
 		return entityManager.find(Operation.class, entity.getId());
 	}
 
-	public Operation update(Operation entity) {
+    /**
+     *
+     * @param entity
+     * @return
+     */
+    public Operation update(Operation entity) {
 		if (entity == null) {
 			throw new IllegalArgumentException("Entity can't be null.");
 		}
@@ -134,7 +172,12 @@ public class OperationDao {
 		return entityManager.contains(entity) ? null : entityManager.merge(entity);
 	}
 
-	public Operation remove(Operation entity) {
+    /**
+     *
+     * @param entity
+     * @return
+     */
+    public Operation remove(Operation entity) {
 		if (entity == null) {
 			throw new IllegalArgumentException("Entity can't be null.");
 		}
@@ -146,7 +189,12 @@ public class OperationDao {
 		return remove(entity.getId());
 	}
 	
-	public Operation remove(long id) {
+    /**
+     *
+     * @param id
+     * @return
+     */
+    public Operation remove(long id) {
 		if (id == 0) {
 			throw new IllegalArgumentException("Entity id can't be zero.");
 		}

@@ -13,13 +13,23 @@ import javax.persistence.TypedQuery;
 
 import br.com.altamira.data.model.sales.Product;
 
+/**
+ *
+ * @author alessandro.holanda
+ */
 @Named
 @Stateless
 public class ProductDao {
 	@Inject
 	private EntityManager entityManager;
 
-	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) 
+    /**
+     *
+     * @param startPosition
+     * @param maxResult
+     * @return
+     */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) 
 	public List<Product> list(int startPosition, int maxResult) {
 
 		TypedQuery<Product> findAllQuery = entityManager.createNamedQuery("Product.list", Product.class);
@@ -30,17 +40,32 @@ public class ProductDao {
 		return findAllQuery.getResultList();
 	}
 	
-	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) 
+    /**
+     *
+     * @param material
+     * @return
+     */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) 
 	public Product find(Product material) {
 		return null;
 	}
 
-	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) 
+    /**
+     *
+     * @param id
+     * @return
+     */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) 
 	public Product findById(long id) {
 		return entityManager.find(Product.class, id);
 	}
 
-	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) 
+    /**
+     *
+     * @param code
+     * @return
+     */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) 
 	public Product findByCode(String code) {
 		
 		try {
@@ -55,7 +80,12 @@ public class ProductDao {
 
 	}
 	
-	public Product create(Product entity) {
+    /**
+     *
+     * @param entity
+     * @return
+     */
+    public Product create(Product entity) {
 		if (entity == null) {
 			throw new IllegalArgumentException("Entity can't be null.");
 		}
@@ -72,7 +102,12 @@ public class ProductDao {
 		return entityManager.find(Product.class, entity.getId());
 	}
 
-	public Product update(Product entity) {
+    /**
+     *
+     * @param entity
+     * @return
+     */
+    public Product update(Product entity) {
 		if (entity == null) {
 			throw new IllegalArgumentException("Entity can't be null.");
 		}
@@ -82,7 +117,12 @@ public class ProductDao {
 		return entityManager.contains(entity) ? null : entityManager.merge(entity);
 	}
 
-	public Product remove(Product entity) {
+    /**
+     *
+     * @param entity
+     * @return
+     */
+    public Product remove(Product entity) {
 		if (entity == null) {
 			throw new IllegalArgumentException("Entity can't be null.");
 		}
@@ -97,7 +137,12 @@ public class ProductDao {
 		return entity;
 	}
 	
-	public Product remove(long id) {
+    /**
+     *
+     * @param id
+     * @return
+     */
+    public Product remove(long id) {
 		if (id == 0) {
 			throw new IllegalArgumentException("Entity id can't be zero.");
 		}
@@ -114,7 +159,12 @@ public class ProductDao {
 		return entity;
 	}
 	
-	public Product remove(String code) {
+    /**
+     *
+     * @param code
+     * @return
+     */
+    public Product remove(String code) {
 		if (code.length() == 0) {
 			throw new IllegalArgumentException("Entity code can't be zero.");
 		}

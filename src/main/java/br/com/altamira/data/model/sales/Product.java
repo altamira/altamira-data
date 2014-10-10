@@ -14,6 +14,10 @@ import javax.validation.constraints.Size;
 
 import br.com.altamira.data.model.Resource;
 
+/**
+ *
+ * @author alessandro.holanda
+ */
 @Entity
 @Table(name = "SL_PRODUCT", uniqueConstraints = @UniqueConstraint(columnNames = {"CODE", "DESCRIPTION"}))
 @NamedQueries({
@@ -60,11 +64,24 @@ public class Product extends Resource {
 	@Column(name = "WEIGHT")
 	private BigDecimal weight = BigDecimal.valueOf(0);
 
-	public Product() {
+    /**
+     *
+     */
+    public Product() {
 		
 	}
 	
-	public Product(String code, String description, String color,
+    /**
+     *
+     * @param code
+     * @param description
+     * @param color
+     * @param width
+     * @param height
+     * @param length
+     * @param weight
+     */
+    public Product(String code, String description, String color,
 			BigDecimal width, BigDecimal height, BigDecimal length,
 			BigDecimal weight) {
 		super();
@@ -77,59 +94,115 @@ public class Product extends Resource {
 		this.weight = weight;
 	}
 
-	public String getCode() {
+    /**
+     *
+     * @return
+     */
+    public String getCode() {
 		return code;
 	}
 
-	public void setCode(String code) {
+    /**
+     *
+     * @param code
+     */
+    public void setCode(String code) {
 		this.code = code;
 	}
 
-	public String getDescription() {
+    /**
+     *
+     * @return
+     */
+    public String getDescription() {
 		return description;
 	}
 
-	public void setDescription(String description) {
+    /**
+     *
+     * @param description
+     */
+    public void setDescription(String description) {
 		this.description = description;
 	}
 
-	public String getColor() {
+    /**
+     *
+     * @return
+     */
+    public String getColor() {
 		return color;
 	}
 
-	public void setColor(String color) {
+    /**
+     *
+     * @param color
+     */
+    public void setColor(String color) {
 		this.color = color;
 	}
 
-	public BigDecimal getWidth() {
+    /**
+     *
+     * @return
+     */
+    public BigDecimal getWidth() {
 		return width;
 	}
 
-	public void setWidth(BigDecimal width) {
+    /**
+     *
+     * @param width
+     */
+    public void setWidth(BigDecimal width) {
 		this.width = width;
 	}
 
-	public BigDecimal getHeight() {
+    /**
+     *
+     * @return
+     */
+    public BigDecimal getHeight() {
 		return height;
 	}
 
-	public void setHeight(BigDecimal height) {
+    /**
+     *
+     * @param height
+     */
+    public void setHeight(BigDecimal height) {
 		this.height = height;
 	}
 
-	public BigDecimal getLength() {
+    /**
+     *
+     * @return
+     */
+    public BigDecimal getLength() {
 		return length;
 	}
 
-	public void setLength(BigDecimal length) {
+    /**
+     *
+     * @param length
+     */
+    public void setLength(BigDecimal length) {
 		this.length = length;
 	}
 
-	public BigDecimal getWeight() {
+    /**
+     *
+     * @return
+     */
+    public BigDecimal getWeight() {
 		return weight;
 	}
 
-	public void setWeight(BigDecimal weight) {
+    /**
+     *
+     * @param weight
+     */
+    public void setWeight(BigDecimal weight) {
 		this.weight = weight;
 	}
 

@@ -14,6 +14,10 @@ import javax.persistence.TypedQuery;
 
 import br.com.altamira.data.model.purchasing.*;
 
+/**
+ *
+ * @author alessandro.holanda
+ */
 @Named
 @Stateless
 public class RequestDao {
@@ -21,7 +25,13 @@ public class RequestDao {
 	@Inject
 	private EntityManager entityManager;
 
-	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) 
+    /**
+     *
+     * @param startPosition
+     * @param maxResult
+     * @return
+     */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) 
 	public List<Request> list(int startPosition, int maxResult) {
 
 		TypedQuery<Request> findAllQuery = entityManager.createNamedQuery("Request.list", Request.class);
@@ -32,7 +42,14 @@ public class RequestDao {
 		return findAllQuery.getResultList();
 	}
 	
-	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) 
+    /**
+     *
+     * @param requestId
+     * @param startPosition
+     * @param maxResult
+     * @return
+     */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) 
 	public List<RequestItem> listItems(Long requestId, int startPosition, int maxResult) {
 
 		TypedQuery<RequestItem> findAllQuery = entityManager.createNamedQuery("Request.items", RequestItem.class);
@@ -44,7 +61,12 @@ public class RequestDao {
 		return findAllQuery.getResultList();
 	}
 	
-	public Request find(long id) {
+    /**
+     *
+     * @param id
+     * @return
+     */
+    public Request find(long id) {
         Request entity;
 
         if (id == 0) {
@@ -67,7 +89,12 @@ public class RequestDao {
         return entity;
 	}
 	
-	public Request create(Request entity) {
+    /**
+     *
+     * @param entity
+     * @return
+     */
+    public Request create(Request entity) {
 		if (entity == null) {
 			throw new IllegalArgumentException("Entity can't be null.");
 		}
@@ -86,7 +113,12 @@ public class RequestDao {
 		return entityManager.find(Request.class, entity.getId());
 	}
 	
-	public Request update(Request entity) {
+    /**
+     *
+     * @param entity
+     * @return
+     */
+    public Request update(Request entity) {
 		if (entity == null) {
 			throw new IllegalArgumentException("Entity can't be null.");
 		}
@@ -101,7 +133,12 @@ public class RequestDao {
 		return entityManager.find(Request.class, entity.getId());
 	}
 	
-	public Request remove(Request entity) {
+    /**
+     *
+     * @param entity
+     * @return
+     */
+    public Request remove(Request entity) {
 		if (entity == null) {
 			throw new IllegalArgumentException("Entity can't be null.");
 		}
@@ -113,7 +150,12 @@ public class RequestDao {
 		return remove(entity.getId());
 	}
 	
-	public Request remove(long id) {
+    /**
+     *
+     * @param id
+     * @return
+     */
+    public Request remove(long id) {
 		if (id == 0) {
 			throw new IllegalArgumentException("Entity id can't be zero.");
 		}
@@ -132,6 +174,10 @@ public class RequestDao {
 		return entity;
 	}
 	
+    /**
+     *
+     * @return
+     */
     public Request current() {
         List<Request> requests;
 
@@ -170,6 +216,13 @@ public class RequestDao {
 
         return tempBlob.getBytes(1, (int) tempBlob.length());
     }*/
+
+    /**
+     *
+     * @param requestId
+     * @return
+     */
+    
 
     public List<Object[]> selectRequestReportDataById(long requestId) {
         StringBuffer selectSql = new StringBuffer().append(" SELECT M.ID, ")

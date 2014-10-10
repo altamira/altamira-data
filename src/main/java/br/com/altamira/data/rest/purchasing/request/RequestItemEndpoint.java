@@ -39,6 +39,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
 
+/**
+ *
+ * @author alessandro.holanda
+ */
 @Stateless
 @Path("purchasing/request/{requestId:[0-9]*}")
 public class RequestItemEndpoint {
@@ -55,7 +59,15 @@ public class RequestItemEndpoint {
 	@Inject
 	private RequestItemDao requestItemDao;
 
-	@GET
+    /**
+     *
+     * @param requestId
+     * @param startPosition
+     * @param maxResult
+     * @return
+     * @throws IOException
+     */
+    @GET
 	@Path("item")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response list(@PathParam("requestId") long requestId,
@@ -78,7 +90,14 @@ public class RequestItemEndpoint {
 		return Response.ok(mapper.writeValueAsString(list)).build();
 	}
 	
-	@GET
+    /**
+     *
+     * @param requestId
+     * @param id
+     * @return
+     * @throws IOException
+     */
+    @GET
 	@Path("{id:[0-9]*}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response findById(@PathParam("requestId") long requestId, @PathParam("id") long id) throws IOException {
@@ -101,7 +120,16 @@ public class RequestItemEndpoint {
 		return Response.ok(mapper.writeValueAsString(entity)).build();
 	}
 	
-	@POST
+    /**
+     *
+     * @param requestId
+     * @param entity
+     * @return
+     * @throws IllegalArgumentException
+     * @throws UriBuilderException
+     * @throws JsonProcessingException
+     */
+    @POST
 	@Path("item")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
@@ -173,7 +201,17 @@ public class RequestItemEndpoint {
 				.entity(mapper.writeValueAsString(entity)).build();
 	}
 
-	@PUT
+    /**
+     *
+     * @param requestId
+     * @param id
+     * @param entity
+     * @return
+     * @throws IllegalArgumentException
+     * @throws UriBuilderException
+     * @throws JsonProcessingException
+     */
+    @PUT
 	@Path("{id:[0-9]*}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
@@ -249,7 +287,13 @@ public class RequestItemEndpoint {
 				.entity(mapper.writeValueAsString(entity)).build();
 	}
 
-	@DELETE
+    /**
+     *
+     * @param requestId
+     * @param id
+     * @return
+     */
+    @DELETE
 	@Path("{id:[0-9]*}")
 	public Response removeById(@PathParam("requestId") long requestId, @PathParam("id") long id) {
 		RequestItem entity = null;

@@ -20,6 +20,10 @@ import br.com.altamira.data.serialize.NullCollectionSerializer;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+/**
+ *
+ * @author alessandro.holanda
+ */
 @Entity
 @Table(name = "MN_PROCESS")
 @NamedQueries({
@@ -70,75 +74,147 @@ public class Process extends br.com.altamira.data.model.Process {
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "process", fetch = FetchType.LAZY, orphanRemoval = true)
 	private List<Operation> operation = new ArrayList<Operation>();
 
-	public String getCode() {
+    /**
+     *
+     * @return
+     */
+    public String getCode() {
 		return code;
 	}
 	
-	public void setCode(String code) {
+    /**
+     *
+     * @param code
+     */
+    public void setCode(String code) {
 		this.code = code;
 	}
 	
-	public String getDescription() {
+    /**
+     *
+     * @return
+     */
+    public String getDescription() {
 		return description;
 	}
 	
-	public void setDescription(String description) {
+    /**
+     *
+     * @param description
+     */
+    public void setDescription(String description) {
 		this.description = description;
 	}
 	
-	public String getColor() {
+    /**
+     *
+     * @return
+     */
+    public String getColor() {
 		return color;
 	}
 	
-	public void setColor(String color) {
+    /**
+     *
+     * @param color
+     */
+    public void setColor(String color) {
 		this.color = color;
 	}
 	
-	public float getWeight() {
+    /**
+     *
+     * @return
+     */
+    public float getWeight() {
 		return weight;
 	}
 	
-	public void setWeight(float weight) {
+    /**
+     *
+     * @param weight
+     */
+    public void setWeight(float weight) {
 		this.weight = weight;
 	}
 	
-	public float getLength() {
+    /**
+     *
+     * @return
+     */
+    public float getLength() {
 		return length;
 	}
 	
-	public void setLength(float length) {
+    /**
+     *
+     * @param length
+     */
+    public void setLength(float length) {
 		this.length = length;
 	}
 	
-	public float getWidth() {
+    /**
+     *
+     * @return
+     */
+    public float getWidth() {
 		return width;
 	}
 	
-	public void setWidth(float width) {
+    /**
+     *
+     * @param width
+     */
+    public void setWidth(float width) {
 		this.width = width;
 	}
 	
-	public String getFinish() {
+    /**
+     *
+     * @return
+     */
+    public String getFinish() {
 		return finish;
 	}
 	
-	public void setFinish(String finish) {
+    /**
+     *
+     * @param finish
+     */
+    public void setFinish(String finish) {
 		this.finish = finish;
 	}
 	
-	public List<Revision> getRevision() {
+    /**
+     *
+     * @return
+     */
+    public List<Revision> getRevision() {
 		return revision;
 	}
 	
-	public void setRevision(List<Revision> revision) {
+    /**
+     *
+     * @param revision
+     */
+    public void setRevision(List<Revision> revision) {
 		this.revision = revision;
 	}
 	
-	public List<Operation> getOperation() {
+    /**
+     *
+     * @return
+     */
+    public List<Operation> getOperation() {
 		return operation;
 	}
 	
-	public void setOperation(List<Operation> operation) {
+    /**
+     *
+     * @param operation
+     */
+    public void setOperation(List<Operation> operation) {
 		this.operation = operation;
 	}
 

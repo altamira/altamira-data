@@ -7,9 +7,21 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 
+/**
+ *
+ * @author alessandro.holanda
+ */
 public class NullCollectionDeserializer extends JsonDeserializer<Object> {
 
-	@Override
+    /**
+     *
+     * @param jp
+     * @param ctxt
+     * @return
+     * @throws IOException
+     * @throws JsonProcessingException
+     */
+    @Override
 	public Object deserialize(JsonParser jp, DeserializationContext ctxt)
 			throws IOException, JsonProcessingException {
 		

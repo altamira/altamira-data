@@ -1,4 +1,4 @@
-package br.com.altamira.data.rest.sales.order;
+package br.com.altamira.data.rest.sales;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -32,16 +31,21 @@ import javax.ws.rs.core.UriBuilderException;
 
 import br.com.altamira.data.dao.sales.order.OrderDao;
 import br.com.altamira.data.dao.sales.order.OrderItemDao;
-import br.com.altamira.data.model.sales.order.Order;
-import br.com.altamira.data.model.sales.order.OrderItem;
+import br.com.altamira.data.model.sales.Order;
+import br.com.altamira.data.model.sales.OrderItem;
 import br.com.altamira.data.serialize.JSonViews;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
+import javax.enterprise.context.RequestScoped;
 
-@Stateless
+/**
+ *
+ * @author alessandro.holanda
+ */
+@RequestScoped
 @Path("sales/orderitem/{number:[0-9]*}")
 public class OrderItemEndpoint {
 	
@@ -57,7 +61,15 @@ public class OrderItemEndpoint {
 	@Inject
 	private OrderItemDao orderItemDao;
 
-	@GET
+    /**
+     *
+     * @param number
+     * @param startPosition
+     * @param maxResult
+     * @return
+     * @throws IOException
+     */
+    @GET
 	@Path("item")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response list(@PathParam("number") long number,
@@ -81,7 +93,14 @@ public class OrderItemEndpoint {
 		return Response.ok(writer.writeValueAsString(list)).build();
 	}
 	
-	@GET
+    /**
+     *
+     * @param number
+     * @param id
+     * @return
+     * @throws IOException
+     */
+    @GET
 	@Path("{id:[0-9]*}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response findById(@PathParam("number") long number, @PathParam("id") long id) throws IOException {
@@ -104,7 +123,16 @@ public class OrderItemEndpoint {
 		return Response.ok(mapper.writeValueAsString(entity)).build();
 	}
 	
-	@POST
+    /**
+     *
+     * @param number
+     * @param entity
+     * @return
+     * @throws IllegalArgumentException
+     * @throws UriBuilderException
+     * @throws JsonProcessingException
+     */
+    @POST
 	@Path("item")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
@@ -176,7 +204,17 @@ public class OrderItemEndpoint {
 				.entity(mapper.writeValueAsString(entity)).build();
 	}
 
-	@PUT
+    /**
+     *
+     * @param number
+     * @param id
+     * @param entity
+     * @return
+     * @throws IllegalArgumentException
+     * @throws UriBuilderException
+     * @throws JsonProcessingException
+     */
+    @PUT
 	@Path("{id:[0-9]*}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
@@ -252,7 +290,13 @@ public class OrderItemEndpoint {
 				.entity(mapper.writeValueAsString(entity)).build();
 	}
 
-	@DELETE
+    /**
+     *
+     * @param number
+     * @param id
+     * @return
+     */
+    @DELETE
 	@Path("{id:[0-9]*}")
 	public Response removeById(@PathParam("number") long number, @PathParam("id") long id) {
 		OrderItem entity = null;

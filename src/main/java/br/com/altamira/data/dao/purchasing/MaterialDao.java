@@ -30,7 +30,13 @@ public class MaterialDao {
 	@Inject
 	private EntityManager entityManager;
 
-	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) 
+    /**
+     *
+     * @param startPosition
+     * @param maxResult
+     * @return
+     */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) 
 	public List<Material> list(int startPosition, int maxResult) {
 
 		TypedQuery<Material> findAllQuery = entityManager.createNamedQuery("Material.list", Material.class);
@@ -41,14 +47,28 @@ public class MaterialDao {
 		return findAllQuery.getResultList();
 	}
 	
-	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) 
+    /**
+     *
+     * @param material
+     * @return
+     */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) 
 	public Material find(Material material) {
 		return find(material.getLamination(), material.getTreatment(),
 				material.getThickness(), material.getWidth(),
 				material.getLength());
 	}
 
-	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) 
+    /**
+     *
+     * @param lamination
+     * @param treatment
+     * @param thickness
+     * @param width
+     * @param length
+     * @return
+     */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) 
 	public Material find(String lamination, String treatment,
 			BigDecimal thickness, BigDecimal width, BigDecimal length) {
 
@@ -68,12 +88,22 @@ public class MaterialDao {
 		return materials.get(0);
 	}
 
-	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) 
+    /**
+     *
+     * @param id
+     * @return
+     */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) 
 	public Material find(long id) {
 		return entityManager.find(Material.class, id);
 	}
 
-	public Material create(Material entity) {
+    /**
+     *
+     * @param entity
+     * @return
+     */
+    public Material create(Material entity) {
 		if (entity == null) {
 			throw new IllegalArgumentException("Entity can't be null.");
 		}
@@ -90,7 +120,12 @@ public class MaterialDao {
 		return entityManager.find(Material.class, entity.getId());
 	}
 
-	public Material update(Material entity) {
+    /**
+     *
+     * @param entity
+     * @return
+     */
+    public Material update(Material entity) {
 		if (entity == null) {
 			throw new IllegalArgumentException("Entity can't be null.");
 		}
@@ -100,7 +135,12 @@ public class MaterialDao {
 		return entityManager.contains(entity) ? null : entityManager.merge(entity);
 	}
 
-	public Material remove(Material entity) {
+    /**
+     *
+     * @param entity
+     * @return
+     */
+    public Material remove(Material entity) {
 		if (entity == null) {
 			throw new IllegalArgumentException("Entity can't be null.");
 		}
@@ -112,7 +152,12 @@ public class MaterialDao {
 		return remove(entity.getId());
 	}
 	
-	public Material remove(long id) {
+    /**
+     *
+     * @param id
+     * @return
+     */
+    public Material remove(long id) {
 		if (id == 0) {
 			throw new IllegalArgumentException("Entity id can't be zero.");
 		}

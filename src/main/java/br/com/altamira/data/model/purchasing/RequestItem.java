@@ -64,44 +64,86 @@ public class RequestItem extends Resource {
     /*@OneToMany(cascade = CascadeType.ALL,mappedBy = "requestItem", fetch = FetchType.LAZY)
     private Set<PurchasePlanningItem> purchasePlanningItem;*/
 
+    /**
+     *
+     */
+    
+
     public RequestItem() {
     }
 
+    /**
+     *
+     * @param arrival
+     * @param weight
+     */
     public RequestItem(Date arrival, BigDecimal weight) {
         this.arrival = arrival;
         this.weight = weight;
     }
     
+    /**
+     *
+     * @return
+     */
     public Date getArrival() {
         return arrival;
     }
 
+    /**
+     *
+     * @param arrival
+     */
     public void setArrival(Date arrival) {
         this.arrival = arrival;
     }
 
+    /**
+     *
+     * @return
+     */
     public BigDecimal getWeight() {
         return weight;
     }
 
+    /**
+     *
+     * @param weight
+     */
     public void setWeight(BigDecimal weight) {
         this.weight = weight;
     }
 	
+    /**
+     *
+     * @return
+     */
     @JsonIgnore
     @XmlTransient
     public Request getRequest() {
         return request;
     }
 
+    /**
+     *
+     * @param request
+     */
     public void setRequest(Request request) {
         this.request = request;
     }
 
+    /**
+     *
+     * @return
+     */
     public Material getMaterial() {
         return material;
     }
 
+    /**
+     *
+     * @param material
+     */
     public void setMaterial(Material material) {
         this.material = material;
     }

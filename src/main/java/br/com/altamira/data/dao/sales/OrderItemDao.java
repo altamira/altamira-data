@@ -1,5 +1,8 @@
-package br.com.altamira.data.dao.sales.order;
+package br.com.altamira.data.dao.sales;
 
+import br.com.altamira.data.model.sales.OrderItemPart;
+import br.com.altamira.data.model.sales.OrderItem;
+import br.com.altamira.data.model.sales.Order;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -11,8 +14,11 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 
-import br.com.altamira.data.model.sales.order.*;
 
+/**
+ *
+ * @author alessandro.holanda
+ */
 @Named
 @Stateless
 public class OrderItemDao {
@@ -22,6 +28,15 @@ public class OrderItemDao {
 	
 	/*@Inject
 	private ProductDao productDao;*/
+
+    /**
+     *
+     * @param number
+     * @param startPosition
+     * @param maxResult
+     * @return
+     */
+    
 	
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) 
 	public List<OrderItem> list(Long number, int startPosition, int maxResult) {
@@ -35,7 +50,12 @@ public class OrderItemDao {
 		return findAllQuery.getResultList();
 	}
 	
-	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) 
+    /**
+     *
+     * @param id
+     * @return
+     */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) 
 	public OrderItem find(long id) {
         OrderItem entity;
 
@@ -50,7 +70,13 @@ public class OrderItemDao {
         return entity;
 	}
 	
-	public OrderItem create(Order order, OrderItem entity) {
+    /**
+     *
+     * @param order
+     * @param entity
+     * @return
+     */
+    public OrderItem create(Order order, OrderItem entity) {
 		if (entity == null) {
 			throw new IllegalArgumentException("Entity can't be null.");
 		}
@@ -96,7 +122,13 @@ public class OrderItemDao {
 		return entityManager.find(OrderItem.class, entity.getId());
 	}
 	
-	public OrderItem update(Order order, OrderItem entity) {
+    /**
+     *
+     * @param order
+     * @param entity
+     * @return
+     */
+    public OrderItem update(Order order, OrderItem entity) {
 		
 		if (entity == null) {
 			throw new IllegalArgumentException("Entity can't be null.");
@@ -128,7 +160,12 @@ public class OrderItemDao {
 		return entityManager.find(OrderItem.class, entity.getId());
 	}
 	
-	public OrderItem remove(OrderItem entity) {
+    /**
+     *
+     * @param entity
+     * @return
+     */
+    public OrderItem remove(OrderItem entity) {
 		if (entity == null) {
 			throw new IllegalArgumentException("Entity can't be null.");
 		}
@@ -140,7 +177,12 @@ public class OrderItemDao {
 		return remove(entity.getId());
 	}
 	
-	public OrderItem remove(long id) {
+    /**
+     *
+     * @param id
+     * @return
+     */
+    public OrderItem remove(long id) {
 		if (id == 0) {
 			throw new IllegalArgumentException("Entity id can't be zero.");
 		}

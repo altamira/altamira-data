@@ -75,44 +75,86 @@ public class Request extends Resource {
     /*@ManyToOne(optional = true, fetch = FetchType.LAZY)
     private QuotationRequest quotationRequest;*/
 
+    /**
+     *
+     */
+    
+
     public Request() {
     }
 
+    /**
+     *
+     * @param created
+     * @param creator
+     */
     public Request(Date created, String creator) {
         this.created = created;
         this.creator = creator;
         this.sent = null;
     }
     
+    /**
+     *
+     * @return
+     */
     public Date getCreated() {
         return created;
     }
 
+    /**
+     *
+     * @param created
+     */
     public void setCreated(Date created) {
         this.created = created;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getCreator() {
         return creator;
     }
 
+    /**
+     *
+     * @param creator
+     */
     public void setCreator(String creator) {
         this.creator = creator;
     }
 
+    /**
+     *
+     * @return
+     */
     public Date getSent() {
         return sent;
     }
 
+    /**
+     *
+     * @param sent
+     */
     public void setSent(Date sent) {
         this.sent = sent;
     }
 
+    /**
+     *
+     * @return
+     */
     @XmlTransient
     public Set<RequestItem> getItem() {
         return item;
     }
 
+    /**
+     *
+     * @param items
+     */
     public void setItem(Set<RequestItem> items) {
         this.item = items;
     }

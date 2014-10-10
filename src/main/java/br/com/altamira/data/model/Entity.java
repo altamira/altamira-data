@@ -10,6 +10,10 @@ import javax.persistence.PreUpdate;
 import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.NotNull;
 
+/**
+ *
+ * @author alessandro.holanda
+ */
 @javax.persistence.MappedSuperclass
 public abstract class Entity implements Serializable {
 	
@@ -29,11 +33,19 @@ public abstract class Entity implements Serializable {
 	@Column(name = "LAST_MODIFIED")
 	Long lastModified = System.currentTimeMillis();
     
+    /**
+     *
+     * @return
+     */
     public Long getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+    /**
+     *
+     * @param id
+     */
+    public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -64,7 +76,11 @@ public abstract class Entity implements Serializable {
         return this.getClass().toString() + "[ id=" + id + " ]";
     }
 
-	public static long getSerialversionuid() {
+    /**
+     *
+     * @return
+     */
+    public static long getSerialversionuid() {
 		return serialVersionUID;
 	}  
 

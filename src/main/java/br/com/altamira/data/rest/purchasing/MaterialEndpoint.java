@@ -34,6 +34,7 @@ import br.com.altamira.data.model.purchasing.Material;
 
 /**
  *
+ * @author alessandro.holanda
  */
 @Stateless
 @Path("purchasing/material")
@@ -48,7 +49,14 @@ public class MaterialEndpoint {
     @Inject 
     private MaterialDao materialDao;
 
-	@GET
+    /**
+     *
+     * @param startPosition
+     * @param maxResult
+     * @return
+     * @throws IOException
+     */
+    @GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response list(
 			@DefaultValue("0") @QueryParam("start") Integer startPosition,
@@ -66,6 +74,11 @@ public class MaterialEndpoint {
 		return Response.ok(list).build();
 	}
 	
+    /**
+     *
+     * @param id
+     * @return
+     */
     @GET
     @Path("/{id:[1-9]*}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -85,6 +98,11 @@ public class MaterialEndpoint {
         return Response.ok(entity).build();
     }
 
+    /**
+     *
+     * @param entity
+     * @return
+     */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response create(Material entity) {
@@ -115,6 +133,12 @@ public class MaterialEndpoint {
 		        .build();
     }
 
+    /**
+     *
+     * @param id
+     * @param entity
+     * @return
+     */
     @PUT
     @Path("/{id:[0-9][0-9]*}")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -156,6 +180,11 @@ public class MaterialEndpoint {
 				.entity(entity).build();
     }
 
+    /**
+     *
+     * @param id
+     * @return
+     */
     @DELETE
     @Path("/{id:[0-9][0-9]*}")
     public Response deleteById(@PathParam("id") long id) {
