@@ -17,9 +17,10 @@
 package br.com.altamira.data.util;
 
 import java.util.logging.Logger;
-import javax.enterprise.context.Dependent;
-import javax.enterprise.inject.Produces;
 
+import javax.enterprise.context.Dependent;
+import javax.enterprise.inject.Default;
+import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -38,9 +39,12 @@ import javax.persistence.PersistenceContext;
  * private EntityManager em;
  * </pre>
  */
+@Dependent
 public class ResourcesFactory {
+	
     // use @SuppressWarnings to tell IDE to ignore warnings about field not being referenced directly
     @Produces
+    @Default
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -51,7 +55,8 @@ public class ResourcesFactory {
      */
     @Produces
     public Logger produceLog(InjectionPoint injectionPoint) {
-        return Logger.getLogger(injectionPoint.getMember().getDeclaringClass().getName());
+    	String resourcePath = injectionPoint.getMember().getDeclaringClass().getName();
+        return Logger.getLogger(resourcePath);
     }
 
 }

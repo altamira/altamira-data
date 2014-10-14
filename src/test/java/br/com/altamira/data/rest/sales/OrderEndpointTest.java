@@ -5,17 +5,11 @@
  */
 package br.com.altamira.data.rest.sales;
 
-import br.com.altamira.data.dao.sales.order.OrderDao;
-import br.com.altamira.data.model.Entity;
-import br.com.altamira.data.model.Resource;
-import br.com.altamira.data.model.sales.Order;
-import br.com.altamira.data.model.sales.OrderItem;
-import br.com.altamira.data.model.sales.OrderItemPart;
-import br.com.altamira.data.model.sales.Product;
-import br.com.altamira.data.serialize.JSonViews;
-import br.com.altamira.data.util.MockUtil;
 import static br.com.altamira.data.util.MockUtil.getMockupOrder;
-import br.com.altamira.data.util.ResourcesFactory;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -33,12 +27,13 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
+
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.formatter.Formatters;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
@@ -48,16 +43,26 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 import org.junit.runner.RunWith;
+
+import br.com.altamira.data.dao.sales.OrderDao;
+import br.com.altamira.data.model.Entity;
+import br.com.altamira.data.model.Resource;
+import br.com.altamira.data.model.sales.Order;
+import br.com.altamira.data.model.sales.OrderItem;
+import br.com.altamira.data.model.sales.OrderItemPart;
+import br.com.altamira.data.model.sales.Product;
+import br.com.altamira.data.serialize.JSonViews;
+import br.com.altamira.data.util.MockUtil;
+import br.com.altamira.data.util.ResourcesFactory;
 
 /**
  *
- * 
+ *
  */
 @RunWith(Arquillian.class)
 public class OrderEndpointTest {
-    
+
     static final List<Long> orders = Arrays.asList(72244l, 72510l, 72201l, 72270l);
 
     @Deployment
@@ -68,15 +73,16 @@ public class OrderEndpointTest {
                 .resolve().withTransitivity().asFile();
 
         WebArchive war = ShrinkWrap
-                .create(WebArchive.class, "OrderDaoTest.war")
-                .addClasses(Entity.class, Resource.class, Order.class, OrderItem.class, OrderItemPart.class, Product.class)
+                .create(WebArchive.class, "OrderEndpointTest.war")
+                .addClasses(Entity.class, Resource.class, Order.class, OrderItem.class, OrderItemPart.class, Product.class, OrderDao.class)
                 .addClass(OrderEndpoint.class)
                 .addPackage(JSonViews.class.getPackage())
                 .addClass(ResourcesFactory.class)
                 .addAsLibraries(libs)
                 .addClass(MockUtil.class)
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
-                .addAsWebResource("log4j.xml", "log4j.xml")
+                .addAsWebInfResource("WEB-INF/beans.xml", "beans.xml")
+                //.addAsWebInfResource("META-INF/jboss-all.xml", "jboss-all.xml")
+                //.addAsWebResource("log4j.xml", "log4j.xml")
                 .addAsResource("META-INF/test-persistence.xml", "META-INF/persistence.xml");
 
         for (Long number : orders) {
@@ -92,15 +98,15 @@ public class OrderEndpointTest {
 
     @EJB
     private OrderDao orderDao;
-    
+
     @BeforeClass
     public static void setUpClass() {
     }
-    
+
     @AfterClass
     public static void tearDownClass() {
     }
-    
+
     @Before
     public void setUp() throws IOException {
         // Create test
@@ -114,9 +120,9 @@ public class OrderEndpointTest {
                 fail("Setup test fail, can not create use case for order number " + number.toString() + ", exception: " + e.getCausedByException().getMessage());
             }
             //log.log(Level.INFO, "Order mockup data created for number ", number);
-        }        
+        }
     }
-    
+
     @After
     public void tearDown() {
         // Remove test
@@ -129,11 +135,12 @@ public class OrderEndpointTest {
                 // TODO: implement rollback transaction after execute each test
                 assertTrue("Setup test fail, can not remove use for next test ", e.getCausedByException() instanceof NoResultException);
             }
-        }        
+        }
     }
 
     /**
      * Test of list method, of class OrderEndpoint.
+     *
      * @param baseURL
      * @throws java.lang.Exception
      */
@@ -156,6 +163,7 @@ public class OrderEndpointTest {
 
     /**
      * Test of findByNumber method, of class OrderEndpoint.
+     *
      * @throws java.lang.Exception
      */
     @Test
@@ -164,6 +172,7 @@ public class OrderEndpointTest {
 
     /**
      * Test of create method, of class OrderEndpoint.
+     *
      * @throws java.lang.Exception
      */
     @Test
@@ -175,7 +184,7 @@ public class OrderEndpointTest {
      */
     @Test
     public void testUpdate() {
-        
+
     }
 
     /**
@@ -183,7 +192,7 @@ public class OrderEndpointTest {
      */
     @Test
     public void testDeleteById() {
-        
+
     }
 
     /**
@@ -191,7 +200,7 @@ public class OrderEndpointTest {
      */
     @Test
     public void testGetCORSHeadersFromPath() {
-        
+
     }
 
     /**
@@ -199,16 +208,17 @@ public class OrderEndpointTest {
      */
     @Test
     public void testGetCORSHeadersFromNumberPath() {
-        
+
     }
 
     /**
      * Test of search method, of class OrderEndpoint.
+     *
      * @throws java.lang.Exception
      */
     @Test
     public void testSearch() throws Exception {
 
     }
-    
+
 }

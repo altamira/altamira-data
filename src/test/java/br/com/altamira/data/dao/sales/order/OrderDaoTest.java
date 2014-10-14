@@ -5,6 +5,7 @@
  */
 package br.com.altamira.data.dao.sales.order;
 
+import br.com.altamira.data.dao.sales.OrderDao;
 import br.com.altamira.data.model.Entity;
 import br.com.altamira.data.model.Resource;
 import br.com.altamira.data.model.sales.Product;
@@ -15,34 +16,38 @@ import br.com.altamira.data.serialize.JSonViews;
 import br.com.altamira.data.util.MockUtil;
 import static br.com.altamira.data.util.MockUtil.getMockupOrder;
 import br.com.altamira.data.util.ResourcesFactory;
+
 import java.io.File;
 import java.io.IOException;
+
 import static java.lang.Math.abs;
+
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.ejb.EJB;
 import javax.ejb.EJBException;
-import javax.ejb.embeddable.EJBContainer;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.validation.ConstraintViolationException;
+
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.formatter.Formatters;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
-
 import org.junit.After;
 import org.junit.AfterClass;
+
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -71,8 +76,9 @@ public class OrderDaoTest {
                 .addClass(ResourcesFactory.class)
                 .addAsLibraries(libs)
                 .addClass(MockUtil.class)
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
-                .addAsWebResource("log4j.xml", "log4j.xml")
+                .addAsWebInfResource("WEB-INF/beans.xml", "beans.xml")
+                .addAsWebInfResource("META-INF/jboss-all.xml", "jboss-all.xml")
+                //.addAsWebResource("log4j.xml", "log4j.xml")
                 .addAsResource("META-INF/test-persistence.xml", "META-INF/persistence.xml");
 
         for (Long number : orders) {

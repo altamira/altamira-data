@@ -33,11 +33,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
 
-import br.com.altamira.data.dao.sales.order.OrderDao;
+import br.com.altamira.data.dao.sales.OrderDao;
 import br.com.altamira.data.model.sales.Order;
 import br.com.altamira.data.rest.WebApplication;
 import br.com.altamira.data.serialize.JSonViews;
+
 import java.util.logging.Level;
+
 import javax.enterprise.context.RequestScoped;
 import javax.validation.constraints.Size;
 

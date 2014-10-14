@@ -29,8 +29,8 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriBuilderException;
 
-import br.com.altamira.data.dao.sales.order.OrderDao;
-import br.com.altamira.data.dao.sales.order.OrderItemDao;
+import br.com.altamira.data.dao.sales.OrderDao;
+import br.com.altamira.data.dao.sales.OrderItemDao;
 import br.com.altamira.data.model.sales.Order;
 import br.com.altamira.data.model.sales.OrderItem;
 import br.com.altamira.data.serialize.JSonViews;
