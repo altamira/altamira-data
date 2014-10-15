@@ -80,7 +80,7 @@ public class OrderDao {
     public List<Order> listUnchecked(
             @Min(value = 0, message = START_PAGE_VALIDATION) int startPage, 
             @Min(value = 1, message = PAGE_SIZE_VALIDATION) int pageSize) 
-            throws ConstraintViolationException {
+            throws ConstraintViolationException, NoResultException {
         
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Order> q = cb.createQuery(Order.class);
@@ -106,7 +106,7 @@ public class OrderDao {
             @NotNull @Size(min = 2, message = SEARCH_VALIDATION) String search,
             @Min(value = 0, message = START_PAGE_VALIDATION) int startPage, 
             @Min(value = 1, message = PAGE_SIZE_VALIDATION) int pageSize) 
-        throws ConstraintViolationException {
+        throws ConstraintViolationException, NoResultException {
         
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Order> q = cb.createQuery(Order.class);

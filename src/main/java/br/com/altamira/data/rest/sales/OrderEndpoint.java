@@ -41,7 +41,6 @@ import br.com.altamira.data.serialize.JSonViews;
 import java.util.logging.Level;
 
 import javax.enterprise.context.RequestScoped;
-import javax.validation.constraints.Size;
 
 /**
  *
@@ -64,66 +63,32 @@ public class OrderEndpoint {
      * @return
      * @throws IOException
      */
-//    @GET
-//    @Produces(MediaType.APPLICATION_JSON)
-//    public Response list(
-//            @DefaultValue("0") @QueryParam("start") Integer startPosition,
-//            @DefaultValue("10") @QueryParam("max") Integer maxResult)
-//            throws IOException {
-//
-//        List<Order> list;
-//
-//        try {
-//            list = orderDao.list(startPosition, maxResult);
-//        } catch (Exception e) {
-//            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
-//        }
-//
-//        ObjectMapper mapper = new ObjectMapper();
-//
-//        mapper.registerModule(new Hibernate4Module());
-//        ObjectWriter writer = mapper.writerWithView(JSonViews.ListView.class);
-//
-//        return Response.ok(writer.writeValueAsString(list))
-//                .header("Access-Control-Allow-Origin", WebApplication.ACCESS_CONTROL_ALLOW_ORIGIN)
-//                .header("Access-Control-Allow-Credentials", "true")
-//                .build();
-//    }
-
-    /**
-     *
-     * @param startPosition
-     * @param maxResult
-     * @param search
-     * @return
-     * @throws IOException
-     */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response search(
+    public Response list(
             @DefaultValue("0") @QueryParam("start") Integer startPosition,
-            @DefaultValue("10") @QueryParam("max") Integer maxResult,
-            @Size(min = 2) @QueryParam("search") String search)
+            @DefaultValue("10") @QueryParam("max") Integer maxResult)
             throws IOException {
 
         List<Order> list;
 
         try {
-            list = orderDao.search(search, startPosition, maxResult);
+            list = orderDao.list(startPosition, maxResult);
         } catch (Exception e) {
             return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
         }
 
-//        ObjectMapper mapper = new ObjectMapper();
-//
-//        mapper.registerModule(new Hibernate4Module());
-//        ObjectWriter writer = mapper.writerWithView(JSonViews.ListView.class);
+        ObjectMapper mapper = new ObjectMapper();
 
-        return Response.ok(/*writer.writeValueAsString(list)*/ list)
+        mapper.registerModule(new Hibernate4Module());
+        ObjectWriter writer = mapper.writerWithView(JSonViews.ListView.class);
+
+        return Response.ok(writer.writeValueAsString(list))
                 .header("Access-Control-Allow-Origin", WebApplication.ACCESS_CONTROL_ALLOW_ORIGIN)
                 .header("Access-Control-Allow-Credentials", "true")
                 .build();
     }
+
 
     /**
      *
