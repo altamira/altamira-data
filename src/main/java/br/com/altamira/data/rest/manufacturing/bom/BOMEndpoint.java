@@ -5,10 +5,9 @@
  */
 package br.com.altamira.data.rest.manufacturing.bom;
 
-import br.com.altamira.data.dao.sales.OrderDao;
-import br.com.altamira.data.model.sales.Order;
+import br.com.altamira.data.dao.manufacturing.bom.BOMDao;
+import br.com.altamira.data.model.manufacturing.bom.BOM;
 import br.com.altamira.data.rest.WebApplication;
-import br.com.altamira.data.rest.sales.OrderEndpoint;
 import br.com.altamira.data.serialize.JSonViews;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -47,17 +46,17 @@ import javax.ws.rs.core.UriBuilderException;
 
 /**
  *
- * 
+ * Bill of Material rest services
  */
 @RequestScoped
 @Path("/manufacturing/bom")
-public class BillOfMaterialEndpoint {
+public class BOMEndpoint {
 
     @Inject
     private Logger log;
 
     @Inject
-    private OrderDao orderDao;
+    private BOMDao bomDao;
     
     /**
      *
@@ -73,10 +72,10 @@ public class BillOfMaterialEndpoint {
             @DefaultValue("10") @QueryParam("max") Integer maxResult)
             throws IOException {
 
-        List<Order> list;
+        List<BOM> list;
 
         try {
-            list = orderDao.listUnchecked(startPosition, maxResult);
+            list = bomDao.listUnchecked(startPosition, maxResult);
         } catch (NoResultException e) {
             list = new ArrayList<>(); // show empty results
         } catch (ConstraintViolationException e) {
@@ -113,10 +112,10 @@ public class BillOfMaterialEndpoint {
             @Size(min = 2) @QueryParam("search") String search)
             throws IOException {
 
-        List<Order> list;
+        List<BOM> list;
 
         try {
-            list = orderDao.search(search, startPosition, maxResult);
+            list = bomDao.search(search, startPosition, maxResult);
         } catch (NoResultException e) {
             list = new ArrayList<>(); // show empty results
         } catch (ConstraintViolationException e) {
@@ -141,10 +140,10 @@ public class BillOfMaterialEndpoint {
     @Path("/{number:[0-9]*}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response findByNumber(@PathParam("number") long number) throws JsonProcessingException {
-        Order entity = null;
+        BOM entity = null;
 
         try {
-            entity = orderDao.findByNumber(number);
+            entity = bomDao.findByNumber(number);
         } catch (NoResultException e) {
             return Response.status(Response.Status.NOT_FOUND).build();
         } catch (ConstraintViolationException e) {
@@ -188,7 +187,7 @@ public class BillOfMaterialEndpoint {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response create(Order entity) throws IllegalArgumentException, UriBuilderException, JsonProcessingException {
+    public Response create(BOM entity) throws IllegalArgumentException, UriBuilderException, JsonProcessingException {
 
         if (entity == null) {
             return Response.status(Response.Status.BAD_REQUEST).build();
@@ -199,7 +198,7 @@ public class BillOfMaterialEndpoint {
         }
 
         try {
-            entity = orderDao.create(entity);
+            entity = bomDao.create(entity);
         } catch (ConstraintViolationException ce) {
             // Handle bean validation issues
             createViolationResponse(ce.getConstraintViolations()).build();
@@ -222,7 +221,7 @@ public class BillOfMaterialEndpoint {
 
         //return Response.ok(writer.writeValueAsString(entity)).build();
         return Response.created(
-                UriBuilder.fromResource(OrderEndpoint.class)
+                UriBuilder.fromResource(BOMEndpoint.class)
                 .path(String.valueOf(entity.getId())).build())
                 .entity(writer.writeValueAsString(entity))
                 .header("Access-Control-Allow-Origin", WebApplication.ACCESS_CONTROL_ALLOW_ORIGIN)
@@ -240,7 +239,7 @@ public class BillOfMaterialEndpoint {
     @Path("/{id:[0-9][0-9]*}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response update(@PathParam("id") long id, Order entity) {
+    public Response update(@PathParam("id") long id, BOM entity) {
 
         if (entity.getId() != id) {
             return Response.status(Response.Status.CONFLICT)
@@ -249,7 +248,7 @@ public class BillOfMaterialEndpoint {
         }
 
         try {
-            entity = orderDao.update(entity);
+            entity = bomDao.update(entity);
         } catch (ConstraintViolationException ce) {
             // Handle bean validation issues
             return createViolationResponse(ce.getConstraintViolations()).build();
@@ -269,7 +268,7 @@ public class BillOfMaterialEndpoint {
         }
 
         return Response
-                .ok(UriBuilder.fromResource(OrderEndpoint.class)
+                .ok(UriBuilder.fromResource(BOMEndpoint.class)
                         .path(String.valueOf(entity.getId())).build())
                 .entity(entity)
                 .header("Access-Control-Allow-Origin", WebApplication.ACCESS_CONTROL_ALLOW_ORIGIN)
@@ -285,9 +284,9 @@ public class BillOfMaterialEndpoint {
     @DELETE
     @Path("/{id:[0-9]*}")
     public Response deleteById(@PathParam("id") long id) {
-        Order entity = null;
+        BOM entity = null;
         try {
-            orderDao.remove(id);
+            bomDao.remove(id);
         } catch (ConstraintViolationException ce) {
             // Handle bean validation issues
             return createViolationResponse(ce.getConstraintViolations()).build();
