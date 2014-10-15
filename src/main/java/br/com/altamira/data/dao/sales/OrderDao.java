@@ -87,7 +87,7 @@ public class OrderDao {
         Root<Order> entity = q.from(Order.class);
 
         q.select(cb.construct(Order.class, entity.get("number"), entity.get("customer")));
-        q.where(cb.isNotNull(entity.get("checked")));
+        q.where(cb.isNull(entity.get("checked")));
 
         return entityManager.createQuery(q)
                 .setFirstResult(startPage * pageSize)
