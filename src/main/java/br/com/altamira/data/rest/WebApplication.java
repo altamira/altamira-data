@@ -7,7 +7,7 @@ import javax.ws.rs.core.Application;
  *
  * @author alessandro.holanda
  */
-@ApplicationPath("/rest")
+@ApplicationPath("/")
 public class WebApplication extends Application {
 	
     /**
