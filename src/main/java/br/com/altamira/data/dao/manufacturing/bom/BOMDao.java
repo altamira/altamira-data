@@ -279,7 +279,7 @@ public class BOMDao {
 
     /**
      *
-     * @param number
+     * @param number Order Number
      */
     public void remove(
             @Min(value = 1, message = NUMBER_VALIDATION) long number) 

@@ -7,8 +7,8 @@ package br.com.altamira.data.rest.manufacturing.bom;
 
 import br.com.altamira.data.dao.manufacturing.bom.BOMDao;
 import br.com.altamira.data.model.manufacturing.bom.BOM;
-import br.com.altamira.data.rest.WebApplication;
 import br.com.altamira.data.serialize.JSonViews;
+import br.com.altamira.data.serialize.NullValueSerializer;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,9 +16,6 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
 
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -33,6 +30,8 @@ import javax.persistence.NoResultException;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -45,6 +44,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
@@ -58,12 +59,14 @@ import javax.ws.rs.core.UriBuilderException;
 @Path("/manufacturing/bom")
 public class BOMEndpoint {
 
+    private static final String NOT_FOUND = "Entity not found.";
+    
     @Inject
     private Logger log;
 
     @Inject
     private BOMDao bomDao;
-    
+
     /**
      *
      * @param startPosition
@@ -75,7 +78,8 @@ public class BOMEndpoint {
     @Produces(MediaType.APPLICATION_JSON)
     public Response list(
             @DefaultValue("0") @QueryParam("start") Integer startPosition,
-            @DefaultValue("10") @QueryParam("max") Integer maxResult)
+            @DefaultValue("10") @QueryParam("max") Integer maxResult,
+            @Context HttpHeaders headers)
             throws IOException {
 
         List<BOM> list;
@@ -83,11 +87,27 @@ public class BOMEndpoint {
         try {
             list = bomDao.listUnchecked(startPosition, maxResult);
         } catch (NoResultException e) {
-            list = new ArrayList<>(); // show empty results
-        } catch (ConstraintViolationException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();            
+            Map<String, String> responseObj = new HashMap<>();
+            responseObj.put("message", NOT_FOUND);
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity(responseObj)
+                    .header("Access-Control-Allow-Origin", headers.getRequestHeader("Origin").get(0))
+                    .header("Access-Control-Allow-Credentials", "true")
+                    .build();
+        } catch (ConstraintViolationException ce) {
+            // Handle bean validation issues
+            return createViolationResponse(ce.getConstraintViolations())
+                    .header("Access-Control-Allow-Origin", headers.getRequestHeader("Origin").get(0))
+                    .header("Access-Control-Allow-Credentials", "true")
+                    .build();
         } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+            Map<String, String> responseObj = new HashMap<>();
+            responseObj.put("message", e.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(responseObj)
+                    .header("Access-Control-Allow-Origin", headers.getRequestHeader("Origin").get(0))
+                    .header("Access-Control-Allow-Credentials", "true")
+                    .build();
         }
 
         ObjectMapper mapper = new ObjectMapper();
@@ -96,16 +116,17 @@ public class BOMEndpoint {
         ObjectWriter writer = mapper.writerWithView(JSonViews.ListView.class);
 
         return Response.ok(writer.writeValueAsString(list))
-                .header("Access-Control-Allow-Origin", WebApplication.ACCESS_CONTROL_ALLOW_ORIGIN)
+                .header("Access-Control-Allow-Origin", headers.getRequestHeader("Origin").get(0))
                 .header("Access-Control-Allow-Credentials", "true")
                 .build();
     }
-    
+
     /**
      *
      * @param startPosition
      * @param maxResult
      * @param search
+     * @param headers
      * @return
      * @throws IOException
      */
@@ -115,7 +136,8 @@ public class BOMEndpoint {
     public Response search(
             @DefaultValue("0") @QueryParam("start") Integer startPosition,
             @DefaultValue("10") @QueryParam("max") Integer maxResult,
-            @Size(min = 2) @QueryParam("search") String search)
+            @Size(min = 2) @QueryParam("search") String search,
+            @Context HttpHeaders headers)
             throws IOException {
 
         List<BOM> list;
@@ -123,15 +145,31 @@ public class BOMEndpoint {
         try {
             list = bomDao.search(search, startPosition, maxResult);
         } catch (NoResultException e) {
-            list = new ArrayList<>(); // show empty results
-        } catch (ConstraintViolationException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
+            Map<String, String> responseObj = new HashMap<>();
+            responseObj.put("message", NOT_FOUND);
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity(responseObj)
+                    .header("Access-Control-Allow-Origin", headers.getRequestHeader("Origin").get(0))
+                    .header("Access-Control-Allow-Credentials", "true")
+                    .build();
+        } catch (ConstraintViolationException ce) {
+            // Handle bean validation issues
+            return createViolationResponse(ce.getConstraintViolations())
+                    .header("Access-Control-Allow-Origin", headers.getRequestHeader("Origin").get(0))
+                    .header("Access-Control-Allow-Credentials", "true")
+                    .build();
         } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+            Map<String, String> responseObj = new HashMap<>();
+            responseObj.put("message", e.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(responseObj)
+                    .header("Access-Control-Allow-Origin", headers.getRequestHeader("Origin").get(0))
+                    .header("Access-Control-Allow-Credentials", "true")
+                    .build();
         }
 
         return Response.ok(list)
-                .header("Access-Control-Allow-Origin", WebApplication.ACCESS_CONTROL_ALLOW_ORIGIN)
+                .header("Access-Control-Allow-Origin", headers.getRequestHeader("Origin").get(0))
                 .header("Access-Control-Allow-Credentials", "true")
                 .build();
     }
@@ -139,52 +177,78 @@ public class BOMEndpoint {
     /**
      *
      * @param number
+     * @param headers
      * @return
      * @throws JsonProcessingException
      */
     @GET
     @Path("/{number:[0-9]*}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response findByNumber(@PathParam("number") long number) throws JsonProcessingException {
+    public Response findByNumber(
+            @Min(1) @PathParam("number") long number,
+            @Context HttpHeaders headers) throws JsonProcessingException {
         BOM entity = null;
 
         try {
             entity = bomDao.findByNumber(number);
         } catch (NoResultException e) {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        } catch (ConstraintViolationException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();            
+            Map<String, String> responseObj = new HashMap<>();
+            responseObj.put("message", NOT_FOUND);
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity(responseObj)
+                    .header("Access-Control-Allow-Origin", headers.getRequestHeader("Origin").get(0))
+                    .header("Access-Control-Allow-Credentials", "true")
+                    .build();
+        } catch (ConstraintViolationException ce) {
+            // Handle bean validation issues
+            return createViolationResponse(ce.getConstraintViolations())
+                    .header("Access-Control-Allow-Origin", headers.getRequestHeader("Origin").get(0))
+                    .header("Access-Control-Allow-Credentials", "true")
+                    .build();
+        } catch (ValidationException e) {
+            // Handle the unique constrain violation
+            Map<String, String> responseObj = new HashMap<>();
+            responseObj.put("message", e.getMessage());
+            return Response.status(Response.Status.CONFLICT)
+                    .entity(responseObj)
+                    .header("Access-Control-Allow-Origin", headers.getRequestHeader("Origin").get(0))
+                    .header("Access-Control-Allow-Credentials", "true")
+                    .build();
+        } catch (IllegalArgumentException e) {
+            Map<String, String> responseObj = new HashMap<>();
+            responseObj.put("message", e.getMessage());
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(responseObj)
+                    .header("Access-Control-Allow-Origin", headers.getRequestHeader("Origin").get(0))
+                    .header("Access-Control-Allow-Credentials", "true")
+                    .build();
         } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage())
-                    .header("Access-Control-Allow-Origin", WebApplication.ACCESS_CONTROL_ALLOW_ORIGIN)
+            Map<String, String> responseObj = new HashMap<>();
+            responseObj.put("message", e.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(responseObj)
+                    .header("Access-Control-Allow-Origin", headers.getRequestHeader("Origin").get(0))
                     .header("Access-Control-Allow-Credentials", "true")
                     .build();
         }
 
-        if (entity == null) {
-            return Response.status(Response.Status.NOT_FOUND)
-                    .header("Access-Control-Allow-Origin", WebApplication.ACCESS_CONTROL_ALLOW_ORIGIN)
-                    .header("Access-Control-Allow-Credentials", "true")
-                    .build();
-        }
 
         ObjectMapper mapper = new ObjectMapper();
 
         mapper.registerModule(new Hibernate4Module());
+        mapper.getSerializerProvider().setNullValueSerializer(new NullValueSerializer());
         ObjectWriter writer = mapper.writerWithView(JSonViews.EntityView.class);
 
         return Response.ok(writer.writeValueAsString(entity))
-                .header("Access-Control-Allow-Origin", WebApplication.ACCESS_CONTROL_ALLOW_ORIGIN)
-                .header("Access-Control-Allow-Headers", "Access-Control-Allow-Origin, Origin, Content-Type, Content-Length, Accept, Authorization, X-Requested-With")
+                .header("Access-Control-Allow-Origin", headers.getRequestHeader("Origin").get(0))
                 .header("Access-Control-Allow-Credentials", "true")
-                .header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD")
-                .header("Access-Control-Max-Age", "1209600")
                 .build();
     }
 
     /**
      *
      * @param entity
+     * @param headers
      * @return
      * @throws IllegalArgumentException
      * @throws UriBuilderException
@@ -193,140 +257,187 @@ public class BOMEndpoint {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response create(BOM entity) throws IllegalArgumentException, UriBuilderException, JsonProcessingException {
-
-        if (entity == null) {
-            return Response.status(Response.Status.BAD_REQUEST).build();
-        }
-
-        if (entity.getId() != null && entity.getId() > 0) {
-            return Response.status(Response.Status.BAD_REQUEST).build();
-        }
+    public Response create(
+            @NotNull(message = BOMDao.ENTITY_VALIDATION) BOM entity,
+            @Context HttpHeaders headers) 
+            throws IllegalArgumentException, UriBuilderException, JsonProcessingException {
 
         try {
             entity = bomDao.create(entity);
         } catch (ConstraintViolationException ce) {
             // Handle bean validation issues
-            createViolationResponse(ce.getConstraintViolations()).build();
+            return createViolationResponse(ce.getConstraintViolations())
+                    .header("Access-Control-Allow-Origin", headers.getRequestHeader("Origin").get(0))
+                    .header("Access-Control-Allow-Credentials", "true")
+                    .build();
         } catch (ValidationException e) {
             // Handle the unique constrain violation
-            Map<String, String> responseObj = new HashMap<String, String>();
-            responseObj.put("error", e.getMessage());
-            return Response.status(Response.Status.CONFLICT).entity(responseObj).build();
+            Map<String, String> responseObj = new HashMap<>();
+            responseObj.put("message", e.getMessage());
+            return Response.status(Response.Status.CONFLICT)
+                    .entity(responseObj)
+                    .header("Access-Control-Allow-Origin", headers.getRequestHeader("Origin").get(0))
+                    .header("Access-Control-Allow-Credentials", "true")
+                    .build();
+        } catch (IllegalArgumentException e) {
+            Map<String, String> responseObj = new HashMap<>();
+            responseObj.put("message", e.getMessage());
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(responseObj)
+                    .header("Access-Control-Allow-Origin", headers.getRequestHeader("Origin").get(0))
+                    .header("Access-Control-Allow-Credentials", "true")
+                    .build();
         } catch (Exception e) {
-            Map<String, String> responseObj = new HashMap<String, String>();
-            responseObj.put("error", e.getMessage());
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(responseObj).build();
+            Map<String, String> responseObj = new HashMap<>();
+            responseObj.put("message", e.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(responseObj)
+                    .header("Access-Control-Allow-Origin", headers.getRequestHeader("Origin").get(0))
+                    .header("Access-Control-Allow-Credentials", "true")
+                    .build();
         }
+
 
         ObjectMapper mapper = new ObjectMapper();
 
         mapper.registerModule(new Hibernate4Module());
-        //mapper.getSerializerProvider().setNullValueSerializer(new NullValueSerializer());
+        mapper.getSerializerProvider().setNullValueSerializer(new NullValueSerializer());
         ObjectWriter writer = mapper.writerWithView(JSonViews.EntityView.class);
 
-        //return Response.ok(writer.writeValueAsString(entity)).build();
         return Response.created(
                 UriBuilder.fromResource(BOMEndpoint.class)
                 .path(String.valueOf(entity.getId())).build())
                 .entity(writer.writeValueAsString(entity))
-                .header("Access-Control-Allow-Origin", WebApplication.ACCESS_CONTROL_ALLOW_ORIGIN)
+                .header("Access-Control-Allow-Origin", headers.getRequestHeader("Origin").get(0))
                 .header("Access-Control-Allow-Credentials", "true")
                 .build();
     }
 
     /**
      *
-     * @param id
+     * @param number
      * @param entity
+     * @param headers
      * @return
      */
     @PUT
-    @Path("/{id:[0-9][0-9]*}")
+    @Path("/{number:[0-9][0-9]*}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response update(@PathParam("id") long id, BOM entity) {
+    public Response update(
+            @Min(1) @PathParam("number") long number,
+            @NotNull(message = BOMDao.ENTITY_VALIDATION) BOM entity,
+            @Context HttpHeaders headers) {
 
-        if (entity.getId() != id) {
-            return Response.status(Response.Status.CONFLICT)
-                    .entity("entity id doesn't match with resource path id")
-                    .build();
-        }
         // Add the current date to checked field
         Date date = new Date();
         entity.setChecked(date);
-        
+
         try {
             entity = bomDao.update(entity);
         } catch (ConstraintViolationException ce) {
             // Handle bean validation issues
-            return createViolationResponse(ce.getConstraintViolations()).build();
+            return createViolationResponse(ce.getConstraintViolations())
+                    .header("Access-Control-Allow-Origin", headers.getRequestHeader("Origin").get(0))
+                    .header("Access-Control-Allow-Credentials", "true")
+                    .build();
         } catch (ValidationException e) {
             // Handle the unique constrain violation
-            Map<String, String> responseObj = new HashMap<String, String>();
-            responseObj.put("error", e.getMessage());
-            return Response.status(Response.Status.CONFLICT).entity(entity).build();
+            Map<String, String> responseObj = new HashMap<>();
+            responseObj.put("message", e.getMessage());
+            return Response.status(Response.Status.CONFLICT)
+                    .entity(responseObj)
+                    .header("Access-Control-Allow-Origin", headers.getRequestHeader("Origin").get(0))
+                    .header("Access-Control-Allow-Credentials", "true")
+                    .build();
+        } catch (IllegalArgumentException e) {
+            Map<String, String> responseObj = new HashMap<>();
+            responseObj.put("message", e.getMessage());
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(responseObj)
+                    .header("Access-Control-Allow-Origin", headers.getRequestHeader("Origin").get(0))
+                    .header("Access-Control-Allow-Credentials", "true")
+                    .build();
         } catch (Exception e) {
-            Map<String, String> responseObj = new HashMap<String, String>();
-            responseObj.put("error", e.getMessage());
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(responseObj).build();
+            Map<String, String> responseObj = new HashMap<>();
+            responseObj.put("message", e.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(responseObj)
+                    .header("Access-Control-Allow-Origin", headers.getRequestHeader("Origin").get(0))
+                    .header("Access-Control-Allow-Credentials", "true")
+                    .build();
         }
-
-        if (entity == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
-
+        
         return Response
                 .ok(UriBuilder.fromResource(BOMEndpoint.class)
-                        .path(String.valueOf(entity.getId())).build())
+                .path(String.valueOf(entity.getId())).build())
                 .entity(entity)
-                .header("Access-Control-Allow-Origin", WebApplication.ACCESS_CONTROL_ALLOW_ORIGIN)
+                .header("Access-Control-Allow-Origin", headers.getRequestHeader("Origin").get(0))
                 .header("Access-Control-Allow-Credentials", "true")
                 .build();
     }
 
     /**
      *
-     * @param id
+     * @param number
+     * @param headers
      * @return
      */
     @DELETE
-    @Path("/{id:[0-9]*}")
-    public Response deleteById(@PathParam("id") long id) {
-        BOM entity = null;
+    @Path("/{number:[0-9]*}")
+    public Response deleteById(
+            @Min(1) @PathParam("number") long number,
+            @Context HttpHeaders headers) {
         try {
-            bomDao.remove(id);
+            bomDao.remove(number);
         } catch (ConstraintViolationException ce) {
             // Handle bean validation issues
-            return createViolationResponse(ce.getConstraintViolations()).build();
+            return createViolationResponse(ce.getConstraintViolations())
+                    .header("Access-Control-Allow-Origin", headers.getRequestHeader("Origin").get(0))
+                    .header("Access-Control-Allow-Credentials", "true")
+                    .build();
         } catch (ValidationException e) {
             // Handle the unique constrain violation
-            Map<String, String> responseObj = new HashMap<String, String>();
-            responseObj.put("error", e.getMessage());
-            return Response.status(Response.Status.CONFLICT).entity(responseObj).build();
+            Map<String, String> responseObj = new HashMap<>();
+            responseObj.put("message", e.getMessage());
+            return Response.status(Response.Status.CONFLICT)
+                    .entity(responseObj)
+                    .header("Access-Control-Allow-Origin", headers.getRequestHeader("Origin").get(0))
+                    .header("Access-Control-Allow-Credentials", "true")
+                    .build();
+        } catch (IllegalArgumentException e) {
+            Map<String, String> responseObj = new HashMap<>();
+            responseObj.put("message", e.getMessage());
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(responseObj)
+                    .header("Access-Control-Allow-Origin", headers.getRequestHeader("Origin").get(0))
+                    .header("Access-Control-Allow-Credentials", "true")
+                    .build();
         } catch (Exception e) {
-            Map<String, String> responseObj = new HashMap<String, String>();
-            responseObj.put("error", e.getMessage());
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+            Map<String, String> responseObj = new HashMap<>();
+            responseObj.put("message", e.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(responseObj)
+                    .header("Access-Control-Allow-Origin", headers.getRequestHeader("Origin").get(0))
+                    .header("Access-Control-Allow-Credentials", "true")
+                    .build();
         }
 
-        if (entity == null) {
-            return Response.noContent().status(Response.Status.NOT_FOUND).build();
-        }
         return Response.noContent()
-                .header("Access-Control-Allow-Origin", WebApplication.ACCESS_CONTROL_ALLOW_ORIGIN)
+                .header("Access-Control-Allow-Origin", headers.getRequestHeader("Origin").get(0))
                 .header("Access-Control-Allow-Credentials", "true")
                 .build();
     }
-    
+
     /**
      *
+     * @param headers
      * @return
      */
     @OPTIONS
-    public Response getCORSHeadersFromPath() {
+    public Response getCORSHeadersFromPath(@Context HttpHeaders headers) {
         return Response.ok()
-                .header("Access-Control-Allow-Origin", WebApplication.ACCESS_CONTROL_ALLOW_ORIGIN)
+                .header("Access-Control-Allow-Origin", headers.getRequestHeader("Origin").get(0))
                 .header("Access-Control-Allow-Headers", "Access-Control-Allow-Origin, Origin, Content-Type, Content-Length, Accept, Authorization, X-Requested-With")
                 .header("Access-Control-Allow-Credentials", "true")
                 .header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD")
@@ -337,44 +448,47 @@ public class BOMEndpoint {
     /**
      *
      * @param number
+     * @param headers
      * @return
      */
     @OPTIONS
     @Path("/{number:[0-9][0-9]*}")
-    public Response getCORSHeadersFromNumberPath(@PathParam("number") long number) {
+    public Response getCORSHeadersFromNumberPath(
+            @PathParam("number") long number,
+            @Context HttpHeaders headers) {
         return Response.ok()
-                .header("Access-Control-Allow-Origin", WebApplication.ACCESS_CONTROL_ALLOW_ORIGIN)
+                .header("Access-Control-Allow-Origin", headers.getRequestHeader("Origin").get(0))
                 .header("Access-Control-Allow-Headers", "Access-Control-Allow-Origin, Origin, Content-Type, Content-Length, Accept, Authorization, X-Requested-With")
                 .header("Access-Control-Allow-Credentials", "true")
                 .header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD")
                 .header("Access-Control-Max-Age", "1209600")
                 .build();
     }
-    
+
     /**
-    *
-    * @param startPosition
-    * @param maxResult
-    * @param search
-    * @return
-    */
-   @OPTIONS
-   @Path("/search")
-   public Response getCORSHeadersFromSearchPath(
-		   @DefaultValue("0") @QueryParam("start") Integer startPosition,
-           @DefaultValue("10") @QueryParam("max") Integer maxResult,
-           @Size(min = 2) @QueryParam("search") String search) {
-       return Response.ok()
-               .header("Access-Control-Allow-Origin", WebApplication.ACCESS_CONTROL_ALLOW_ORIGIN)
-               .header("Access-Control-Allow-Headers", "Access-Control-Allow-Origin, Origin, Content-Type, Content-Length, Accept, Authorization, X-Requested-With")
-               .header("Access-Control-Allow-Credentials", "true")
-               .header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD")
-               .header("Access-Control-Max-Age", "1209600")
-               .build();
-   }
-    
-    
-    
+     *
+     * @param startPosition
+     * @param maxResult
+     * @param search
+     * @param headers
+     * @return
+     */
+    @OPTIONS
+    @Path("/search")
+    public Response getCORSHeadersFromSearchPath(
+            @DefaultValue("0") @QueryParam("start") Integer startPosition,
+            @DefaultValue("10") @QueryParam("max") Integer maxResult,
+            @Size(min = 2) @QueryParam("search") String search,
+            @Context HttpHeaders headers) {
+        return Response.ok()
+                .header("Access-Control-Allow-Origin", headers.getRequestHeader("Origin").get(0))
+                .header("Access-Control-Allow-Headers", "Access-Control-Allow-Origin, Origin, Content-Type, Content-Length, Accept, Authorization, X-Requested-With")
+                .header("Access-Control-Allow-Credentials", "true")
+                .header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD")
+                .header("Access-Control-Max-Age", "1209600")
+                .build();
+    }
+
     /**
      * Creates a JAX-RS "Bad Request" response including a map of all violation
      * fields, and their message. This can then be used by clients to show
@@ -394,5 +508,5 @@ public class BOMEndpoint {
 
         return Response.status(Response.Status.BAD_REQUEST).entity(responseObj);
     }
-    
+
 }
