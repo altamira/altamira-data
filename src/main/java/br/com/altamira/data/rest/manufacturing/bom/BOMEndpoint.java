@@ -9,18 +9,24 @@ import br.com.altamira.data.dao.manufacturing.bom.BOMDao;
 import br.com.altamira.data.model.manufacturing.bom.BOM;
 import br.com.altamira.data.rest.WebApplication;
 import br.com.altamira.data.serialize.JSonViews;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
+
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
@@ -246,7 +252,10 @@ public class BOMEndpoint {
                     .entity("entity id doesn't match with resource path id")
                     .build();
         }
-
+        // Add the current date to checked field
+        Date date = new Date();
+        entity.setChecked(date);
+        
         try {
             entity = bomDao.update(entity);
         } catch (ConstraintViolationException ce) {
@@ -341,6 +350,30 @@ public class BOMEndpoint {
                 .header("Access-Control-Max-Age", "1209600")
                 .build();
     }
+    
+    /**
+    *
+    * @param startPosition
+    * @param maxResult
+    * @param search
+    * @return
+    */
+   @OPTIONS
+   @Path("/search")
+   public Response getCORSHeadersFromSearchPath(
+		   @DefaultValue("0") @QueryParam("start") Integer startPosition,
+           @DefaultValue("10") @QueryParam("max") Integer maxResult,
+           @Size(min = 2) @QueryParam("search") String search) {
+       return Response.ok()
+               .header("Access-Control-Allow-Origin", WebApplication.ACCESS_CONTROL_ALLOW_ORIGIN)
+               .header("Access-Control-Allow-Headers", "Access-Control-Allow-Origin, Origin, Content-Type, Content-Length, Accept, Authorization, X-Requested-With")
+               .header("Access-Control-Allow-Credentials", "true")
+               .header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD")
+               .header("Access-Control-Max-Age", "1209600")
+               .build();
+   }
+    
+    
     
     /**
      * Creates a JAX-RS "Bad Request" response including a map of all violation
