@@ -15,8 +15,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import br.com.altamira.data.model.Resource;
-import br.com.altamira.data.serialize.JSonViews;
-import com.fasterxml.jackson.annotation.JsonView;
 
 /**
  *
@@ -46,12 +44,12 @@ public class Order extends Resource {
     private String representative = "";
 
     @NotNull
-    @Temporal(value = TemporalType.DATE)
+    @Temporal(value = TemporalType.TIMESTAMP)
     @Column(name = "CREATED")
     private Date created = new Date();
 
     @NotNull
-    @Temporal(value = TemporalType.DATE)
+    @Temporal(value = TemporalType.TIMESTAMP)
     @Column(name = "DELIVERY")
     private Date delivery = new Date();
 
@@ -73,7 +71,6 @@ public class Order extends Resource {
     @Column(name = "CHECKLIST")
     private Date checked;
 
-    @JsonView(JSonViews.EntityView.class)
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "order", fetch = FetchType.LAZY, orphanRemoval = true)
     private List<OrderItem> items;
 

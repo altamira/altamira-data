@@ -49,7 +49,6 @@ public class OrderItem extends Resource {
     @Column(name = "DESCRIPTION", length = 100000)
     private String description = "";
 
-    @JsonView(JSonViews.EntityView.class)
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "orderItem", fetch = FetchType.LAZY, orphanRemoval = true)
     private List<OrderItemPart> parts;
 

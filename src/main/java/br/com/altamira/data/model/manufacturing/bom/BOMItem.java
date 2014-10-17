@@ -1,6 +1,5 @@
 package br.com.altamira.data.model.manufacturing.bom;
 
-import br.com.altamira.data.model.sales.*;
 import java.util.ArrayList;
 import java.util.List;
 

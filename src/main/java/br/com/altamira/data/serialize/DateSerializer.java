@@ -38,7 +38,7 @@ public class DateSerializer extends JsonSerializer<Date> {
 			jgen.writeString("");
 		} else {
 			//jgen.writeString(new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(date));
-			jgen.writeObject(date);
+			jgen.writeNumber(date.getTime());
 		}
 	}
 }

@@ -1,6 +1,5 @@
 package br.com.altamira.data.model.manufacturing.bom;
 
-import br.com.altamira.data.model.sales.*;
 import java.math.BigDecimal;
 
 import javax.persistence.Column;

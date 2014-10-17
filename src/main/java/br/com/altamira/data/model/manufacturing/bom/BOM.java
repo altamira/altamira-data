@@ -1,6 +1,5 @@
 package br.com.altamira.data.model.manufacturing.bom;
 
-import br.com.altamira.data.model.sales.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -47,12 +46,12 @@ public class BOM extends Resource {
     private String representative = "";
 
     @NotNull
-    @Temporal(value = TemporalType.DATE)
+    @Temporal(value = TemporalType.TIMESTAMP)
     @Column(name = "CREATED")
     private Date created = new Date();
 
     @NotNull
-    @Temporal(value = TemporalType.DATE)
+    @Temporal(value = TemporalType.TIMESTAMP)
     @Column(name = "DELIVERY")
     private Date delivery = new Date();
 
@@ -70,8 +69,8 @@ public class BOM extends Resource {
     @Column(name = "PROJECT")
     private Long project = 0l;
     
-    @Temporal(value = TemporalType.DATE)
-    @Column(name = "CHECKLIST")
+    @Temporal(value = TemporalType.TIMESTAMP)
+    @Column(name = "CHECKED")
     private Date checked;
 
     @JsonView(JSonViews.EntityView.class)
