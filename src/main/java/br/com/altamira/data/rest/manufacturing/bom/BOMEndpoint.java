@@ -191,7 +191,7 @@ public class BOMEndpoint {
             return createIlegalArgumentsResponse(e, headers).build();
         } catch (Exception e) {
             return createInternalServerErroResponse(e, headers).build();
-        }            
+        }
 
         return createCreatedResponse(entity, headers).build();
     }
@@ -202,7 +202,7 @@ public class BOMEndpoint {
      * @param entity
      * @param headers
      * @return
-     * @throws JsonProcessingException 
+     * @throws JsonProcessingException
      */
     @PUT
     @Path("/{number:[0-9][0-9]*}")
@@ -210,9 +210,15 @@ public class BOMEndpoint {
     @Produces(MediaType.APPLICATION_JSON)
     public Response update(
             @Min(1) @PathParam("number") long number,
-            @NotNull(message = BOMDao.ENTITY_VALIDATION) BOM entity,
+            //@NotNull(message = BOMDao.ENTITY_VALIDATION) BOM entity,
             @Context HttpHeaders headers) throws JsonProcessingException {
 
+    	BOM entity = bomDao.findByNumber(number);
+    	
+    	if (entity == null) {
+    		return createNoResultResponse(new NoResultException(), headers).build();
+    	}
+    	
         // Add the current date to checked field
         Date date = new Date();
         entity.setChecked(date);
@@ -237,7 +243,7 @@ public class BOMEndpoint {
      * @param number
      * @param headers
      * @return
-     * @throws JsonProcessingException 
+     * @throws JsonProcessingException
      */
     @DELETE
     @Path("/{number:[0-9]*}")
@@ -254,7 +260,7 @@ public class BOMEndpoint {
             return createIlegalArgumentsResponse(e, headers).build();
         } catch (Exception e) {
             return createInternalServerErroResponse(e, headers).build();
-        }            
+        }
 
         return createNoContentResponse(headers).build();
     }
@@ -422,13 +428,13 @@ public class BOMEndpoint {
 
         if (entity instanceof BOM) {
             responseBuilder = Response.ok(UriBuilder.fromResource(BOMEndpoint.class)
-                                    .path(String.valueOf(((BOM)entity).getId())));
+                    .path(String.valueOf(((BOM) entity).getId())));
         } else {
             responseBuilder = Response.ok(UriBuilder.fromResource(BOMEndpoint.class));
         }
-        
+
         responseBuilder.entity(mapper.writeValueAsString(entity));
-        
+
         if (headers.getHeaderString("Origin") != null && !headers.getHeaderString("Origin").isEmpty()) {
             responseBuilder
                     .header("Access-Control-Allow-Origin", headers.getRequestHeader("Origin").get(0))
@@ -450,7 +456,7 @@ public class BOMEndpoint {
                 UriBuilder.fromResource(BOMEndpoint.class)
                 .path(String.valueOf(entity.getId())).build())
                 .entity(mapper.writeValueAsString(entity));
-        
+
         if (headers.getHeaderString("Origin") != null && !headers.getHeaderString("Origin").isEmpty()) {
             responseBuilder.header("Access-Control-Allow-Origin", headers.getRequestHeader("Origin").get(0))
                     .header("Access-Control-Allow-Credentials", "true");
@@ -462,12 +468,12 @@ public class BOMEndpoint {
     private Response.ResponseBuilder createNoContentResponse(@Context HttpHeaders headers) throws JsonProcessingException {
 
         ResponseBuilder responseBuilder = Response.noContent();
-        
+
         if (headers.getHeaderString("Origin") != null && !headers.getHeaderString("Origin").isEmpty()) {
             responseBuilder.header("Access-Control-Allow-Origin", headers.getRequestHeader("Origin").get(0))
                     .header("Access-Control-Allow-Credentials", "true");
         }
 
         return responseBuilder;
-    }    
+    }
 }
