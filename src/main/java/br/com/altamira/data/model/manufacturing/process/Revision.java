@@ -29,7 +29,7 @@ public class Revision extends br.com.altamira.data.model.Resource {
 	private static final long serialVersionUID = -6900819206533333287L;
 	
 	@NotNull
-	@Temporal(value=TemporalType.DATE)
+	@Temporal(value=TemporalType.TIMESTAMP)
 	@Column(name = "CHANGE_DATE")
 	private Date date;
 	

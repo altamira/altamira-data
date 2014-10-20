@@ -86,6 +86,12 @@ public class BOM extends Resource {
         this.customer = customer;
     }
 
+    public BOM(Long number, String customer, Date checked) {
+        this.number = number;
+        this.customer = customer;
+        this.checked = checked;
+    }
+    
     /**
      *
      * @return

@@ -86,7 +86,10 @@ public class BOMDao {
         CriteriaQuery<BOM> q = cb.createQuery(BOM.class);
         Root<BOM> entity = q.from(BOM.class);
 
-        q.select(cb.construct(BOM.class, entity.get("number"), entity.get("customer")));
+        q.select(cb.construct(BOM.class, entity.get("number"), 
+                                         entity.get("customer"),
+                                         entity.get("checked")));
+        
         q.where(cb.isNull(entity.get("checked")));
 
         return entityManager.createQuery(q)
@@ -114,7 +117,9 @@ public class BOMDao {
         
         String searchCriteria = "%" + search.toLowerCase().trim() + "%";
         
-        q.select(cb.construct(BOM.class, entity.get("number"), entity.get("customer")));
+        q.select(cb.construct(BOM.class, entity.get("number"), 
+                                         entity.get("customer"),
+                                         entity.get("checked")));
         
         q.where(cb.or(
                 cb.like(cb.lower(entity.get("number").as(String.class)), searchCriteria),

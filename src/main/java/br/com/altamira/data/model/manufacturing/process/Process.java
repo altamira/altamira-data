@@ -27,195 +27,195 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @Entity
 @Table(name = "MN_PROCESS")
 @NamedQueries({
-	@NamedQuery(name = "Process.list", query = "SELECT p FROM Process p"),
-	@NamedQuery(name = "Process.findById", query = "SELECT p FROM Process p WHERE p.id = :id")})
+    @NamedQuery(name = "Process.list", query = "SELECT p FROM Process p"),
+    @NamedQuery(name = "Process.findById", query = "SELECT p FROM Process p WHERE p.id = :id")})
 public class Process extends br.com.altamira.data.model.Process {
-	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 5549369785798723928L;
-	
-	@NotNull
-	@Size(min=10)
-	@Column(name = "CODE", columnDefinition = "nvarchar2(255)")
-	private String code;
-	
-	@NotNull
-	@Size(min=10)
-	@Column(name = "DESCRIPTION", columnDefinition = "nvarchar2(255)")
-	private String description;
 
-	@Column(name = "COLOR", columnDefinition = "nvarchar2(255)")
-	private String color;
-	
-	@Min(0)
-	@Column(name = "WEIGHT")
-	private float weight;
-	
-	@Min(0)
-	@Column(name = "LENGTH")
-	private float length;
-	
-	@Min(0)
-	@Column(name = "WIDTH")
-	private float width;
-	
-	@Column(name = "FINISH", columnDefinition = "nvarchar2(255)")
-	private String finish;
-	
-	@JsonView(JSonViews.EntityView.class)
-    @JsonSerialize(using = NullCollectionSerializer.class)
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "process", fetch = FetchType.LAZY, orphanRemoval = true)
-	private List<Revision> revision = new ArrayList<Revision>();
+    /**
+     *
+     */
+    private static final long serialVersionUID = 5549369785798723928L;
 
-	@JsonView(JSonViews.EntityView.class)
+    @NotNull
+    @Size(min = 10)
+    @Column(name = "CODE", columnDefinition = "nvarchar2(255)")
+    private String code;
+
+    @NotNull
+    @Size(min = 10)
+    @Column(name = "DESCRIPTION", columnDefinition = "nvarchar2(255)")
+    private String description;
+
+    @Column(name = "COLOR", columnDefinition = "nvarchar2(255)")
+    private String color;
+
+    @Min(0)
+    @Column(name = "WEIGHT")
+    private float weight;
+
+    @Min(0)
+    @Column(name = "LENGTH")
+    private float length;
+
+    @Min(0)
+    @Column(name = "WIDTH")
+    private float width;
+
+    @Column(name = "FINISH", columnDefinition = "nvarchar2(255)")
+    private String finish;
+
+    @JsonView(JSonViews.EntityView.class)
     @JsonSerialize(using = NullCollectionSerializer.class)
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "process", fetch = FetchType.LAZY, orphanRemoval = true)
-	private List<Operation> operation = new ArrayList<Operation>();
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "process", fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<Revision> revision = new ArrayList<Revision>();
+
+    @JsonView(JSonViews.EntityView.class)
+    @JsonSerialize(using = NullCollectionSerializer.class)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "process", fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<Operation> operation = new ArrayList<Operation>();
 
     /**
      *
      * @return
      */
     public String getCode() {
-		return code;
-	}
-	
+        return code;
+    }
+
     /**
      *
      * @param code
      */
     public void setCode(String code) {
-		this.code = code;
-	}
-	
+        this.code = code;
+    }
+
     /**
      *
      * @return
      */
     public String getDescription() {
-		return description;
-	}
-	
+        return description;
+    }
+
     /**
      *
      * @param description
      */
     public void setDescription(String description) {
-		this.description = description;
-	}
-	
+        this.description = description;
+    }
+
     /**
      *
      * @return
      */
     public String getColor() {
-		return color;
-	}
-	
+        return color;
+    }
+
     /**
      *
      * @param color
      */
     public void setColor(String color) {
-		this.color = color;
-	}
-	
+        this.color = color;
+    }
+
     /**
      *
      * @return
      */
     public float getWeight() {
-		return weight;
-	}
-	
+        return weight;
+    }
+
     /**
      *
      * @param weight
      */
     public void setWeight(float weight) {
-		this.weight = weight;
-	}
-	
+        this.weight = weight;
+    }
+
     /**
      *
      * @return
      */
     public float getLength() {
-		return length;
-	}
-	
+        return length;
+    }
+
     /**
      *
      * @param length
      */
     public void setLength(float length) {
-		this.length = length;
-	}
-	
+        this.length = length;
+    }
+
     /**
      *
      * @return
      */
     public float getWidth() {
-		return width;
-	}
-	
+        return width;
+    }
+
     /**
      *
      * @param width
      */
     public void setWidth(float width) {
-		this.width = width;
-	}
-	
+        this.width = width;
+    }
+
     /**
      *
      * @return
      */
     public String getFinish() {
-		return finish;
-	}
-	
+        return finish;
+    }
+
     /**
      *
      * @param finish
      */
     public void setFinish(String finish) {
-		this.finish = finish;
-	}
-	
+        this.finish = finish;
+    }
+
     /**
      *
      * @return
      */
     public List<Revision> getRevision() {
-		return revision;
-	}
-	
+        return revision;
+    }
+
     /**
      *
      * @param revision
      */
     public void setRevision(List<Revision> revision) {
-		this.revision = revision;
-	}
-	
+        this.revision = revision;
+    }
+
     /**
      *
      * @return
      */
     public List<Operation> getOperation() {
-		return operation;
-	}
-	
+        return operation;
+    }
+
     /**
      *
      * @param operation
      */
     public void setOperation(List<Operation> operation) {
-		this.operation = operation;
-	}
+        this.operation = operation;
+    }
 
 }

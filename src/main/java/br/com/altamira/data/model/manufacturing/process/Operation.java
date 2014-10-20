@@ -31,166 +31,166 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @Entity
 @Table(name = "MN_OPERATION")
 @NamedQueries({
-	@NamedQuery(name = "Operation.list", query = "SELECT o FROM Operation o"),
-	@NamedQuery(name = "Operation.findById", query = "SELECT o FROM Operation o WHERE o.id = :id")})
+    @NamedQuery(name = "Operation.list", query = "SELECT o FROM Operation o"),
+    @NamedQuery(name = "Operation.findById", query = "SELECT o FROM Operation o WHERE o.id = :id")})
 public class Operation extends br.com.altamira.data.model.Operation {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 4778350055794788171L;
-	
-	@NotNull
-	@Min(1)
-	@Column(name = "SEQUENCE")
-	private int sequence;
-	
-	@NotNull
-	@Size(min=3)
-	@Column(name = "NAME", columnDefinition = "nvarchar2(255)")
-	private String name;
-	
-	@NotNull
-	@Size(min=1)
-	@Column(name = "DESCRIPTION", columnDefinition = "nvarchar2(500)")
-	private String description;
-	
-	@Column(name = "SKETCH", columnDefinition = "nvarchar2(500)")
-	private String sketch;
-    
-	@JsonIgnore
-	@JoinColumn(name = "PROCESS", referencedColumnName = "ID")
+    /**
+     *
+     */
+    private static final long serialVersionUID = 4778350055794788171L;
+
+    @NotNull
+    @Min(1)
+    @Column(name = "SEQUENCE")
+    private int sequence;
+
+    @NotNull
+    @Size(min = 3)
+    @Column(name = "NAME", columnDefinition = "nvarchar2(255)")
+    private String name;
+
+    @NotNull
+    @Size(min = 1)
+    @Column(name = "DESCRIPTION", columnDefinition = "nvarchar2(500)")
+    private String description;
+
+    @Column(name = "SKETCH", columnDefinition = "nvarchar2(500)")
+    private String sketch;
+
+    @JsonIgnore
+    @JoinColumn(name = "PROCESS", referencedColumnName = "ID")
     @ManyToOne(optional = true, fetch = FetchType.LAZY)
     private Process process;
-    
-	@JsonView(JSonViews.EntityView.class)
+
+    @JsonView(JSonViews.EntityView.class)
     @JsonSerialize(using = NullCollectionSerializer.class)
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "operation", fetch = FetchType.LAZY, orphanRemoval = true)
-	private List<Consume> consume = new ArrayList<Consume>();
-	
-	@JsonView(JSonViews.EntityView.class)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "operation", fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<Consume> consume = new ArrayList<Consume>();
+
+    @JsonView(JSonViews.EntityView.class)
     @JsonSerialize(using = NullCollectionSerializer.class)
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "operation", fetch = FetchType.LAZY, orphanRemoval = true)
-	private List<Produce> produce = new ArrayList<Produce>();
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "operation", fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<Produce> produce = new ArrayList<Produce>();
 
     /**
      *
      * @return
      */
     public Process getProcess() {
-		return process;
-	}
+        return process;
+    }
 
     /**
      *
      * @param process
      */
     public void setProcess(Process process) {
-		this.process = process;
-	}
+        this.process = process;
+    }
 
     /**
      *
      * @param consume
      */
     public void setConsume(List<Consume> consume) {
-		this.consume = consume;
-	}
+        this.consume = consume;
+    }
 
     /**
      *
      * @return
      */
     public int getSequence() {
-		return sequence;
-	}
-	
+        return sequence;
+    }
+
     /**
      *
      * @param sequence
      */
     public void setSequence(int sequence) {
-		this.sequence = sequence;
-	}
-	
+        this.sequence = sequence;
+    }
+
     /**
      *
      * @return
      */
     public String getName() {
-		return name;
-	}
-	
+        return name;
+    }
+
     /**
      *
      * @param name
      */
     public void setName(String name) {
-		this.name = name;
-	}
-	
+        this.name = name;
+    }
+
     /**
      *
      * @return
      */
     public String getDescription() {
-		return description;
-	}
-	
+        return description;
+    }
+
     /**
      *
      * @param description
      */
     public void setDescription(String description) {
-		this.description = description;
-	}
-	
+        this.description = description;
+    }
+
     /**
      *
      * @return
      */
     public String getSketch() {
-		return sketch;
-	}
-	
+        return sketch;
+    }
+
     /**
      *
      * @param sketch
      */
     public void setSketch(String sketch) {
-		this.sketch = sketch;
-	}
-	
+        this.sketch = sketch;
+    }
+
     /**
      *
      * @return
      */
     public List<Consume> getConsume() {
-		return consume;
-	}
-	
+        return consume;
+    }
+
     /**
      *
      * @param useconsume
      */
     public void setUseconsume(List<Consume> useconsume) {
-		this.consume = useconsume;
-	}
-	
+        this.consume = useconsume;
+    }
+
     /**
      *
      * @return
      */
     public List<Produce> getProduce() {
-		return produce;
-	}
-	
+        return produce;
+    }
+
     /**
      *
      * @param produce
      */
     public void setProduce(List<Produce> produce) {
-		this.produce = produce;
-	}
-	
+        this.produce = produce;
+    }
+
 }

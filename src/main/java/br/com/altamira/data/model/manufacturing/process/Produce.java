@@ -22,33 +22,33 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Table(name = "MN_PRODUCE")
 public class Produce extends br.com.altamira.data.model.Relation {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 8786534973807974496L;
-	
-	@NotNull
-	@Size(min=10)
-	@Column(name = "CODE", columnDefinition = "nvarchar2(255)")
-	private String code;
-	
-	@NotNull
-	@Size(min=10)
-	@Column(name = "DESCRIPTION", columnDefinition = "nvarchar2(255)")
-	private String description;
-	
-	@NotNull
-	@Min(0)
-	@Column(name = "QUANTITY")
-	private BigDecimal quantity;
-	
-	@NotNull
-	@Size(min=1)
-	@Column(name = "UNIT", columnDefinition = "nvarchar2(255)")
-	private String unit;
-	
-	@JsonIgnore
-	@JoinColumn(name = "OPERATION", referencedColumnName = "ID")
+    /**
+     *
+     */
+    private static final long serialVersionUID = 8786534973807974496L;
+
+    @NotNull
+    @Size(min = 10)
+    @Column(name = "CODE", columnDefinition = "nvarchar2(255)")
+    private String code;
+
+    @NotNull
+    @Size(min = 10)
+    @Column(name = "DESCRIPTION", columnDefinition = "nvarchar2(255)")
+    private String description;
+
+    @NotNull
+    @Min(0)
+    @Column(name = "QUANTITY")
+    private BigDecimal quantity;
+
+    @NotNull
+    @Size(min = 1)
+    @Column(name = "UNIT", columnDefinition = "nvarchar2(255)")
+    private String unit;
+
+    @JsonIgnore
+    @JoinColumn(name = "OPERATION", referencedColumnName = "ID")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Operation operation;
 
@@ -57,78 +57,78 @@ public class Produce extends br.com.altamira.data.model.Relation {
      * @return
      */
     public Operation getOperation() {
-		return operation;
-	}
+        return operation;
+    }
 
     /**
      *
      * @param operation
      */
     public void setOperation(Operation operation) {
-		this.operation = operation;
-	}
+        this.operation = operation;
+    }
 
     /**
      *
      * @return
      */
     public String getCode() {
-		return code;
-	}
-	
+        return code;
+    }
+
     /**
      *
      * @param code
      */
     public void setCode(String code) {
-		this.code = code;
-	}
-	
+        this.code = code;
+    }
+
     /**
      *
      * @return
      */
     public String getDescription() {
-		return description;
-	}
-	
+        return description;
+    }
+
     /**
      *
      * @param description
      */
     public void setDescription(String description) {
-		this.description = description;
-	}
-	
+        this.description = description;
+    }
+
     /**
      *
      * @return
      */
     public BigDecimal getQuantity() {
-		return quantity;
-	}
-	
+        return quantity;
+    }
+
     /**
      *
      * @param quantity
      */
     public void setQuantity(BigDecimal quantity) {
-		this.quantity = quantity;
-	}
-	
+        this.quantity = quantity;
+    }
+
     /**
      *
      * @return
      */
     public String getUnit() {
-		return unit;
-	}
-	
+        return unit;
+    }
+
     /**
      *
      * @param unit
      */
     public void setUnit(String unit) {
-		this.unit = unit;
-	}
+        this.unit = unit;
+    }
 }
