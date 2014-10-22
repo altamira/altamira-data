@@ -1,6 +1,8 @@
 package br.com.altamira.data.dao.manufacturing.process;
 
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -10,7 +12,16 @@ import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Validator;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
+import br.com.altamira.data.model.manufacturing.bom.BOM;
 import br.com.altamira.data.model.manufacturing.process.Consume;
 import br.com.altamira.data.model.manufacturing.process.Operation;
 import br.com.altamira.data.model.manufacturing.process.Process;
@@ -25,8 +36,22 @@ import br.com.altamira.data.model.manufacturing.process.Revision;
 @Stateless
 public class ProcessDao {
 	
-	@Inject
-	private EntityManager entityManager;
+    public static final String START_PAGE_VALIDATION = "Invalid start page number, must be greater than 0.";
+    public static final String PAGE_SIZE_VALIDATION = "Invalid page size, must be greater than 0.";
+    public static final String NUMBER_VALIDATION = "Invalid number, must be greater than zero.";
+    public static final String ENTITY_VALIDATION = "Entity can't be null.";
+    public static final String ID_NULL_VALIDATION = "Entity id must be null or zero.";
+    public static final String ID_NOT_NULL_VALIDATION = "Entity id can't be null or zero.";
+    public static final String SEARCH_VALIDATION = "Search word can't be null and size must be greater that 2 characters.";
+    
+    @Inject
+    private Logger log;
+    
+    @Inject
+    private EntityManager entityManager;
+    
+    @Inject
+    private Validator validator;
 
     /**
      *
@@ -203,4 +228,39 @@ public class ProcessDao {
 		
 		return entity;
 	}
+    
+    /**
+    *
+    * @param search
+    * @param startPage
+    * @param pageSize
+    * @return
+    */
+   public List<Process> search (
+           @NotNull @Size(min = 2, message = SEARCH_VALIDATION) String search,
+           @Min(value = 0, message = START_PAGE_VALIDATION) int startPage, 
+           @Min(value = 1, message = PAGE_SIZE_VALIDATION) int pageSize) 
+       throws ConstraintViolationException, NoResultException {
+       
+       CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+       CriteriaQuery<Process> q = cb.createQuery(Process.class);
+       Root<Process> entity = q.from(Process.class);
+       
+       String searchCriteria = "%" + search.toLowerCase().trim() + "%";
+       
+       q.select(cb.construct(Process.class, entity.get("code"), 
+                                        entity.get("description")));
+       
+       q.where(cb.or(
+               cb.like(cb.lower(entity.get("code").as(String.class)), searchCriteria),
+               cb.like(cb.lower(entity.get("description")), searchCriteria)));
+       
+       log.log(Level.INFO, "Searching for {0}...", searchCriteria);
+       
+       return entityManager.createQuery(q)
+               .setFirstResult(startPage * pageSize)
+               .setMaxResults(pageSize)
+               .getResultList();
+        
+   }
 }

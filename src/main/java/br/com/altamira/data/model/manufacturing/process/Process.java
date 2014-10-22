@@ -2,6 +2,7 @@ package br.com.altamira.data.model.manufacturing.process;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -73,6 +74,15 @@ public class Process extends br.com.altamira.data.model.Process {
     @JsonSerialize(using = NullCollectionSerializer.class)
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "process", fetch = FetchType.LAZY, orphanRemoval = true)
     private List<Operation> operation = new ArrayList<Operation>();
+    
+    public Process() {
+        this.operation = new ArrayList<>();
+    }
+    
+    public Process(String code, String description) {
+        this.code = code;
+        this.description = description;
+    }
 
     /**
      *
