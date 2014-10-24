@@ -1,197 +1,112 @@
 package br.com.altamira.data.rest.manufacturing.process;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.NoResultException;
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-import javax.validation.ValidationException;
-import javax.validation.Validator;
 import javax.validation.constraints.Size;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
-import javax.ws.rs.OPTIONS;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriBuilderException;
-import javax.ws.rs.core.Response.ResponseBuilder;
-import javax.ws.rs.core.Response.Status;
 
-import br.com.altamira.data.model.manufacturing.bom.BOM;
 import br.com.altamira.data.model.manufacturing.process.Process;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
 
 import br.com.altamira.data.dao.manufacturing.process.ProcessDao;
-import br.com.altamira.data.rest.WebApplication;
-import br.com.altamira.data.rest.manufacturing.bom.BOMEndpoint;
-import br.com.altamira.data.serialize.JSonViews;
-import br.com.altamira.data.serialize.NullValueSerializer;
+import br.com.altamira.data.rest.BaseEndpoint;
+import javax.enterprise.context.RequestScoped;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 /**
  *
- * @author alessandro.holanda
+ *
  */
-@Stateless
 @Path("manufacturing/process")
-public class ProcessEndpoint {
-	
-	private static final String NOT_FOUND = "Entity not found.";
-	
-	@Inject
-    private Logger log;
+@RequestScoped
+public class ProcessEndpoint
+        extends BaseEndpoint<Process> /*implements Endpoint<Process> See https://issues.jboss.org/browse/WFLY-2724*/ {
 
     @Inject
-    private Validator validator;
-    
-    @Inject 
     private ProcessDao processDao;
-    
+
     /**
      *
      * @param startPosition
      * @param maxResult
+     * @param headers
      * @return
      * @throws IOException
      */
     @GET
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response list(
-			@DefaultValue("0") @QueryParam("start") Integer startPosition,
-			@DefaultValue("10") @QueryParam("max") Integer maxResult)
-			throws IOException {
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response list(
+            @DefaultValue("0") @QueryParam("start") Integer startPosition,
+            @DefaultValue("10") @QueryParam("max") Integer maxResult)
+            throws IOException {
 
-		List<Process> list;
-		
-		try {
-			list = processDao.list(startPosition, maxResult);
-		} catch (Exception e) {
-    		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage())
-    				.header("Access-Control-Allow-Origin", WebApplication.ACCESS_CONTROL_ALLOW_ORIGIN)
-    				.header("Access-Control-Allow-Credentials", "true")
-    				.build();
-    	}
-		
-		if (list.size() == 0) {
-			return Response.status(Status.NOT_FOUND)
-					.header("Access-Control-Allow-Origin", WebApplication.ACCESS_CONTROL_ALLOW_ORIGIN)
-    				.header("Access-Control-Allow-Credentials", "true")
-    				.build();
-		}
-		
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.registerModule(new Hibernate4Module());
-		ObjectWriter writer = mapper.writerWithView(JSonViews.ListView.class);
-		
-		return Response.ok(writer.writeValueAsString(list))
-				.header("Access-Control-Allow-Origin", WebApplication.ACCESS_CONTROL_ALLOW_ORIGIN)
-				.header("Access-Control-Allow-Credentials", "true")
-				.build();
-	}
-    
+        List<Process> list;
+
+        list = processDao.list(startPosition, maxResult);
+
+        return createOkResponse(list).build();
+    }
+
     /**
      *
-     * @param id
+     * @param code
+     * @param headers
      * @return
      * @throws JsonProcessingException
      */
     @GET
-    @Path("/{id:[0-9]*}")
+    @Path("/{code:[a-zA-Z0-9]*}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response findById(@PathParam("id") long id) throws JsonProcessingException {
-    	Process entity = null;
-    	
-    	try {
-    		entity = processDao.find(id);
-    	} catch (Exception e) {
-    		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage())
-    				.header("Access-Control-Allow-Origin", WebApplication.ACCESS_CONTROL_ALLOW_ORIGIN)
-    				.header("Access-Control-Allow-Credentials", "true")
-    				.build();
-    	}
+    public Response find(
+            @Size(min = 5) @PathParam("code") String code)
+            throws JsonProcessingException {
 
-		if (entity == null) {
-			return Response.status(Status.NOT_FOUND)
-					.header("Access-Control-Allow-Origin", WebApplication.ACCESS_CONTROL_ALLOW_ORIGIN)
-    				.header("Access-Control-Allow-Credentials", "true")
-    				.build();
-		}
-		
-		ObjectMapper mapper = new ObjectMapper();
-		
-		mapper.registerModule(new Hibernate4Module());
-		ObjectWriter writer = mapper.writerWithView(JSonViews.EntityView.class);
-		
-		return Response.ok(writer.writeValueAsString(entity))
-				.header("Access-Control-Allow-Origin", WebApplication.ACCESS_CONTROL_ALLOW_ORIGIN)
-	            .header("Access-Control-Allow-Headers", "Access-Control-Allow-Origin, Origin, Content-Type, Content-Length, Accept, Authorization, X-Requested-With")
-	            .header("Access-Control-Allow-Credentials", "true")
-	            .header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD")
-	            .header("Access-Control-Max-Age", "1209600")
-	            .build();
+        return createOkResponse(
+                processDao.find(code)).build();
     }
-    
+
     /**
-    *
-    * @param startPosition
-    * @param maxResult
-    * @param search
-    * @param headers
-    * @return
-    * @throws IOException
-    */
-   @GET
-   @Path("/search")
-   @Produces(MediaType.APPLICATION_JSON)
-   public Response search(
-           @DefaultValue("0") @QueryParam("start") Integer startPosition,
-           @DefaultValue("10") @QueryParam("max") Integer maxResult,
-           @Size(min = 2) @QueryParam("search") String search,
-           @Context HttpHeaders headers)
-           throws IOException {
+     *
+     * @param startPosition
+     * @param maxResult
+     * @param search
+     * @param headers
+     * @return
+     * @throws IOException
+     */
+    @GET
+    @Path("/search")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response search(
+            @DefaultValue("0") @QueryParam("start") Integer startPosition,
+            @DefaultValue("10") @QueryParam("max") Integer maxResult,
+            @Size(min = 2) @QueryParam("search") String search)
+            throws IOException {
 
-       List<Process> list;
+        return createOkResponse(
+                processDao.search(search, startPosition, maxResult)).build();
+    }
 
-       try {
-           list = processDao.search(search, startPosition, maxResult);
-       } catch (NoResultException e) {
-           return createNoResultResponse(e, headers).build();
-       } catch (ConstraintViolationException ce) {
-           return createViolationResponse(ce.getConstraintViolations(), headers).build();
-       } catch (Exception e) {
-           return createInternalServerErroResponse(e, headers).build();
-       }
-
-       return createOkResponse(list, headers).build();
-   }
-    
     /**
      *
      * @param entity
+     * @param headers
      * @return
      * @throws IllegalArgumentException
      * @throws UriBuilderException
@@ -200,310 +115,49 @@ public class ProcessEndpoint {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response create(Process entity) throws IllegalArgumentException, UriBuilderException, JsonProcessingException {
-    	//log.info("This is a log");
-    	if (entity == null) {
-    		return Response.status(Status.BAD_REQUEST)
-    				.header("Access-Control-Allow-Origin", WebApplication.ACCESS_CONTROL_ALLOW_ORIGIN)
-        			.header("Access-Control-Allow-Credentials", "true")
-    		        .build();
-    	}
-    	
-    	if (entity.getId() != null && entity.getId() > 0) {
-    		return Response.status(Status.BAD_REQUEST)
-    				.header("Access-Control-Allow-Origin", WebApplication.ACCESS_CONTROL_ALLOW_ORIGIN)
-        			.header("Access-Control-Allow-Credentials", "true")
-    		        .build();
-    	}
-    	try {
-    		// Validates member using bean validation
-            validate(entity);
-            
-    		entity = processDao.create(entity);
-    	} catch (ConstraintViolationException ce) {
-            // Handle bean validation issues
-            createViolationResponse(ce.getConstraintViolations()).build();
-        } catch (ValidationException e) {
-            // Handle the unique constrain violation
-            Map<String, String> responseObj = new HashMap<String, String>();
-            responseObj.put("error", e.getMessage());
-            return Response.status(Response.Status.CONFLICT).entity(responseObj)
-            		.header("Access-Control-Allow-Origin", WebApplication.ACCESS_CONTROL_ALLOW_ORIGIN)
-        			.header("Access-Control-Allow-Credentials", "true")
-    		        .build();
-        } catch (Exception e) {
-        	Map<String, String> responseObj = new HashMap<String, String>();
-            responseObj.put("error", e.getMessage());
-    		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(responseObj)
-    				.header("Access-Control-Allow-Origin", WebApplication.ACCESS_CONTROL_ALLOW_ORIGIN)
-        			.header("Access-Control-Allow-Credentials", "true")
-    		        .build();
-    	}
-    	
-    	ObjectMapper mapper = new ObjectMapper();
-		
-		mapper.registerModule(new Hibernate4Module());
-		//mapper.getSerializerProvider().setNullValueSerializer(new NullValueSerializer());
-		ObjectWriter writer = mapper.writerWithView(JSonViews.EntityView.class);
-		
-		//return Response.ok(writer.writeValueAsString(entity)).build();
-		
+    public Response create(
+            @NotNull(message = ENTITY_VALIDATION) Process entity)
+            throws IllegalArgumentException, UriBuilderException, JsonProcessingException {
 
-		return Response.created(
-		        UriBuilder.fromResource(ProcessEndpoint.class)
-		        .path(String.valueOf(entity.getId())).build())
-		        .entity(writer.writeValueAsString(entity))
-		        .header("Access-Control-Allow-Origin", WebApplication.ACCESS_CONTROL_ALLOW_ORIGIN)
-    			.header("Access-Control-Allow-Credentials", "true")
-		        .build();
-    }
-    
-    /**
-     *
-     * @return
-     */
-    @OPTIONS
-    public Response getCORSHeadersFromPath() {
-    	return Response.ok()
-    			.header("Access-Control-Allow-Origin", WebApplication.ACCESS_CONTROL_ALLOW_ORIGIN)
-	            .header("Access-Control-Allow-Headers", "Access-Control-Allow-Origin, Origin, Content-Type, Content-Length, Accept, Authorization, X-Requested-With")
-	            .header("Access-Control-Allow-Credentials", "true")
-	            .header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD")
-	            .header("Access-Control-Max-Age", "1209600")
-	            .build();
+        return createCreatedResponse(
+                processDao.create(entity)).build();
     }
 
     /**
      *
-     * @param number
-     * @return
-     */
-    @OPTIONS
-    @Path("/{number:[0-9][0-9]*}")
-    public Response getCORSHeadersFromNumberPath(@PathParam("number") long number) {
-    	return Response.ok()
-		        .header("Access-Control-Allow-Origin", WebApplication.ACCESS_CONTROL_ALLOW_ORIGIN)
-	            .header("Access-Control-Allow-Headers", "Access-Control-Allow-Origin, Origin, Content-Type, Content-Length, Accept, Authorization, X-Requested-With")
-	            .header("Access-Control-Allow-Credentials", "true")
-	            .header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD")
-	            .header("Access-Control-Max-Age", "1209600")
-	            .build();
-    }
-    
-    /**
-     *
-     * @param id
+     * @param code
      * @param entity
+     * @param headers
      * @return
      * @throws JsonProcessingException
      */
     @PUT
-    @Path("/{id:[0-9][0-9]*}")
+    @Path("/{code:[a-zA-Z0-9]*}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response update(@PathParam("id") long id, Process entity) throws JsonProcessingException{
-    	
-    	if (entity.getId() != id) {
-			return Response.status(Status.CONFLICT)
-					.entity("entity id doesn't match with resource path id")
-					.build();
-		}
-    	
-    	try {
-    		// Validates member using bean validation
-            validate(entity);
-            
-    		entity = processDao.update(entity);
-    	} catch (ConstraintViolationException ce) {
-            // Handle bean validation issues
-            return createViolationResponse(ce.getConstraintViolations()).build();
-        } catch (ValidationException e) {
-            // Handle the unique constrain violation
-            Map<String, String> responseObj = new HashMap<String, String>();
-            responseObj.put("error", e.getMessage());
-            return Response.status(Response.Status.CONFLICT).entity(entity).build();
-        } catch (Exception e) {
-        	Map<String, String> responseObj = new HashMap<String, String>();
-            responseObj.put("error", e.getMessage());
-    		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(responseObj).build();
-    	}
+    public Response update(
+            @PathParam("code") String code,
+            @NotNull(message = ProcessDao.ENTITY_VALIDATION) Process entity)
+            throws JsonProcessingException {
 
-		if (entity == null) {
-			return Response.status(Status.NOT_FOUND).build();
-		}
-
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.registerModule(new Hibernate4Module());
-		ObjectWriter writer = mapper.writerWithView(JSonViews.EntityView.class);
-		
-		return Response.ok(writer.writeValueAsString(entity))
-				.header("Access-Control-Allow-Origin", WebApplication.ACCESS_CONTROL_ALLOW_ORIGIN)
-    			.header("Access-Control-Allow-Credentials", "true")
-    			.build();
+        return createOkResponse(
+                processDao.update(entity)).build();
     }
-    
+
     /**
      *
-     * @param id
+     * @param code
      * @return
+     * @throws com.fasterxml.jackson.core.JsonProcessingException
      */
     @DELETE
-    @Path("/{id:[0-9]*}")
-    public Response deleteById(@PathParam("id") long id) {
-    	Process entity = null;
-    	try {
-    		entity = processDao.remove(id);
-    	} catch (ConstraintViolationException ce) {
-            // Handle bean validation issues
-            return createViolationResponse(ce.getConstraintViolations()).build();
-        } catch (ValidationException e) {
-            // Handle the unique constrain violation
-            Map<String, String> responseObj = new HashMap<String, String>();
-            responseObj.put("error", e.getMessage());
-            return Response.status(Response.Status.CONFLICT).entity(responseObj).build();
-        } catch (Exception e) {
-        	Map<String, String> responseObj = new HashMap<String, String>();
-            responseObj.put("error", e.getMessage());
-    		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
-    	}
-    	
-		if (entity == null) {
-			return Response.noContent().status(Status.NOT_FOUND).build();
-		}
-		return Response.noContent()
-				.header("Access-Control-Allow-Origin", WebApplication.ACCESS_CONTROL_ALLOW_ORIGIN)
-    			.header("Access-Control-Allow-Credentials", "true")
-    			.build();
+    @Path("/{code:[a-zA-Z0-9]*}")
+    public Response delete(
+            @Min(1) @PathParam("code") String code)
+            throws JsonProcessingException {
+
+        processDao.remove(code);
+
+        return createNoContentResponse().build();
     }
-    
-    /**
-     * <p>
-     * Validates the given Member variable and throws validation exceptions based on the type of error. If the error is standard
-     * bean validation errors then it will throw a ConstraintValidationException with the set of the constraints violated.
-     * </p>
-     * <p>
-     * If the error is caused because an existing member with the same email is registered it throws a regular validation
-     * exception so that it can be interpreted separately.
-     * </p>
-     * 
-     * @param member Member to be validated
-     * @throws ConstraintViolationException If Bean Validation errors exist
-     * @throws ValidationException If member with the same email already exists
-     */
-    private void validate(Process entity) throws ConstraintViolationException {
-        // Create a bean validator and check for issues.
-        Set<ConstraintViolation<Process>> violations = validator.validate(entity);
-
-        if (!violations.isEmpty()) {
-            throw new ConstraintViolationException(new HashSet<ConstraintViolation<?>>(violations));
-        }
-    }
-    
-    
-    /**
-     * Creates a JAX-RS "Bad Request" response including a map of all violation fields, and their message. This can then be used
-     * by clients to show violations.
-     * 
-     * @param violations A set of violations that needs to be reported
-     * @return JAX-RS response containing all violations
-     */
-    private Response.ResponseBuilder createViolationResponse(Set<ConstraintViolation<?>> violations) {
-        log.fine("Validation completed. violations found: " + violations.size());
-
-        Map<String, String> responseObj = new HashMap<String, String>();
-
-        for (ConstraintViolation<?> violation : violations) {
-            responseObj.put(violation.getPropertyPath().toString(), violation.getMessage());
-        }
-
-        return Response.status(Response.Status.BAD_REQUEST).entity(responseObj);
-    }
-    
-    private Response.ResponseBuilder createNoResultResponse(NoResultException e, @Context HttpHeaders headers) {
-        log.log(Level.FINE, "Not found exception found: {0}", e.getMessage());
-
-        // Handle the unique constrain violation
-        Map<String, String> responseObj = new HashMap<>();
-        responseObj.put("message", NOT_FOUND);
-        ResponseBuilder responseBuilder = Response.status(Response.Status.NOT_FOUND).entity(responseObj);
-
-        if (headers.getHeaderString("Origin") != null && !headers.getHeaderString("Origin").isEmpty()) {
-            responseBuilder.header("Access-Control-Allow-Origin", headers.getRequestHeader("Origin").get(0))
-                    .header("Access-Control-Allow-Credentials", "true");
-        }
-
-        return responseBuilder;
-    }
-
-    private Response.ResponseBuilder createInternalServerErroResponse(Exception e, @Context HttpHeaders headers) {
-        log.log(Level.FINE, "Not found exception found: {0}", e.getMessage());
-
-        // Handle the unique constrain violation
-        Map<String, String> responseObj = new HashMap<>();
-        responseObj.put("message", e.getMessage());
-        ResponseBuilder responseBuilder = Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(responseObj);
-
-        if (headers.getHeaderString("Origin") != null && !headers.getHeaderString("Origin").isEmpty()) {
-            responseBuilder.header("Access-Control-Allow-Origin", headers.getRequestHeader("Origin").get(0))
-                    .header("Access-Control-Allow-Credentials", "true");
-        }
-
-        return responseBuilder;
-    }
-
-    private Response.ResponseBuilder createOkResponse(Object entity, @Context HttpHeaders headers) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-
-        mapper.registerModule(new Hibernate4Module());
-        mapper.getSerializerProvider().setNullValueSerializer(new NullValueSerializer());
-        mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, true);
-        //ObjectWriter writer = mapper.writerWithView(JSonViews.EntityView.class);
-
-        ResponseBuilder responseBuilder = null;
-
-        if (entity instanceof BOM) {
-            responseBuilder = Response.ok(UriBuilder.fromResource(BOMEndpoint.class)
-                    .path(String.valueOf(((BOM) entity).getId())));
-        } else {
-            responseBuilder = Response.ok(UriBuilder.fromResource(BOMEndpoint.class));
-        }
-
-        responseBuilder.entity(mapper.writeValueAsString(entity));
-
-        if (headers.getHeaderString("Origin") != null && !headers.getHeaderString("Origin").isEmpty()) {
-            responseBuilder
-                    .header("Access-Control-Allow-Origin", headers.getRequestHeader("Origin").get(0))
-                    .header("Access-Control-Allow-Credentials", "true");
-        }
-
-        return responseBuilder;
-    }
-
-    /**
-     * Creates a JAX-RS "Bad Request" response including a map of all violation
-     * fields, and their message. This can then be used by clients to show
-     * violations.
-     *
-     * @param violations A set of violations that needs to be reported
-     * @return JAX-RS response containing all violations
-     */
-    private Response.ResponseBuilder createViolationResponse(Set<ConstraintViolation<?>> violations, @Context HttpHeaders headers) {
-        log.log(Level.FINE, "Validation completed. violations found: {0}", violations.size());
-
-        Map<String, String> responseObj = new HashMap<>();
-
-        violations.stream().forEach((violation) -> {
-            responseObj.put(violation.getPropertyPath().toString(), violation.getMessage());
-        });
-
-        ResponseBuilder responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(responseObj);
-
-        if (!headers.getHeaderString("Origin").isEmpty()) {
-            responseBuilder.header("Access-Control-Allow-Origin", headers.getRequestHeader("Origin").get(0))
-                    .header("Access-Control-Allow-Credentials", "true");
-        }
-
-        return responseBuilder;
-    }
-
 }
