@@ -19,7 +19,6 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import br.com.altamira.data.model.manufacturing.process.Operation;
 import br.com.altamira.data.model.manufacturing.process.Process;
 import br.com.altamira.data.model.manufacturing.process.Revision;
 import java.util.HashSet;
@@ -37,7 +36,6 @@ public class ProcessDao {
 
     public static final String START_PAGE_VALIDATION = "Invalid start page number, must be greater than 0.";
     public static final String PAGE_SIZE_VALIDATION = "Invalid page size, must be greater than 0.";
-    public static final String CODE_VALIDATION = "Invalid code, must be char or numbers";
     public static final String ENTITY_VALIDATION = "Entity can't be null.";
     public static final String ID_NULL_VALIDATION = "Entity id must be null or zero.";
     public static final String ID_NOT_NULL_VALIDATION = "Entity id can't be null or zero.";
@@ -54,8 +52,8 @@ public class ProcessDao {
 
     /**
      *
-     * @param startPosition
-     * @param maxResult
+     * @param startPage
+     * @param pageSize
      * @return
      */
     public List<Process> list(
@@ -67,7 +65,9 @@ public class ProcessDao {
         CriteriaQuery<Process> q = cb.createQuery(Process.class);
         Root<Process> entity = q.from(Process.class);
 
-        q.select(cb.construct(Process.class, entity.get("code"),
+        q.select(cb.construct(Process.class,
+                entity.get("id"),
+                entity.get("code"),
                 entity.get("description")));
 
         return entityManager.createQuery(q)
@@ -78,65 +78,25 @@ public class ProcessDao {
 
     /**
      *
-     * @param requestId
-     * @param startPosition
-     * @param maxResult
-     * @return
-     */
-    public List<Operation> listOperations(Long requestId, int startPosition, int maxResult) {
-
-        TypedQuery<Operation> findAllQuery = entityManager.createNamedQuery("Process.items", Operation.class);
-        findAllQuery.setParameter("requestId", requestId);
-
-        findAllQuery.setFirstResult(startPosition);
-        findAllQuery.setMaxResults(maxResult);
-
-        return findAllQuery.getResultList();
-    }
-
-    /**
-     *
      * @param id
      * @return
      */
-    public Process find(long id) {
-        Process entity;
-
-        TypedQuery<Process> findByIdQuery = entityManager.createNamedQuery("Process.findById", Process.class);
-        findByIdQuery.setParameter("id", id);
-
-        try {
-            entity = findByIdQuery.getSingleResult();
-        } catch (NoResultException nre) {
-            return null;
-        }
-
-        // Lazy load of items
-        if (entity.getOperation() != null) {
-            entity.getOperation().size();
-        }
-
-        return entity;
-    }
-
-    /**
-     *
-     * @param code
-     * @return
-     */
     public Process find(
-            @Size(min = 1, message = CODE_VALIDATION) String code)
+            @Min(value = 1, message = ID_NOT_NULL_VALIDATION) long id)
             throws ConstraintViolationException, NoResultException {
 
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Process> q = cb.createQuery(Process.class);
         Root<Process> entity = q.from(Process.class);
 
-        q.select(entity).where(cb.equal(entity.get("code"), code));
+        q.select(entity).where(cb.equal(entity.get("id"), id));
 
         Process process = entityManager.createQuery(q).getSingleResult();
 
-        // Lazy load of items
+        // Lazy load of revision
+        process.getRevision().size();
+
+        // Lazy load of operation
         if (process.getOperation() != null) {
             process.getOperation().size();
             process.getOperation().stream().forEach((operation) -> {
@@ -201,7 +161,7 @@ public class ProcessDao {
         for (Revision r : entity.getRevision()) {
             r.setProcess(entity);
         }
-        
+
         entity.getOperation().stream().map((operation) -> {
             operation.setProcess(entity);
             return operation;
@@ -236,6 +196,11 @@ public class ProcessDao {
 
         if (entity.getId() == null || entity.getId() == 0l) {
             throw new IllegalArgumentException(ID_NOT_NULL_VALIDATION);
+        }
+
+        // Resolve dependencies
+        for (Revision r : entity.getRevision()) {
+            r.setProcess(entity);
         }
 
         // Resolve dependencies
@@ -279,13 +244,12 @@ public class ProcessDao {
     /**
      *
      * @param id
-     * @return
      */
     public void remove(
-            @Min(value = 1, message = CODE_VALIDATION) String code)
+            @Min(value = 1, message = ID_NOT_NULL_VALIDATION) long id)
             throws ConstraintViolationException, NoResultException {
 
-        remove(find(code));
+        remove(find(id));
     }
 
     /**

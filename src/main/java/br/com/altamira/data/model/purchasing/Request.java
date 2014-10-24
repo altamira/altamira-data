@@ -30,6 +30,10 @@ import br.com.altamira.data.serialize.NullCollectionSerializer;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 
 /**
  *
@@ -40,16 +44,22 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @NamedQueries({
     @NamedQuery(name = "Request.list", query = "SELECT r FROM Request r"),
     @NamedQuery(name = "Request.findById", query = "SELECT r FROM Request r WHERE r.id = :id"),
-	@NamedQuery(name = "Request.current", query = "SELECT r FROM Request r WHERE r.id = (SELECT MAX(rr.id) FROM Request rr WHERE rr.sent IS NULL)"),
-	@NamedQuery(name = "Request.items", query = "SELECT r FROM RequestItem r WHERE r.request = :requestId")})
+    @NamedQuery(name = "Request.current", query = "SELECT r FROM Request r WHERE r.id = (SELECT MAX(rr.id) FROM Request rr WHERE rr.sent IS NULL)"),
+    @NamedQuery(name = "Request.items", query = "SELECT r FROM RequestItem r WHERE r.request = :requestId")})
 public class Request extends Resource {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -2066957562882901235L;
+    /**
+     *
+     */
+    private static final long serialVersionUID = -2066957562882901235L;
+    
+//    @Id
+//    @SequenceGenerator(name = "RequestSequence", sequenceName = "PR_REQUEST_SEQ", allocationSize = 1)
+//    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "RequestSequence")
+//    @Column(name = "ID")
+//    private Long id;
 
-	@NotNull
+    @NotNull
     @Basic(optional = false)
     @Column(name = "CREATED")
     @Temporal(TemporalType.TIMESTAMP)
@@ -60,26 +70,23 @@ public class Request extends Resource {
     @Basic(optional = false)
     @Column(name = "CREATOR", columnDefinition = "nvarchar2(255)")
     private String creator = "";
-    
+
     //@JsonSerialize(using = DateSerializer.class)
     @Column(name = "SENT")
     @Temporal(TemporalType.TIMESTAMP)
     private Date sent = new Date();
-    
+
     @JsonView(JSonViews.EntityView.class)
     @JsonSerialize(using = NullCollectionSerializer.class)
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "request", fetch = FetchType.LAZY, orphanRemoval = true)
     //@JoinColumn(name="REQUEST")
     private Set<RequestItem> item = new HashSet<RequestItem>();
-    
-    /*@ManyToOne(optional = true, fetch = FetchType.LAZY)
-    private QuotationRequest quotationRequest;*/
 
+    /*@ManyToOne(optional = true, fetch = FetchType.LAZY)
+     private QuotationRequest quotationRequest;*/
     /**
      *
      */
-    
-
     public Request() {
     }
 
@@ -93,7 +100,21 @@ public class Request extends Resource {
         this.creator = creator;
         this.sent = null;
     }
-    
+
+    /**
+     * @return the id
+     */
+//    public Long getId() {
+//        return id;
+//    }
+
+    /**
+     * @param id the id to set
+     */
+//    public void setId(Long id) {
+//        this.id = id;
+//    }
+
     /**
      *
      * @return
@@ -160,12 +181,11 @@ public class Request extends Resource {
     }
 
     /*@XmlTransient
-    public QuotationRequest getQuotationRequest() {
-        return quotationRequest;
-    }
+     public QuotationRequest getQuotationRequest() {
+     return quotationRequest;
+     }
 
-    public void setQuotationRequest(QuotationRequest quotationRequest) {
-        this.quotationRequest = quotationRequest;
-    }*/
-
+     public void setQuotationRequest(QuotationRequest quotationRequest) {
+     this.quotationRequest = quotationRequest;
+     }*/
 }

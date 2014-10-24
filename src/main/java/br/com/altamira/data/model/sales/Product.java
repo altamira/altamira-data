@@ -13,6 +13,10 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import br.com.altamira.data.model.Resource;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 
 /**
  *
@@ -21,56 +25,62 @@ import br.com.altamira.data.model.Resource;
 @Entity
 @Table(name = "SL_PRODUCT", uniqueConstraints = @UniqueConstraint(columnNames = {"CODE", "DESCRIPTION"}))
 @NamedQueries({
-	@NamedQuery(name = "Product.list", query = "SELECT p FROM Product p"),
-	@NamedQuery(name = "Product.findById", query = "SELECT p FROM Product p WHERE p.id = :id"),
-	@NamedQuery(name = "Product.findByCode", query = "SELECT p FROM Product p WHERE p.code = :code")})
+    @NamedQuery(name = "Product.list", query = "SELECT p FROM Product p"),
+    @NamedQuery(name = "Product.findById", query = "SELECT p FROM Product p WHERE p.id = :id"),
+    @NamedQuery(name = "Product.findByCode", query = "SELECT p FROM Product p WHERE p.code = :code")})
 public class Product extends Resource {
-	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -4871377387938455032L;
 
-	@NotNull
-	@Size(min=10)
-	@Column(name = "CODE", unique=true, nullable=false) 
-	private String code = "";
-	
-	@NotNull
-	@Size(min=10)
-	@Column(name = "DESCRIPTION", unique=true, nullable=false) 
-	private String description = "";
-	
-	@Column(name = "COLOR")
-	private String color = "";
-	
-	@NotNull
-	@Min(0)
-	@Column(name = "WIDTH")
-	private BigDecimal width = BigDecimal.valueOf(0);
-	
-	@NotNull
-	@Min(0)
-	@Column(name = "HEIGHT")
-	private BigDecimal height = BigDecimal.valueOf(0);
-	
-	@NotNull
-	@Min(0)
-	@Column(name = "LENGTH")
-	private BigDecimal length = BigDecimal.valueOf(0);
-	
-	@NotNull
-	@Min(0)
-	@Column(name = "WEIGHT")
-	private BigDecimal weight = BigDecimal.valueOf(0);
+    /**
+     *
+     */
+    private static final long serialVersionUID = -4871377387938455032L;
+
+//    @Id
+//    @SequenceGenerator(name = "ProductSequence", sequenceName = "SL_PRODUCT_SEQ", allocationSize = 1)
+//    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ProductSequence")
+//    @Column(name = "ID")
+//    private Long id;
+
+    @NotNull
+    @Size(min = 10)
+    @Column(name = "CODE", unique = true, nullable = false)
+    private String code = "";
+
+    @NotNull
+    @Size(min = 10)
+    @Column(name = "DESCRIPTION", unique = true, nullable = false)
+    private String description = "";
+
+    @Column(name = "COLOR")
+    private String color = "";
+
+    @NotNull
+    @Min(0)
+    @Column(name = "WIDTH")
+    private BigDecimal width = BigDecimal.valueOf(0);
+
+    @NotNull
+    @Min(0)
+    @Column(name = "HEIGHT")
+    private BigDecimal height = BigDecimal.valueOf(0);
+
+    @NotNull
+    @Min(0)
+    @Column(name = "LENGTH")
+    private BigDecimal length = BigDecimal.valueOf(0);
+
+    @NotNull
+    @Min(0)
+    @Column(name = "WEIGHT")
+    private BigDecimal weight = BigDecimal.valueOf(0);
 
     /**
      *
      */
     public Product() {
-		
-	}
-	
+
+    }
+
     /**
      *
      * @param code
@@ -82,128 +92,142 @@ public class Product extends Resource {
      * @param weight
      */
     public Product(String code, String description, String color,
-			BigDecimal width, BigDecimal height, BigDecimal length,
-			BigDecimal weight) {
-		super();
-		this.code = code;
-		this.description = description;
-		this.color = color;
-		this.width = width;
-		this.height = height;
-		this.length = length;
-		this.weight = weight;
-	}
+            BigDecimal width, BigDecimal height, BigDecimal length,
+            BigDecimal weight) {
+        super();
+        this.code = code;
+        this.description = description;
+        this.color = color;
+        this.width = width;
+        this.height = height;
+        this.length = length;
+        this.weight = weight;
+    }
+
+    /**
+     * @return the id
+     */
+//    public Long getId() {
+//        return id;
+//    }
+
+    /**
+     * @param id the id to set
+     */
+//    public void setId(Long id) {
+//        this.id = id;
+//    }
 
     /**
      *
      * @return
      */
     public String getCode() {
-		return code;
-	}
+        return code;
+    }
 
     /**
      *
      * @param code
      */
     public void setCode(String code) {
-		this.code = code;
-	}
+        this.code = code;
+    }
 
     /**
      *
      * @return
      */
     public String getDescription() {
-		return description;
-	}
+        return description;
+    }
 
     /**
      *
      * @param description
      */
     public void setDescription(String description) {
-		this.description = description;
-	}
+        this.description = description;
+    }
 
     /**
      *
      * @return
      */
     public String getColor() {
-		return color;
-	}
+        return color;
+    }
 
     /**
      *
      * @param color
      */
     public void setColor(String color) {
-		this.color = color;
-	}
+        this.color = color;
+    }
 
     /**
      *
      * @return
      */
     public BigDecimal getWidth() {
-		return width;
-	}
+        return width;
+    }
 
     /**
      *
      * @param width
      */
     public void setWidth(BigDecimal width) {
-		this.width = width;
-	}
+        this.width = width;
+    }
 
     /**
      *
      * @return
      */
     public BigDecimal getHeight() {
-		return height;
-	}
+        return height;
+    }
 
     /**
      *
      * @param height
      */
     public void setHeight(BigDecimal height) {
-		this.height = height;
-	}
+        this.height = height;
+    }
 
     /**
      *
      * @return
      */
     public BigDecimal getLength() {
-		return length;
-	}
+        return length;
+    }
 
     /**
      *
      * @param length
      */
     public void setLength(BigDecimal length) {
-		this.length = length;
-	}
+        this.length = length;
+    }
 
     /**
      *
      * @return
      */
     public BigDecimal getWeight() {
-		return weight;
-	}
+        return weight;
+    }
 
     /**
      *
      * @param weight
      */
     public void setWeight(BigDecimal weight) {
-		this.weight = weight;
-	}
+        this.weight = weight;
+    }
 
 }

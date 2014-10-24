@@ -9,8 +9,6 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Min;
@@ -30,9 +28,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
  */
 @Entity
 @Table(name = "MN_OPERATION")
-@NamedQueries({
-    @NamedQuery(name = "Operation.list", query = "SELECT o FROM Operation o"),
-    @NamedQuery(name = "Operation.findById", query = "SELECT o FROM Operation o WHERE o.id = :id")})
 public class Operation extends br.com.altamira.data.model.Operation {
 
     /**
@@ -40,9 +35,20 @@ public class Operation extends br.com.altamira.data.model.Operation {
      */
     private static final long serialVersionUID = 4778350055794788171L;
 
+//    @Id
+//    @SequenceGenerator(name = "OperationSequence", sequenceName = "MN_OPERATION_SEQ", allocationSize = 1)
+//    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "OperationSequence")
+//    @Column(name = "ID")
+//    private Long id;
+
+    @JsonIgnore
+    @JoinColumn(name = "PROCESS", referencedColumnName = "ID")
+    @ManyToOne(optional = true, fetch = FetchType.LAZY)
+    private Process process;
+
     @NotNull
     @Min(1)
-    @Column(name = "SEQUENCE")
+    @Column(name = "SEQ")
     private int sequence;
 
     @NotNull
@@ -58,21 +64,39 @@ public class Operation extends br.com.altamira.data.model.Operation {
     @Column(name = "SKETCH", columnDefinition = "nvarchar2(500)")
     private String sketch;
 
-    @JsonIgnore
-    @JoinColumn(name = "PROCESS", referencedColumnName = "ID")
-    @ManyToOne(optional = true, fetch = FetchType.LAZY)
-    private Process process;
+    @JsonView(JSonViews.EntityView.class)
+    @JsonSerialize(using = NullCollectionSerializer.class)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "operation", fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<Consume> consume = new ArrayList<>();
 
     @JsonView(JSonViews.EntityView.class)
     @JsonSerialize(using = NullCollectionSerializer.class)
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "operation", fetch = FetchType.LAZY, orphanRemoval = true)
-    private List<Consume> consume = new ArrayList<Consume>();
+    private List<Produce> produce = new ArrayList<>();
 
-    @JsonView(JSonViews.EntityView.class)
-    @JsonSerialize(using = NullCollectionSerializer.class)
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "operation", fetch = FetchType.LAZY, orphanRemoval = true)
-    private List<Produce> produce = new ArrayList<Produce>();
+    public Operation() {
+    }
 
+    public Operation(long id, int sequence, String name) {
+        this.id = id;
+        this.sequence = sequence;
+        this.name = name;
+    }
+
+    /**
+     * @return the id
+     */
+//    public Long getId() {
+//        return id;
+//    }
+
+    /**
+     * @param id the id to set
+     */
+//    public void setId(Long id) {
+//        this.id = id;
+//    }
+    
     /**
      *
      * @return

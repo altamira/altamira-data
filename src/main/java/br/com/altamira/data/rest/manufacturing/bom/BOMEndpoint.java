@@ -10,7 +10,7 @@ import br.com.altamira.data.model.manufacturing.bom.BOM;
 import br.com.altamira.data.rest.BaseEndpoint;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.IOException;
-import java.util.logging.Logger;
+import java.util.Date;
 import javax.inject.Inject;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -50,7 +50,6 @@ public class BOMEndpoint
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Override
     public Response list(
             @DefaultValue("0") @QueryParam("start") Integer startPosition,
             @DefaultValue("10") @QueryParam("max") Integer maxResult)
@@ -109,7 +108,6 @@ public class BOMEndpoint
      * @throws JsonProcessingException
      */
     @POST
-    @Override
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response create(
@@ -127,7 +125,6 @@ public class BOMEndpoint
      * @throws JsonProcessingException
      */
     @PUT
-    @Override
     @Path(value = "{number:[0-9]*}")
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Produces(value = MediaType.APPLICATION_JSON)
@@ -145,6 +142,30 @@ public class BOMEndpoint
         return createOkResponse(bomDao.update(entity)).build();
     }
 
+    /**
+     *
+     * @param number
+     * @param headers
+     * @return
+     * @throws JsonProcessingException
+     */
+    @PUT
+    @Path(value = "{number:[0-9]*}/checked")
+    @Consumes(value = MediaType.APPLICATION_JSON)
+    @Produces(value = MediaType.APPLICATION_JSON)
+    public Response update(
+            @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "number") long number)
+            throws JsonProcessingException {
+        
+        BOM entity = bomDao.findByNumber(number);
+
+        // Add the current date to checked field
+        Date date = new Date();
+        entity.setChecked(date);
+
+        return createOkResponse(bomDao.update(entity)).build();
+    }
+    
     /**
      *
      * @param number

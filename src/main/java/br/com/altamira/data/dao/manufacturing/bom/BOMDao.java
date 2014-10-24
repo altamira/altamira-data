@@ -63,7 +63,10 @@ public class BOMDao {
         CriteriaQuery<BOM> q = cb.createQuery(BOM.class);
         Root<BOM> entity = q.from(BOM.class);
 
-        q.select(cb.construct(BOM.class, entity.get("number"), entity.get("customer")));
+        q.select(cb.construct(BOM.class, 
+                entity.get("id"),
+                entity.get("number"), 
+                entity.get("customer")));
 
         return entityManager.createQuery(q)
                 .setFirstResult(startPage * pageSize)

@@ -1,7 +1,12 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package br.com.altamira.data.model;
 
 import java.io.Serializable;
-
+import java.lang.reflect.ParameterizedType;
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -12,44 +17,47 @@ import javax.validation.constraints.NotNull;
 
 /**
  *
- * @author alessandro.holanda
+ * @author Alessandro
  */
 @javax.persistence.MappedSuperclass
 public abstract class Entity implements Serializable {
-	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -7631337160713217378L;
 
-	// Guarantee unique id for all entities
-	@Id
+    /**
+     *
+     */
+    private static final long serialVersionUID = -73112170881659955L;
+
+    // Guarantee unique id for all entities
+    @Id
     @SequenceGenerator(name = "EntitySequence", sequenceName = "ENTITY_SEQUENCE", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "EntitySequence")
     @Column(name = "ID")
-    private Long id;
-	
-	@NotNull
-	@Column(name = "LAST_MODIFIED")
-	Long lastModified = System.currentTimeMillis();
+    protected Long id;
+
+    @NotNull
+    @Column(name = "LAST_MODIFIED")
+    private Long lastModified = System.currentTimeMillis();
     
+    // TODO: store class name from subclass in an ENTITY table
+//    @NotNull
+    @Column(name = "ENTITY_CLASS")
+    private String entityClass;
+
     /**
-     *
-     * @return
+     * @return the id
      */
     public Long getId() {
-		return id;
-	}
+        return id;
+    }
 
     /**
-     *
-     * @param id
+     * @param id the id to set
      */
     public void setId(Long id) {
-		this.id = id;
-	}
+        this.id = id;
+    }
 
-	@Override
+    @Override
     public int hashCode() {
         int hash = 0;
         hash += (id != null ? id.hashCode() : 0);
@@ -65,7 +73,7 @@ public abstract class Entity implements Serializable {
         }
         Entity other = (Entity) object;
         if ((this.id == null && other.getId() != null)
-                || (this.id != null && !this.id.equals(other.getId()))) {
+                || (this.id != null && !this.getId().equals(other.getId()))) {
             return false;
         }
         return true;
@@ -81,11 +89,19 @@ public abstract class Entity implements Serializable {
      * @return
      */
     public static long getSerialversionuid() {
-		return serialVersionUID;
-	}  
+        return serialVersionUID;
+    }
 
-	@PreUpdate
-	void updateModificationTimestamp() {
-	 lastModified = System.currentTimeMillis();
-	}
+    @PreUpdate
+    void updateModificationTimestamp() {
+        lastModified = System.currentTimeMillis();
+        entityClass = getTypeClass().getName();
+    }
+              
+    private Class<? extends br.com.altamira.data.model.Entity> getTypeClass() {
+        Class<? extends br.com.altamira.data.model.Entity> clazz = (Class<? extends br.com.altamira.data.model.Entity>) ((ParameterizedType) this.getClass()
+                .getGenericSuperclass()).getActualTypeArguments()[0];
+        return clazz;
+    }
+
 }

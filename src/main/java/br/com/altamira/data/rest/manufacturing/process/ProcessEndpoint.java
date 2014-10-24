@@ -26,6 +26,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import br.com.altamira.data.dao.manufacturing.process.ProcessDao;
 import br.com.altamira.data.rest.BaseEndpoint;
 import javax.enterprise.context.RequestScoped;
+import javax.persistence.NoResultException;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
@@ -35,17 +36,18 @@ import javax.validation.constraints.NotNull;
  */
 @Path("manufacturing/process")
 @RequestScoped
-public class ProcessEndpoint
-        extends BaseEndpoint<Process> /*implements Endpoint<Process> See https://issues.jboss.org/browse/WFLY-2724*/ {
+public class ProcessEndpoint extends BaseEndpoint<Process> /*implements Endpoint<Process> See https://issues.jboss.org/browse/WFLY-2724*/ {
 
     @Inject
     private ProcessDao processDao;
+    
+    @Inject
+    private OperationEndpoint operationEndpoint;
 
     /**
      *
      * @param startPosition
      * @param maxResult
-     * @param headers
      * @return
      * @throws IOException
      */
@@ -56,37 +58,48 @@ public class ProcessEndpoint
             @DefaultValue("10") @QueryParam("max") Integer maxResult)
             throws IOException {
 
-        List<Process> list;
-
-        list = processDao.list(startPosition, maxResult);
-
-        return createOkResponse(list).build();
+        return createOkResponse(
+                processDao.list(startPosition, maxResult)).build();
     }
 
     /**
      *
-     * @param code
-     * @param headers
+     * @param id
      * @return
      * @throws JsonProcessingException
      */
     @GET
-    @Path("/{code:[a-zA-Z0-9]*}")
+    @Path("/{id:[0-9]*}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response find(
-            @Size(min = 5) @PathParam("code") String code)
-            throws JsonProcessingException {
+            @PathParam("id") long id)
+            throws JsonProcessingException, NoResultException {
 
         return createOkResponse(
-                processDao.find(code)).build();
+                processDao.find(id)).build();
     }
 
+    /**
+     *
+     * @param processId
+     * @return
+     * @throws JsonProcessingException
+     */
+    @Path("/{process:[0-9]*}/operation")
+    @Produces(MediaType.APPLICATION_JSON)
+    public java.lang.Object listOperation(
+            @PathParam("process") long processId)
+            throws JsonProcessingException, NoResultException {
+
+        return operationEndpoint;
+
+    }
+    
     /**
      *
      * @param startPosition
      * @param maxResult
      * @param search
-     * @param headers
      * @return
      * @throws IOException
      */
@@ -106,7 +119,6 @@ public class ProcessEndpoint
     /**
      *
      * @param entity
-     * @param headers
      * @return
      * @throws IllegalArgumentException
      * @throws UriBuilderException
@@ -127,7 +139,6 @@ public class ProcessEndpoint
      *
      * @param code
      * @param entity
-     * @param headers
      * @return
      * @throws JsonProcessingException
      */
@@ -136,8 +147,8 @@ public class ProcessEndpoint
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response update(
-            @PathParam("code") String code,
-            @NotNull(message = ProcessDao.ENTITY_VALIDATION) Process entity)
+            @NotNull @Size(min = 1, message = ID_VALIDATION) @PathParam("code") String code,
+            @NotNull(message = ENTITY_VALIDATION) Process entity)
             throws JsonProcessingException {
 
         return createOkResponse(
@@ -146,18 +157,19 @@ public class ProcessEndpoint
 
     /**
      *
-     * @param code
+     * @param id
      * @return
      * @throws com.fasterxml.jackson.core.JsonProcessingException
      */
     @DELETE
-    @Path("/{code:[a-zA-Z0-9]*}")
+    @Path("/{id:[0-9]*}")
     public Response delete(
-            @Min(1) @PathParam("code") String code)
+            @Min(1) @PathParam("id") long id)
             throws JsonProcessingException {
 
-        processDao.remove(code);
+        processDao.remove(id);
 
         return createNoContentResponse().build();
     }
+    
 }

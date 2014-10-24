@@ -15,6 +15,10 @@ import javax.validation.constraints.Size;
 import br.com.altamira.data.model.Resource;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 
 /**
  *
@@ -28,7 +32,13 @@ public class BOMItemPart extends Resource {
      * Serial version ID
      */
     private static final long serialVersionUID = -4871377387938455032L;
-
+    
+//    @Id
+//    @SequenceGenerator(name = "BOMItemPartSequence", sequenceName = "MN_BOM_ITEM_PART_SEQ", allocationSize = 1)
+//    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "BOMItemPartSequence")
+//    @Column(name = "ID")
+//    private Long id;
+    
     @NotNull
     @Size(min = 10)
     @Column(name = "CODE")
@@ -78,6 +88,20 @@ public class BOMItemPart extends Resource {
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Product product;
     */
+ 
+    /**
+     * @return the id
+     */
+//    public Long getId() {
+//        return id;
+//    }
+
+    /**
+     * @param id the id to set
+     */
+//    public void setId(Long id) {
+//        this.id = id;
+//    }
     
     /**
      *

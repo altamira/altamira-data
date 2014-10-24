@@ -15,6 +15,10 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import br.com.altamira.data.model.Resource;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 
 /**
  *
@@ -28,6 +32,12 @@ public class Order extends Resource {
      * Serial number ID
      */
     private static final long serialVersionUID = -3725014293364656727L;
+
+//    @Id
+//    @SequenceGenerator(name = "OrderSequence", sequenceName = "SL_ORDER_SEQ", allocationSize = 1)
+//    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "OrderSequence")
+//    @Column(name = "ID")
+//    private Long id;
 
     @NotNull
     @Column(name = "NUMBER", unique = true, nullable = false)
@@ -66,7 +76,7 @@ public class Order extends Resource {
 
     @Column(name = "PROJECT")
     private Long project = 0l;
-    
+
     @Temporal(value = TemporalType.DATE)
     @Column(name = "CHECKLIST")
     private Date checked;
@@ -77,11 +87,25 @@ public class Order extends Resource {
     public Order() {
         this.items = new ArrayList<>();
     }
-    
+
     public Order(Long number, String customer) {
         this.number = number;
         this.customer = customer;
     }
+
+    /**
+     * @return the id
+     */
+//    public Long getId() {
+//        return id;
+//    }
+
+    /**
+     * @param id the id to set
+     */
+//    public void setId(Long id) {
+//        this.id = id;
+//    }
 
     /**
      *

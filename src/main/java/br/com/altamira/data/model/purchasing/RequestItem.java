@@ -27,6 +27,11 @@ import br.com.altamira.data.serialize.NullCollectionSerializer;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+
 /**
  *
  * @author Alessandro
@@ -38,37 +43,40 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
     @NamedQuery(name = "RequestItem.findById", query = "SELECT r FROM RequestItem r WHERE r.id = :id")})
 public class RequestItem extends Resource {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 748027754605400931L;
+    /**
+     *
+     */
+    private static final long serialVersionUID = 748027754605400931L;
 
-	@Basic(optional = false)
+//    @Id
+//    @SequenceGenerator(name = "RequestItemSequence", sequenceName = "PR_REQUEST_ITEM_SEQ", allocationSize = 1)
+//    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "RequestItemSequence")
+//    @Column(name = "ID")
+//    private Long id;
+
+    @Basic(optional = false)
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "ARRIVAL_DATE")
     private Date arrival = new Date();
-    
+
     @Basic(optional = false)
     @Column(name = "WEIGHT")
     private BigDecimal weight = BigDecimal.valueOf(0);
 
-	@JoinColumn(name = "REQUEST", referencedColumnName = "ID")
+    @JoinColumn(name = "REQUEST", referencedColumnName = "ID")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Request request;
-    
-	@JsonSerialize(using = NullCollectionSerializer.class)
+
+    @JsonSerialize(using = NullCollectionSerializer.class)
     @JoinColumn(name = "MATERIAL", referencedColumnName = "ID")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Material material;
-    
-    /*@OneToMany(cascade = CascadeType.ALL,mappedBy = "requestItem", fetch = FetchType.LAZY)
-    private Set<PurchasePlanningItem> purchasePlanningItem;*/
 
+    /*@OneToMany(cascade = CascadeType.ALL,mappedBy = "requestItem", fetch = FetchType.LAZY)
+     private Set<PurchasePlanningItem> purchasePlanningItem;*/
     /**
      *
      */
-    
-
     public RequestItem() {
     }
 
@@ -81,7 +89,21 @@ public class RequestItem extends Resource {
         this.arrival = arrival;
         this.weight = weight;
     }
-    
+
+    /**
+     * @return the id
+     */
+//    public Long getId() {
+//        return id;
+//    }
+
+    /**
+     * @param id the id to set
+     */
+//    public void setId(Long id) {
+//        this.id = id;
+//    }
+
     /**
      *
      * @return
@@ -113,7 +135,7 @@ public class RequestItem extends Resource {
     public void setWeight(BigDecimal weight) {
         this.weight = weight;
     }
-	
+
     /**
      *
      * @return
@@ -149,13 +171,12 @@ public class RequestItem extends Resource {
     }
 
     /*@XmlTransient
-    public Set<PurchasePlanningItem> getPurchasePlanningItem() {
-        return purchasePlanningItem;
-    }
+     public Set<PurchasePlanningItem> getPurchasePlanningItem() {
+     return purchasePlanningItem;
+     }
 
-    public void setPurchasePlanningItem(
-            Set<PurchasePlanningItem> purchasePlanningItem) {
-        this.purchasePlanningItem = purchasePlanningItem;
-    }*/
-
+     public void setPurchasePlanningItem(
+     Set<PurchasePlanningItem> purchasePlanningItem) {
+     this.purchasePlanningItem = purchasePlanningItem;
+     }*/
 }

@@ -18,7 +18,11 @@ import br.com.altamira.data.model.Resource;
 import br.com.altamira.data.serialize.JSonViews;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.UniqueConstraint;
 
 /**
@@ -33,6 +37,12 @@ public class OrderItem extends Resource {
      * Serial version ID
      */
     private static final long serialVersionUID = 7448803904699786256L;
+
+//    @Id
+//    @SequenceGenerator(name = "OrderItemSequence", sequenceName = "SL_ORDER_ITEM_SEQ", allocationSize = 1)
+//    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "OrderItemSequence")
+//    @Column(name = "ID")
+//    private Long id;
 
     @JsonIgnore
     @JoinColumn(name = "SALES_ORDER", referencedColumnName = "ID")
@@ -55,6 +65,20 @@ public class OrderItem extends Resource {
     public OrderItem() {
         this.parts = new ArrayList<>();
     }
+
+    /**
+     * @return the id
+     */
+//    public Long getId() {
+//        return id;
+//    }
+
+    /**
+     * @param id the id to set
+     */
+//    public void setId(Long id) {
+//        this.id = id;
+//    }
 
     /**
      *

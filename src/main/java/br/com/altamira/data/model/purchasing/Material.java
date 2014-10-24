@@ -16,6 +16,10 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import br.com.altamira.data.model.Resource;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 
 /**
  *
@@ -36,49 +40,52 @@ import br.com.altamira.data.model.Resource;
     @NamedQuery(name = "Material.findUnique", query = "SELECT m FROM Material m WHERE m.lamination = :lamination AND m.treatment = :treatment AND m.thickness = :thickness AND m.width = :width AND m.length = :length")})
 public class Material extends Resource {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -6256290660697921883L;
+    /**
+     *
+     */
+    private static final long serialVersionUID = -6256290660697921883L;
 
-	@Basic(optional = false)
+//    @Id
+//    @SequenceGenerator(name = "MaterialSequence", sequenceName = "PR_MATERIAL_SEQ", allocationSize = 1)
+//    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "MaterialSequence")
+//    @Column(name = "ID")
+//    private Long id;
+
+    @Basic(optional = false)
     @Column(name = "LAMINATION", columnDefinition = "char(2)")
     private String lamination;
-    
+
     @Basic(optional = false)
     @Column(name = "TREATMENT", columnDefinition = "char(2)")
     private String treatment;
-    
+
     @Basic(optional = false)
     @Column(name = "THICKNESS")
     private BigDecimal thickness;
-    
+
     @Basic(optional = false)
     @Column(name = "WIDTH")
     private BigDecimal width;
-    
+
     @Basic(optional = false)
     @Column(name = "LENGTH")
     private BigDecimal length;
-    
+
     @Column(name = "TAX")
     private BigDecimal tax;
-    
-    /*@JoinColumn(name = "COMPANY", referencedColumnName = "ID", columnDefinition = "number default 1")
-    @ManyToOne(optional = true, fetch = FetchType.LAZY)
-    private Company company;*/
 
+    /*@JoinColumn(name = "COMPANY", referencedColumnName = "ID", columnDefinition = "number default 1")
+     @ManyToOne(optional = true, fetch = FetchType.LAZY)
+     private Company company;*/
 //    @OneToMany(/*cascade = CascadeType.ALL,*/mappedBy = "material", fetch = FetchType.LAZY)
 //    private Set<MaterialStandard> materialStandardSet;
 //    @OneToMany(/*cascade = CascadeType.ALL,*/mappedBy = "material", fetch = FetchType.LAZY)
 //    private Set<SupplierPriceList> supplierPriceListSet;
 //    @OneToMany(/*cascade = CascadeType.ALL,*/mappedBy = "material", fetch = FetchType.LAZY)
 //    private Set<RequestItem> requestItemSet;
-
     /**
      *
      */
-    
     public Material() {
     }
 
@@ -98,6 +105,20 @@ public class Material extends Resource {
         this.width = width;
         this.length = length;
     }
+
+    /**
+     * @return the id
+     */
+//    public Long getId() {
+//        return id;
+//    }
+
+    /**
+     * @param id the id to set
+     */
+//    public void setId(Long id) {
+//        this.id = id;
+//    }
 
     /**
      *
@@ -198,40 +219,37 @@ public class Material extends Resource {
     //@XmlTransient
     //@JsonIgnore
     /*public Company getCompany() {
-        return company;
-    }
+     return company;
+     }
 
-    public void setCompany(Company company) {
-        this.company = company;
-    }*/
-    
+     public void setCompany(Company company) {
+     this.company = company;
+     }*/
     /*@XmlTransient
-    public Set<MaterialStandard> getMaterialStandardSet() {
-        return materialStandardSet;
-    }
+     public Set<MaterialStandard> getMaterialStandardSet() {
+     return materialStandardSet;
+     }
 
-    public void setMaterialStandardSet(Set<MaterialStandard> materialStandardSet) {
-        this.materialStandardSet = materialStandardSet;
-    }
+     public void setMaterialStandardSet(Set<MaterialStandard> materialStandardSet) {
+     this.materialStandardSet = materialStandardSet;
+     }
 
-    @XmlTransient
-    public Set<SupplierPriceList> getSupplierPriceListSet() {
-        return supplierPriceListSet;
-    }
+     @XmlTransient
+     public Set<SupplierPriceList> getSupplierPriceListSet() {
+     return supplierPriceListSet;
+     }
 
-    public void setSupplierPriceListSet(
-            Set<SupplierPriceList> supplierPriceListSet) {
-        this.supplierPriceListSet = supplierPriceListSet;
-    }
+     public void setSupplierPriceListSet(
+     Set<SupplierPriceList> supplierPriceListSet) {
+     this.supplierPriceListSet = supplierPriceListSet;
+     }
 
-    @XmlTransient
-    public Set<RequestItem> getRequestItemSet() {
-        return requestItemSet;
-    }
+     @XmlTransient
+     public Set<RequestItem> getRequestItemSet() {
+     return requestItemSet;
+     }
 
-    public void setRequestItemSet(Set<RequestItem> requestItemSet) {
-        this.requestItemSet = requestItemSet;
-    }*/
-
-
+     public void setRequestItemSet(Set<RequestItem> requestItemSet) {
+     this.requestItemSet = requestItemSet;
+     }*/
 }

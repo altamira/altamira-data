@@ -17,10 +17,14 @@ import javax.validation.constraints.Size;
 import br.com.altamira.data.model.Resource;
 import br.com.altamira.data.serialize.JSonViews;
 import com.fasterxml.jackson.annotation.JsonView;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 
 /**
  *
- * @author alessandro.holanda
+ * 
  */
 @Entity
 @Table(name = "MN_BOM")
@@ -31,6 +35,12 @@ public class BOM extends Resource {
      */
     private static final long serialVersionUID = -3725014293364656727L;
 
+//    @Id
+//    @SequenceGenerator(name = "BOMSequence", sequenceName = "MN_BOM_SEQ", allocationSize = 1)
+//    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "BOMSequence")
+//    @Column(name = "ID")
+//    private Long id;
+    
     @NotNull
     @Column(name = "NUMBER", unique = true, nullable = false)
     private Long number = 0l;
@@ -91,6 +101,20 @@ public class BOM extends Resource {
         this.customer = customer;
         this.checked = checked;
     }
+
+    /**
+     * @return the id
+     */
+//    public Long getId() {
+//        return id;
+//    }
+
+    /**
+     * @param id the id to set
+     */
+//    public void setId(Long id) {
+//        this.id = id;
+//    }
     
     /**
      *

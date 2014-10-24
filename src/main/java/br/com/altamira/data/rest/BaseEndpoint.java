@@ -46,7 +46,7 @@ import javax.ws.rs.core.UriBuilderException;
  * @param <T>
  */
 public abstract class BaseEndpoint<T extends Entity> /*implements Endpoint<T>*/ {
-	
+
     public static final String NOT_FOUND = "Entity not found.";
     public static final String START_PAGE_VALIDATION = "Invalid start page number, must be greater than 0.";
     public static final String PAGE_SIZE_VALIDATION = "Invalid page size, must be greater than 0.";
@@ -54,12 +54,12 @@ public abstract class BaseEndpoint<T extends Entity> /*implements Endpoint<T>*/ 
     public static final String ENTITY_VALIDATION = "Entity can't be null.";
     public static final String ID_NULL_VALIDATION = "Entity id must be null or zero.";
     public static final String ID_NOT_NULL_VALIDATION = "Entity id can't be null or zero.";
-    
+
     @Inject
-    private Logger log;
+    protected Logger log;
 
     @Context
-    HttpHeaders headers;
+    protected HttpHeaders headers;
 
     /**
      *
@@ -69,14 +69,14 @@ public abstract class BaseEndpoint<T extends Entity> /*implements Endpoint<T>*/ 
      * @return
      * @throws IOException
      */
-    @GET
-    @Produces(value = MediaType.APPLICATION_JSON)
-    public Response list(
-            @DefaultValue(value = "0") @QueryParam(value = "start") Integer startPosition,
-            @DefaultValue(value = "10") @QueryParam(value = "max") Integer maxResult)
-            throws IOException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+//    @GET
+//    @Produces(value = MediaType.APPLICATION_JSON)
+//    public Response list(
+//            @DefaultValue(value = "0") @QueryParam(value = "start") Integer startPosition,
+//            @DefaultValue(value = "10") @QueryParam(value = "max") Integer maxResult)
+//            throws IOException {
+//        throw new UnsupportedOperationException("Not supported yet.");
+//    }
 
     /**
      *
@@ -85,14 +85,14 @@ public abstract class BaseEndpoint<T extends Entity> /*implements Endpoint<T>*/ 
      * @return
      * @throws JsonProcessingException
      */
-    @GET
-    @Path(value = "{id:[0-9]*}")
-    @Produces(value = MediaType.APPLICATION_JSON)
-    public Response find(
-            @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long id)
-            throws JsonProcessingException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+//    @GET
+//    @Path(value = "{id:[0-9]*}")
+//    @Produces(value = MediaType.APPLICATION_JSON)
+//    public Response find(
+//            @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long id)
+//            throws JsonProcessingException {
+//        throw new UnsupportedOperationException("Not supported yet.");
+//    }
 
     /**
      *
@@ -103,16 +103,16 @@ public abstract class BaseEndpoint<T extends Entity> /*implements Endpoint<T>*/ 
      * @return
      * @throws IOException
      */
-    @GET
-    @Path("search")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response search(
-            @DefaultValue("0") @QueryParam("start") Integer startPosition,
-            @DefaultValue("10") @QueryParam("max") Integer maxResult,
-            @Size(min = 2) @QueryParam("search") String searchCriteria)
-            throws IOException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+//    @GET
+//    @Path("search")
+//    @Produces(MediaType.APPLICATION_JSON)
+//    public Response search(
+//            @DefaultValue("0") @QueryParam("start") Integer startPosition,
+//            @DefaultValue("10") @QueryParam("max") Integer maxResult,
+//            @Size(min = 2) @QueryParam("search") String searchCriteria)
+//            throws IOException {
+//        throw new UnsupportedOperationException("Not supported yet.");
+//    }
 
     /**
      *
@@ -123,14 +123,14 @@ public abstract class BaseEndpoint<T extends Entity> /*implements Endpoint<T>*/ 
      * @throws UriBuilderException
      * @throws JsonProcessingException
      */
-    @POST
-    @Consumes(value = MediaType.APPLICATION_JSON)
-    @Produces(value = MediaType.APPLICATION_JSON)
-    public Response create(
-            @NotNull(message = ENTITY_VALIDATION) T entity)
-            throws IllegalArgumentException, UriBuilderException, JsonProcessingException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+//    @POST
+//    @Consumes(value = MediaType.APPLICATION_JSON)
+//    @Produces(value = MediaType.APPLICATION_JSON)
+//    public Response create(
+//            @NotNull(message = ENTITY_VALIDATION) T entity)
+//            throws IllegalArgumentException, UriBuilderException, JsonProcessingException {
+//        throw new UnsupportedOperationException("Not supported yet.");
+//    }
 
     /**
      *
@@ -140,16 +140,16 @@ public abstract class BaseEndpoint<T extends Entity> /*implements Endpoint<T>*/ 
      * @return
      * @throws JsonProcessingException
      */
-    @PUT
-    @Path(value = "{id:[0-9]*}")
-    @Consumes(value = MediaType.APPLICATION_JSON)
-    @Produces(value = MediaType.APPLICATION_JSON)
-    public Response update(
-            @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long id,
-            @NotNull(message = ENTITY_VALIDATION) T entity)
-            throws JsonProcessingException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+//    @PUT
+//    @Path(value = "{id:[0-9]*}")
+//    @Consumes(value = MediaType.APPLICATION_JSON)
+//    @Produces(value = MediaType.APPLICATION_JSON)
+//    public Response update(
+//            @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long id,
+//            @NotNull(message = ENTITY_VALIDATION) T entity)
+//            throws JsonProcessingException {
+//        throw new UnsupportedOperationException("Not supported yet.");
+//    }
 
     /**
      *
@@ -158,13 +158,13 @@ public abstract class BaseEndpoint<T extends Entity> /*implements Endpoint<T>*/ 
      * @return
      * @throws JsonProcessingException
      */
-    @DELETE
-    @Path(value = "{id:[0-9]*}")
-    public Response delete(
-            @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long id)
-            throws JsonProcessingException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+//    @DELETE
+//    @Path(value = "{id:[0-9]*}")
+//    public Response delete(
+//            @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long id)
+//            throws JsonProcessingException {
+//        throw new UnsupportedOperationException("Not supported yet.");
+//    }
 
     /**
      *
@@ -174,13 +174,23 @@ public abstract class BaseEndpoint<T extends Entity> /*implements Endpoint<T>*/ 
      * @return
      * @throws JsonProcessingException
      */
-    @DELETE
-    @Path(value = "{id:[0-9]*}")
-    public Response delete(
-            @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long id,
-            @NotNull(message = ENTITY_VALIDATION) T entity)
-            throws JsonProcessingException {
-        throw new UnsupportedOperationException("Not supported yet.");
+//    @DELETE
+//    @Path(value = "{id:[0-9]*}")
+//    public Response delete(
+//            @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long id,
+//            @NotNull(message = ENTITY_VALIDATION) T entity)
+//            throws JsonProcessingException {
+//        throw new UnsupportedOperationException("Not supported yet.");
+//    }
+
+    private Response getCORSHeaders(String origin) {
+        return Response.ok()
+                .header("Access-Control-Allow-Origin", origin)
+                .header("Access-Control-Allow-Headers", "Access-Control-Allow-Origin, Origin, Content-Type, Content-Length, Accept, Authorization, X-Requested-With")
+                .header("Access-Control-Allow-Credentials", "true")
+                .header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD")
+                .header("Access-Control-Max-Age", "1209600")
+                .build();
     }
 
     /**
@@ -189,14 +199,19 @@ public abstract class BaseEndpoint<T extends Entity> /*implements Endpoint<T>*/ 
      * @return
      */
     @OPTIONS
-    public Response getCORSHeaders(@HeaderParam("Origin") String origin) {
-        return Response.ok()
-                .header("Access-Control-Allow-Origin", origin)
-                .header("Access-Control-Allow-Headers", "Access-Control-Allow-Origin, Origin, Content-Type, Content-Length, Accept, Authorization, X-Requested-With")
-                .header("Access-Control-Allow-Credentials", "true")
-                .header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD")
-                .header("Access-Control-Max-Age", "1209600")
-                .build();
+    public Response corsPreflight(@HeaderParam("Origin") String origin) {
+        return getCORSHeaders(origin);
+    }
+
+    /**
+     *
+     * @param headers
+     * @return
+     */
+    @OPTIONS
+    @Path("{key:[a-zA-Z0-9]*}")
+    public Response corsPreflightPath(@HeaderParam("Origin") String origin) {
+        return getCORSHeaders(origin);
     }
 
     protected Response.ResponseBuilder createOkResponse(Object entity) throws JsonProcessingException {

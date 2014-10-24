@@ -7,8 +7,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Min;
@@ -27,19 +25,22 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
  */
 @Entity
 @Table(name = "MN_PROCESS")
-@NamedQueries({
-    @NamedQuery(name = "Process.list", query = "SELECT p FROM Process p"),
-    @NamedQuery(name = "Process.findById", query = "SELECT p FROM Process p WHERE p.id = :id")})
 public class Process extends br.com.altamira.data.model.Process {
 
     /**
      *
      */
     private static final long serialVersionUID = 5549369785798723928L;
-
+    
+//    @Id
+//    @SequenceGenerator(name = "ProcessSequence", sequenceName = "MN_PROCESS_SEQ", allocationSize = 1)
+//    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ProcessSequence")
+//    @Column(name = "ID")
+//    private Long id;
+    
     @NotNull
     @Size(min = 10)
-    @Column(name = "CODE", columnDefinition = "nvarchar2(255)")
+    @Column(name = "CODE", columnDefinition = "nvarchar2(255)", unique=true, nullable=false)
     private String code;
 
     @NotNull
@@ -79,11 +80,26 @@ public class Process extends br.com.altamira.data.model.Process {
         this.operation = new ArrayList<>();
     }
     
-    public Process(String code, String description) {
+    public Process(long id, String code, String description) {
+        this.id = id;
         this.code = code;
         this.description = description;
     }
 
+    /**
+     * @return the id
+     */
+//    public Long getId() {
+//        return id;
+//    }
+
+    /**
+     * @param id the id to set
+     */
+//    public void setId(Long id) {
+//        this.id = id;
+//    }
+    
     /**
      *
      * @return

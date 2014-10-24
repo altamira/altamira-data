@@ -1,214 +1,71 @@
 package br.com.altamira.data.dao.manufacturing.process;
 
-import java.math.BigDecimal;
+import br.com.altamira.data.dao.BaseDao;
+import static br.com.altamira.data.dao.Dao.NUMBER_VALIDATION;
 import java.util.List;
 
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.TypedQuery;
-
-import br.com.altamira.data.model.manufacturing.process.Consume;
 import br.com.altamira.data.model.manufacturing.process.Operation;
-import br.com.altamira.data.model.manufacturing.process.Produce;
-import br.com.altamira.data.model.manufacturing.process.Process;
+import javax.persistence.NoResultException;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+import javax.validation.ConstraintViolationException;
+import javax.validation.constraints.Min;
 
 /**
  *
  * 
  */
-@Named
 @Stateless
-public class OperationDao {
+public class OperationDao extends BaseDao<Operation> {
 
-    @Inject
-    private EntityManager entityManager;
-
-    /**
-     *
-     * @param startPosition
-     * @param maxResult
-     * @return
-     */
-    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public List<Operation> list(int startPosition, int maxResult) {
-
-        TypedQuery<Operation> findAllQuery = entityManager.createNamedQuery("Operation.list", Operation.class);
-
-        findAllQuery.setFirstResult(startPosition);
-        findAllQuery.setMaxResults(maxResult);
-
-        return findAllQuery.getResultList();
-    }
+    public static final String CODE_VALIDATION = "Invalid code, must be char or numbers";
 
     /**
      *
-     * @param material
+     * @param processId
+     * @param startPage
+     * @param pageSize
      * @return
      */
-    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public Operation find(Operation material) {
-        return null;
-    }
+    public List<Operation> list(
+            @Min(value = 1, message = ID_NOT_NULL_VALIDATION) long processId,
+            @Min(value = 0, message = START_PAGE_VALIDATION) int startPage,
+            @Min(value = 1, message = PAGE_SIZE_VALIDATION) int pageSize)
+            throws ConstraintViolationException {
 
-    /**
-     *
-     * @param lamination
-     * @param treatment
-     * @param thickness
-     * @param width
-     * @param length
-     * @return
-     */
-    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public Operation find(String lamination, String treatment,
-            BigDecimal thickness, BigDecimal width, BigDecimal length) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Operation> q = cb.createQuery(Operation.class);
+        Root<Operation> entity = q.from(Operation.class);
 
-        List<Operation> materials = entityManager
-                .createNamedQuery("Operation.findUnique", Operation.class)
-                .setParameter("lamination", lamination)
-                .setParameter("treatment", treatment)
-                .setParameter("thickness", thickness)
-                .setParameter("width", width)
-                .setParameter("length", length)
+        q.select(cb.construct(Operation.class, 
+                entity.get("id"),
+                entity.get("sequence"),
+                entity.get("name")));
+        
+        q.where(cb.equal(entity.get("process"), processId));
+
+        return entityManager.createQuery(q)
+                .setFirstResult(startPage * pageSize)
+                .setMaxResults(pageSize)
                 .getResultList();
-
-        if (materials.isEmpty()) {
-            return null;
-        }
-
-        return materials.get(0);
     }
 
-    /**
+        /**
      *
-     * @param id
+     * @param operationId
      * @return
      */
-    public Operation find(long id) {
-        //return entityManager.find(Operation.class, id);
-        Operation entity;
+    @Override
+    public Operation find(
+            @Min(value = 1, message = NUMBER_VALIDATION) long operationId)
+            throws ConstraintViolationException, NoResultException {
 
-        TypedQuery<Operation> findByIdQuery = entityManager.createNamedQuery("Operation.findById", Operation.class);
-        findByIdQuery.setParameter("id", id);
-
-        try {
-            entity = findByIdQuery.getSingleResult();
-        } catch (NoResultException nre) {
-            return null;
-        }
-
-        // Lazy load of items
-        if (entity.getConsume() != null) {
-            entity.getConsume().size();
-        }
-        if (entity.getProduce() != null) {
-            entity.getProduce().size();
-        }
+        Operation entity = super.find(operationId);
+        
+        entity.getConsume().size();
 
         return entity;
     }
-
-    /**
-     *
-     * @param entity
-     * @return
-     */
-    public Operation create(Operation entity) {
-        if (entity == null) {
-            throw new IllegalArgumentException("Entity can't be null.");
-        }
-
-        if (entity.getId() != null && entity.getId() > 0) {
-            throw new IllegalArgumentException("To create this entity, id must be null or zero.");
-        }
-
-        Process process = entity.getProcess();
-        entity.setProcess(process);
-
-        for (Consume consume : entity.getConsume()) {
-            consume.setOperation(entity);
-
-        }
-        for (Produce produce : entity.getProduce()) {
-            produce.setOperation(entity);
-        }
-        entity.setId(null);
-
-        entityManager.persist(entity);
-        entityManager.flush();
-
-        return entityManager.find(Operation.class, entity.getId());
-    }
-
-    /**
-     *
-     * @param entity
-     * @return
-     */
-    public Operation update(Operation entity) {
-        if (entity == null) {
-            throw new IllegalArgumentException("Entity can't be null.");
-        }
-        if (entity.getId() == null || entity.getId() == 0l) {
-            throw new IllegalArgumentException("Entity id can't be null or zero.");
-        }
-
-        Process process = entity.getProcess();
-        entity.setProcess(process);
-
-        for (Consume consume : entity.getConsume()) {
-            consume.setOperation(entity);
-
-        }
-        for (Produce produce : entity.getProduce()) {
-            produce.setOperation(entity);
-        }
-
-        return entityManager.contains(entity) ? null : entityManager.merge(entity);
-    }
-
-    /**
-     *
-     * @param entity
-     * @return
-     */
-    public Operation remove(Operation entity) {
-        if (entity == null) {
-            throw new IllegalArgumentException("Entity can't be null.");
-        }
-
-        if (entity.getId() == null || entity.getId() == 0l) {
-            throw new IllegalArgumentException("Entity id can't be null or zero.");
-        }
-
-        return remove(entity.getId());
-    }
-
-    /**
-     *
-     * @param id
-     * @return
-     */
-    public Operation remove(long id) {
-        if (id == 0) {
-            throw new IllegalArgumentException("Entity id can't be zero.");
-        }
-
-        Operation entity = entityManager.find(Operation.class, id);
-
-        if (entity == null) {
-            throw new IllegalArgumentException("Entity not found.");
-        }
-
-        entityManager.remove(entity);
-        entityManager.flush();
-
-        return entity;
-    }
-
 }

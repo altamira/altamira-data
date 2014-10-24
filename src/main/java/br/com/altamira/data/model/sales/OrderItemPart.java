@@ -15,6 +15,10 @@ import javax.validation.constraints.Size;
 import br.com.altamira.data.model.Resource;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 
 /**
  *
@@ -28,6 +32,12 @@ public class OrderItemPart extends Resource {
      * Serial version ID
      */
     private static final long serialVersionUID = -4871377387938455032L;
+
+//    @Id
+//    @SequenceGenerator(name = "OrderItemPartSequence", sequenceName = "SL_ORDER_ITEM_PART_SEQ", allocationSize = 1)
+//    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "OrderItemPartSequence")
+//    @Column(name = "ID")
+//    private Long id;
 
     @NotNull
     @Size(min = 10)
@@ -73,12 +83,25 @@ public class OrderItemPart extends Resource {
     private OrderItem orderItem;
 
     /*
-    @JoinColumn(name = "CODE", referencedColumnName = "CODE", insertable=false, updatable=false)
-    @JoinColumn(name = "PRODUCT", referencedColumnName = "ID", insertable = false, updatable = false)
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private Product product;
-    */
-    
+     @JoinColumn(name = "CODE", referencedColumnName = "CODE", insertable=false, updatable=false)
+     @JoinColumn(name = "PRODUCT", referencedColumnName = "ID", insertable = false, updatable = false)
+     @ManyToOne(optional = false, fetch = FetchType.LAZY)
+     private Product product;
+     */
+    /**
+     * @return the id
+     */
+//    public Long getId() {
+//        return id;
+//    }
+
+    /**
+     * @param id the id to set
+     */
+//    public void setId(Long id) {
+//        this.id = id;
+//    }
+
     /**
      *
      * @return
