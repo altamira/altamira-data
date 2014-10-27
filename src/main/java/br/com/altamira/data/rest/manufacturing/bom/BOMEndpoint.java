@@ -86,9 +86,9 @@ public class BOMEndpoint
      * @throws JsonProcessingException
      */
     @GET
-    @Path("/{number:[0-9]*}")
+    @Path("/{id:[0-9]*}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response findByNumber(
+    public Response find(
             @Min(1) @PathParam("id") long id)
             throws JsonProcessingException {
 
@@ -146,7 +146,7 @@ public class BOMEndpoint
             @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long id)
             throws JsonProcessingException {
         
-        BOM entity = bomDao.findByNumber(id);
+        BOM entity = bomDao.find(id);
 
         // Add the current date to checked field
         Date date = new Date();

@@ -48,18 +48,20 @@ public class ProcessEndpoint extends BaseEndpoint<Process> /*implements Endpoint
      *
      * @param startPosition
      * @param maxResult
+     * @param search
      * @return
      * @throws IOException
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response list(
+    public Response search(
             @DefaultValue("0") @QueryParam("start") Integer startPosition,
-            @DefaultValue("10") @QueryParam("max") Integer maxResult)
+            @DefaultValue("10") @QueryParam("max") Integer maxResult,
+            @Size(min = 2) @QueryParam("search") String search)
             throws IOException {
 
         return createOkResponse(
-                processDao.list(startPosition, maxResult)).build();
+                processDao.search(search, startPosition, maxResult)).build();
     }
 
     /**
@@ -95,27 +97,6 @@ public class ProcessEndpoint extends BaseEndpoint<Process> /*implements Endpoint
 
     }
     
-    /**
-     *
-     * @param startPosition
-     * @param maxResult
-     * @param search
-     * @return
-     * @throws IOException
-     */
-    @GET
-    @Path("/search")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response search(
-            @DefaultValue("0") @QueryParam("start") Integer startPosition,
-            @DefaultValue("10") @QueryParam("max") Integer maxResult,
-            @Size(min = 2) @QueryParam("search") String search)
-            throws IOException {
-
-        return createOkResponse(
-                processDao.search(search, startPosition, maxResult)).build();
-    }
-
     /**
      *
      * @param entity
