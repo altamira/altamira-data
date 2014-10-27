@@ -101,6 +101,40 @@ public class BOMDao {
                 .getResultList();
     }
     
+    public BOM find(
+            @Min(value = 1, message = NUMBER_VALIDATION) long id) {
+        
+        return entityManager.find(BOM.class, id);        
+    }
+    
+    /**
+     *
+     * @param number
+     * @return
+     */
+    public BOM findByNumber(
+            @Min(value = 1, message = NUMBER_VALIDATION) long number) 
+            throws ConstraintViolationException, NoResultException  {
+
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<BOM> q = cb.createQuery(BOM.class);
+        Root<BOM> entity = q.from(BOM.class);
+
+        q.select(entity).where(cb.equal(entity.get("number"), number));
+
+        BOM bom = entityManager.createQuery(q).getSingleResult();
+
+        // Lazy load of items
+        if (bom.getItems() != null) {
+            bom.getItems().size();
+            bom.getItems().stream().forEach((item) -> {
+                item.getParts().size();
+            });
+        }
+
+        return bom;
+    }
+    
     /**
      *
      * @param search
@@ -135,34 +169,6 @@ public class BOMDao {
                 .setMaxResults(pageSize)
                 .getResultList();
          
-    }
-    
-    /**
-     *
-     * @param number
-     * @return
-     */
-    public BOM findByNumber(
-            @Min(value = 1, message = NUMBER_VALIDATION) long number) 
-            throws ConstraintViolationException, NoResultException  {
-
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<BOM> q = cb.createQuery(BOM.class);
-        Root<BOM> entity = q.from(BOM.class);
-
-        q.select(entity).where(cb.equal(entity.get("number"), number));
-
-        BOM bom = entityManager.createQuery(q).getSingleResult();
-
-        // Lazy load of items
-        if (bom.getItems() != null) {
-            bom.getItems().size();
-            bom.getItems().stream().forEach((item) -> {
-                item.getParts().size();
-            });
-        }
-
-        return bom;
     }
     
     /**
@@ -246,12 +252,12 @@ public class BOMDao {
 
     /**
      *
-     * @param number
+     * @param id
      */
     public void updateToUnchecked(
-            @Min(value = 1, message = NUMBER_VALIDATION) long number) {
+            @Min(value = 1, message = NUMBER_VALIDATION) long id) {
         
-        BOM bom = findByNumber(number);
+        BOM bom = find(id);
         
         bom.setChecked(null);
         
@@ -260,9 +266,9 @@ public class BOMDao {
     }
 
     public void updateToChecked(
-            @Min(value = 1, message = NUMBER_VALIDATION) long number) {
+            @Min(value = 1, message = NUMBER_VALIDATION) long id) {
         
-        BOM bom = findByNumber(number);
+        BOM bom = find(id);
         
         bom.setChecked(new Date());
         
@@ -287,13 +293,13 @@ public class BOMDao {
 
     /**
      *
-     * @param number Order Number
+     * @param id
      */
     public void remove(
-            @Min(value = 1, message = NUMBER_VALIDATION) long number) 
+            @Min(value = 1, message = NUMBER_VALIDATION) long id) 
             throws ConstraintViolationException, NoResultException {
 
-        remove(findByNumber(number));
+        remove(find(id));
     }
 
     /**

@@ -44,7 +44,6 @@ public class BOMEndpoint
      *
      * @param startPosition
      * @param maxResult
-     * @param headers
      * @return
      * @throws IOException
      */
@@ -64,7 +63,6 @@ public class BOMEndpoint
      * @param startPosition
      * @param maxResult
      * @param search
-     * @param headers
      * @return
      * @throws IOException
      */
@@ -83,8 +81,7 @@ public class BOMEndpoint
 
     /**
      *
-     * @param number
-     * @param headers
+     * @param id
      * @return
      * @throws JsonProcessingException
      */
@@ -92,16 +89,15 @@ public class BOMEndpoint
     @Path("/{number:[0-9]*}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response findByNumber(
-            @Min(1) @PathParam("number") long number)
+            @Min(1) @PathParam("id") long id)
             throws JsonProcessingException {
 
-        return createOkResponse(bomDao.findByNumber(number)).build();
+        return createOkResponse(bomDao.find(id)).build();
     }
 
     /**
      *
      * @param entity
-     * @param headers
      * @return
      * @throws IllegalArgumentException
      * @throws UriBuilderException
@@ -119,45 +115,38 @@ public class BOMEndpoint
 
     /**
      *
-     * @param number
-     * @param headers
+     * @param id
+     * @param entity
      * @return
      * @throws JsonProcessingException
      */
     @PUT
-    @Path(value = "{number:[0-9]*}")
+    @Path(value = "{id:[0-9]*}")
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response update(
-            @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "number") long number,
+            @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long id,
             @NotNull(message = ENTITY_VALIDATION) BOM entity)
             throws JsonProcessingException {
-        
-        //BOM entity = bomDao.findByNumber(number);
-
-        // Add the current date to checked field
-        //Date date = new Date();
-        //entity.setChecked(date);
 
         return createOkResponse(bomDao.update(entity)).build();
     }
 
     /**
      *
-     * @param number
-     * @param headers
+     * @param id
      * @return
      * @throws JsonProcessingException
      */
     @PUT
-    @Path(value = "{number:[0-9]*}/checked")
+    @Path(value = "{id:[0-9]*}/checked")
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response update(
-            @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "number") long number)
+            @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long id)
             throws JsonProcessingException {
         
-        BOM entity = bomDao.findByNumber(number);
+        BOM entity = bomDao.findByNumber(id);
 
         // Add the current date to checked field
         Date date = new Date();
@@ -168,17 +157,17 @@ public class BOMEndpoint
     
     /**
      *
-     * @param number
-     * @param headers
+     * @param id
      * @return
      * @throws JsonProcessingException
      */
     @DELETE
-    @Path("/{number:[0-9]*}")
-    public Response deleteByNumber(
-            @Min(1) @PathParam("number") long number) throws JsonProcessingException {
+    @Path("/{id:[0-9]*}")
+    public Response delete(
+            @Min(1) @PathParam("id") long id) 
+            throws JsonProcessingException {
 
-        bomDao.remove(number);
+        bomDao.remove(id);
 
         return createNoContentResponse().build();
     }

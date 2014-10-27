@@ -72,7 +72,7 @@ public class ProcessEndpoint extends BaseEndpoint<Process> /*implements Endpoint
     @Path("/{id:[0-9]*}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response find(
-            @PathParam("id") long id)
+            @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long id)
             throws JsonProcessingException, NoResultException {
 
         return createOkResponse(
@@ -81,14 +81,14 @@ public class ProcessEndpoint extends BaseEndpoint<Process> /*implements Endpoint
 
     /**
      *
-     * @param processId
+     * @param id
      * @return
      * @throws JsonProcessingException
      */
     @Path("/{process:[0-9]*}/operation")
     @Produces(MediaType.APPLICATION_JSON)
     public java.lang.Object listOperation(
-            @PathParam("process") long processId)
+            @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "process") long id)
             throws JsonProcessingException, NoResultException {
 
         return operationEndpoint;
@@ -137,17 +137,17 @@ public class ProcessEndpoint extends BaseEndpoint<Process> /*implements Endpoint
 
     /**
      *
-     * @param code
+     * @param id
      * @param entity
      * @return
      * @throws JsonProcessingException
      */
     @PUT
-    @Path("/{code:[a-zA-Z0-9]*}")
+    @Path("/{id:[0-9]*}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response update(
-            @NotNull @Size(min = 1, message = ID_VALIDATION) @PathParam("code") String code,
+            @NotNull @Size(min = 1, message = ID_VALIDATION) @PathParam("id") long id,
             @NotNull(message = ENTITY_VALIDATION) Process entity)
             throws JsonProcessingException {
 

@@ -24,13 +24,13 @@ public class OperationDao extends BaseDao<Operation> {
 
     /**
      *
-     * @param processId
+     * @param id
      * @param startPage
      * @param pageSize
      * @return
      */
     public List<Operation> list(
-            @Min(value = 1, message = ID_NOT_NULL_VALIDATION) long processId,
+            @Min(value = 1, message = ID_NOT_NULL_VALIDATION) long id,
             @Min(value = 0, message = START_PAGE_VALIDATION) int startPage,
             @Min(value = 1, message = PAGE_SIZE_VALIDATION) int pageSize)
             throws ConstraintViolationException {
@@ -44,7 +44,7 @@ public class OperationDao extends BaseDao<Operation> {
                 entity.get("sequence"),
                 entity.get("name")));
         
-        q.where(cb.equal(entity.get("process"), processId));
+        q.where(cb.equal(entity.get("process"), id));
 
         return entityManager.createQuery(q)
                 .setFirstResult(startPage * pageSize)
@@ -65,6 +65,7 @@ public class OperationDao extends BaseDao<Operation> {
         Operation entity = super.find(operationId);
         
         entity.getConsume().size();
+        entity.getProduce().size();
 
         return entity;
     }

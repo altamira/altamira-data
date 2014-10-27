@@ -12,32 +12,17 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
-import java.io.IOException;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.logging.Logger;
 import javax.inject.Inject;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.OPTIONS;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
-import javax.ws.rs.core.UriBuilderException;
 
 /**
  *
@@ -195,7 +180,7 @@ public abstract class BaseEndpoint<T extends Entity> /*implements Endpoint<T>*/ 
 
     /**
      *
-     * @param headers
+     * @param origin
      * @return
      */
     @OPTIONS
@@ -205,7 +190,7 @@ public abstract class BaseEndpoint<T extends Entity> /*implements Endpoint<T>*/ 
 
     /**
      *
-     * @param headers
+     * @param origin
      * @return
      */
     @OPTIONS

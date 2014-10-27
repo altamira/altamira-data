@@ -9,10 +9,5 @@ import javax.ws.rs.core.Application;
  */
 @ApplicationPath("/")
 public class WebApplication extends Application {
-	
-    /**
-     *
-     */
-    public static final String ACCESS_CONTROL_ALLOW_ORIGIN = "http://localhost:8100";
-	
+		
 }

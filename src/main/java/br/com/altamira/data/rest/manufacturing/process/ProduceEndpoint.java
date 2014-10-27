@@ -5,16 +5,16 @@
  */
 package br.com.altamira.data.rest.manufacturing.process;
 
-import br.com.altamira.data.dao.manufacturing.process.ConsumeDao;
+import br.com.altamira.data.dao.manufacturing.process.ProduceDao;
 import br.com.altamira.data.dao.manufacturing.process.OperationDao;
-import br.com.altamira.data.model.manufacturing.process.Consume;
+import br.com.altamira.data.model.manufacturing.process.Produce;
 import br.com.altamira.data.model.manufacturing.process.Operation;
+import br.com.altamira.data.model.manufacturing.process.Produce;
 import br.com.altamira.data.rest.BaseEndpoint;
+import static br.com.altamira.data.rest.BaseEndpoint.ENTITY_VALIDATION;
 import static br.com.altamira.data.rest.BaseEndpoint.ID_VALIDATION;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.IOException;
-import static javafx.scene.input.KeyCode.T;
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -34,20 +34,19 @@ import javax.ws.rs.core.UriBuilderException;
 
 /**
  *
- * @author Alessandro
+ * @author alessandro.holanda
  */
-@RequestScoped
-public class ConsumeEndpoint extends BaseEndpoint<br.com.altamira.data.model.manufacturing.process.Consume> {
+public class ProduceEndpoint  extends BaseEndpoint<Produce> {
 
     @Inject
     private OperationDao operationDao;
 
     @Inject
-    private ConsumeDao consumeDao;
+    private ProduceDao produceDao;
 
     /**
      *
-     * @param operation
+     * @param id
      * @param startPosition
      * @param maxResult
      * @return
@@ -56,15 +55,15 @@ public class ConsumeEndpoint extends BaseEndpoint<br.com.altamira.data.model.man
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response list(
-            @Min(value = 1, message = ID_VALIDATION) @PathParam("operation") long operation,
+            @Min(value = 1, message = ID_VALIDATION) @PathParam("operation") long id,
             @DefaultValue("0") @QueryParam("start") Integer startPosition,
             @DefaultValue("10") @QueryParam("max") Integer maxResult)
             throws IOException {
 
-        Operation entity = operationDao.find(operation);
+        Operation entity = operationDao.find(id);
 
         return createOkResponse(
-                entity.getConsume()).build();
+                entity.getProduce()).build();
     }
 
     /**
@@ -74,14 +73,14 @@ public class ConsumeEndpoint extends BaseEndpoint<br.com.altamira.data.model.man
      * @throws JsonProcessingException
      */
     @GET
-    @Path(value = "{consume:[0-9]*}")
+    @Path(value = "{id:[0-9]*}")
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response find(
-            @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "consume") long id)
+            @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long id)
             throws JsonProcessingException {
 
         return createOkResponse(
-                consumeDao.find(id)).build();
+                produceDao.find(id)).build();
     }
 
     /**
@@ -96,11 +95,11 @@ public class ConsumeEndpoint extends BaseEndpoint<br.com.altamira.data.model.man
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response create(
-            @NotNull(message = ENTITY_VALIDATION) Consume entity)
+            @NotNull(message = ENTITY_VALIDATION) Produce entity)
             throws IllegalArgumentException, UriBuilderException, JsonProcessingException {
         
         return createCreatedResponse(
-            consumeDao.create(entity)).build();
+            produceDao.create(entity)).build();
     }
 
     /**
@@ -116,11 +115,11 @@ public class ConsumeEndpoint extends BaseEndpoint<br.com.altamira.data.model.man
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response update(
             @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long id,
-            @NotNull(message = ENTITY_VALIDATION) Consume entity)
+            @NotNull(message = ENTITY_VALIDATION) Produce entity)
             throws JsonProcessingException {
         
         return createOkResponse(
-                consumeDao.update(entity)).build();
+                produceDao.update(entity)).build();
     }
 
     /**
@@ -135,9 +134,10 @@ public class ConsumeEndpoint extends BaseEndpoint<br.com.altamira.data.model.man
             @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long id)
             throws JsonProcessingException {
         
-        consumeDao.remove(id);
+        produceDao.remove(id);
         
         return createNoContentResponse().build();
     }
 
+    
 }
