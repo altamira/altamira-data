@@ -23,6 +23,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
+import javax.ws.rs.core.UriBuilder;
 
 /**
  *
@@ -236,10 +237,10 @@ public abstract class BaseEndpoint<T extends Entity> /*implements Endpoint<T>*/ 
         mapper.getSerializerProvider().setNullValueSerializer(new NullValueSerializer());
         mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, true);
 
-        ResponseBuilder responseBuilder = Response.ok()
-                //        Response.created(
-                //                UriBuilder.fromResource((T) getTypeClass)
-                //                .path(String.valueOf(entity.getId())).build())
+        ResponseBuilder responseBuilder = Response.created(
+                                UriBuilder.fromResource( (Class<? extends br.com.altamira.data.rest.BaseEndpoint<T>>) ((ParameterizedType) this.getClass()
+                .getGenericSuperclass()).getActualTypeArguments()[0])
+                                .path(String.valueOf(entity.getId())).build())
                 .entity(mapper.writeValueAsString(entity));
 
         if (headers.getHeaderString("Origin") != null && !headers.getHeaderString("Origin").isEmpty()) {
