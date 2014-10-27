@@ -105,7 +105,17 @@ public class BOMDao {
     public BOM find(
             @Min(value = 1, message = NUMBER_VALIDATION) long id) {
         
-        return entityManager.find(BOM.class, id);        
+        BOM entity = entityManager.find(BOM.class, id);     
+        
+        // Lazy load of items
+        if (entity.getItems() != null) {
+            entity.getItems().size();
+            entity.getItems().stream().forEach((item) -> {
+                item.getParts().size();
+            });
+        }
+        
+        return entity;        
     }
     
     /**
