@@ -84,10 +84,18 @@ public class Order extends Resource {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "order", fetch = FetchType.LAZY, orphanRemoval = true)
     private List<OrderItem> items;
 
+    /**
+     *
+     */
     public Order() {
         this.items = new ArrayList<>();
     }
 
+    /**
+     *
+     * @param number
+     * @param customer
+     */
     public Order(Long number, String customer) {
         this.number = number;
         this.customer = customer;

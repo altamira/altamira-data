@@ -74,9 +74,18 @@ public class Operation extends br.com.altamira.data.model.Operation {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "operation", fetch = FetchType.LAZY, orphanRemoval = true)
     private List<Produce> produce = new ArrayList<>();
 
+    /**
+     *
+     */
     public Operation() {
     }
 
+    /**
+     *
+     * @param id
+     * @param sequence
+     * @param name
+     */
     public Operation(long id, int sequence, String name) {
         this.id = id;
         this.sequence = sequence;

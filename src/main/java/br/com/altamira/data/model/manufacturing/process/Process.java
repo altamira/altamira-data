@@ -76,10 +76,19 @@ public class Process extends br.com.altamira.data.model.Process {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "process", fetch = FetchType.LAZY, orphanRemoval = true)
     private List<Operation> operation = new ArrayList<Operation>();
     
+    /**
+     *
+     */
     public Process() {
         this.operation = new ArrayList<>();
     }
     
+    /**
+     *
+     * @param id
+     * @param code
+     * @param description
+     */
     public Process(long id, String code, String description) {
         this.id = id;
         this.code = code;

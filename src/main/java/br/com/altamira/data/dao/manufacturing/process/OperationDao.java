@@ -16,10 +16,14 @@ import javax.validation.constraints.Min;
 /**
  *
  * 
+ * @author Alessandro
  */
 @Stateless
 public class OperationDao extends BaseDao<Operation> {
 
+    /**
+     *
+     */
     public static final String CODE_VALIDATION = "Invalid code, must be char or numbers";
 
     /**

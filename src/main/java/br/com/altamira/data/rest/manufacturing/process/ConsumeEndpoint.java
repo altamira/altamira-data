@@ -10,12 +10,11 @@ import br.com.altamira.data.dao.manufacturing.process.OperationDao;
 import br.com.altamira.data.model.manufacturing.process.Consume;
 import br.com.altamira.data.model.manufacturing.process.Operation;
 import br.com.altamira.data.rest.BaseEndpoint;
-import static br.com.altamira.data.rest.BaseEndpoint.ID_VALIDATION;
+import br.com.altamira.data.rest.manufacturing.bom.BOMEndpoint;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.IOException;
-import static javafx.scene.input.KeyCode.T;
+import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
@@ -39,12 +38,19 @@ import javax.ws.rs.core.UriBuilderException;
 @RequestScoped
 public class ConsumeEndpoint extends BaseEndpoint<br.com.altamira.data.model.manufacturing.process.Consume> {
 
-    @Inject
+    @EJB
     private OperationDao operationDao;
 
-    @Inject
+    @EJB
     private ConsumeDao consumeDao;
-
+    
+    /**
+     *
+     */
+    public ConsumeEndpoint() {
+    	this.type = ConsumeEndpoint.class;
+    }
+    
     /**
      *
      * @param operation

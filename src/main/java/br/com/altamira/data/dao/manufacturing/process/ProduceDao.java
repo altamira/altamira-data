@@ -12,6 +12,7 @@ import javax.ejb.Stateless;
 /**
  *
  *
+ * @author Alessandro
  */
 @Stateless
 public class ProduceDao extends BaseDao<Produce> {

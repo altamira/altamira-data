@@ -28,7 +28,11 @@ public abstract class Entity implements Serializable {
     private static final long serialVersionUID = -73112170881659955L;
 
     // Guarantee unique id for all entities
-    @Id
+
+    /**
+     *
+     */
+        @Id
     @SequenceGenerator(name = "EntitySequence", sequenceName = "ENTITY_SEQUENCE", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "EntitySequence")
     @Column(name = "ID")

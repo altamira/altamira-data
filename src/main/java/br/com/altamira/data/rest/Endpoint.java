@@ -35,19 +35,45 @@ import javax.ws.rs.core.UriBuilderException;
  */
 public interface Endpoint<T extends Entity> {
 
+    /**
+     *
+     */
     public static final String NOT_FOUND = "Entity not found.";
+
+    /**
+     *
+     */
     public static final String START_PAGE_VALIDATION = "Invalid start page number, must be greater than 0.";
+
+    /**
+     *
+     */
     public static final String PAGE_SIZE_VALIDATION = "Invalid page size, must be greater than 0.";
+
+    /**
+     *
+     */
     public static final String ID_VALIDATION = "Invalid id, must be greater than zero.";
+
+    /**
+     *
+     */
     public static final String ENTITY_VALIDATION = "Entity can't be null.";
+
+    /**
+     *
+     */
     public static final String ID_NULL_VALIDATION = "Entity id must be null or zero.";
+
+    /**
+     *
+     */
     public static final String ID_NOT_NULL_VALIDATION = "Entity id can't be null or zero.";
 
     /**
      *
      * @param startPosition
      * @param maxResult
-     * @param headers
      * @return
      * @throws IOException
      */
@@ -61,7 +87,6 @@ public interface Endpoint<T extends Entity> {
     /**
      *
      * @param id
-     * @param headers
      * @return
      * @throws JsonProcessingException
      */
@@ -77,7 +102,6 @@ public interface Endpoint<T extends Entity> {
      * @param startPosition
      * @param maxResult
      * @param searchCriteria
-     * @param headers
      * @return
      * @throws IOException
      */
@@ -93,7 +117,6 @@ public interface Endpoint<T extends Entity> {
     /**
      *
      * @param entity
-     * @param headers
      * @return
      * @throws IllegalArgumentException
      * @throws UriBuilderException
@@ -126,7 +149,6 @@ public interface Endpoint<T extends Entity> {
     /**
      *
      * @param id
-     * @param headers
      * @return
      * @throws JsonProcessingException
      */
@@ -139,7 +161,6 @@ public interface Endpoint<T extends Entity> {
      *
      * @param id
      * @param entity
-     * @param headers
      * @return
      * @throws JsonProcessingException
      */

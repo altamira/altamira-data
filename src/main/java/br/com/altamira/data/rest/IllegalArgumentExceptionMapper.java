@@ -32,6 +32,11 @@ public class IllegalArgumentExceptionMapper implements ExceptionMapper<IllegalAr
     @Context
     HttpHeaders headers;
 
+    /**
+     *
+     * @param exception
+     * @return
+     */
     @Override
     public Response toResponse(IllegalArgumentException exception) {
 

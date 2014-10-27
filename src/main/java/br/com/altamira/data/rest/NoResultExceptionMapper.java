@@ -33,6 +33,11 @@ public class NoResultExceptionMapper implements ExceptionMapper<NoResultExceptio
     @Context
     HttpHeaders headers;
 
+    /**
+     *
+     * @param exception
+     * @return
+     */
     @Override
     public Response toResponse(NoResultException exception) {
 

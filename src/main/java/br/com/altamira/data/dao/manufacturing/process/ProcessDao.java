@@ -34,11 +34,34 @@ import javax.validation.ValidationException;
 @Stateless
 public class ProcessDao {
 
+    /**
+     *
+     */
     public static final String START_PAGE_VALIDATION = "Invalid start page number, must be greater than 0.";
+
+    /**
+     *
+     */
     public static final String PAGE_SIZE_VALIDATION = "Invalid page size, must be greater than 0.";
+
+    /**
+     *
+     */
     public static final String ENTITY_VALIDATION = "Entity can't be null.";
+
+    /**
+     *
+     */
     public static final String ID_NULL_VALIDATION = "Entity id must be null or zero.";
+
+    /**
+     *
+     */
     public static final String ID_NOT_NULL_VALIDATION = "Entity id can't be null or zero.";
+
+    /**
+     *
+     */
     public static final String SEARCH_VALIDATION = "Search word can't be null and size must be greater that 5 characters.";
 
     @Inject
@@ -229,7 +252,6 @@ public class ProcessDao {
     /**
      *
      * @param entity
-     * @return
      */
     public void remove(
             @NotNull(message = ENTITY_VALIDATION) Process entity)

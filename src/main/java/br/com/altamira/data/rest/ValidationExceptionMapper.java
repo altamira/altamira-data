@@ -73,6 +73,12 @@ public class ValidationExceptionMapper implements ExceptionMapper<ValidationExce
 //
 //    }
     
+    /**
+     *
+     * @param exception
+     * @return
+     */
+        
     @Override
     public Response toResponse(ValidationException exception) {
         if (exception instanceof ConstraintDefinitionException) {
@@ -98,6 +104,13 @@ public class ValidationExceptionMapper implements ExceptionMapper<ValidationExce
         return buildResponse(unwrapException(exception), MediaType.TEXT_PLAIN, Status.INTERNAL_SERVER_ERROR);
     }
  
+    /**
+     *
+     * @param entity
+     * @param mediaType
+     * @param status
+     * @return
+     */
     protected Response buildResponse(Object entity, String mediaType, Status status) {
         ResponseBuilder builder = Response.status(status).entity(entity);
         builder.type(MediaType.TEXT_PLAIN);
@@ -105,6 +118,12 @@ public class ValidationExceptionMapper implements ExceptionMapper<ValidationExce
         return builder.build();
     }
  
+    /**
+     *
+     * @param exception
+     * @param status
+     * @return
+     */
     protected Response buildViolationReportResponse(ResteasyViolationException exception, Status status) {
         ResponseBuilder builder = Response.status(status);
         //builder.header(Validation.VALIDATION_HEADER, "true");
@@ -123,6 +142,11 @@ public class ValidationExceptionMapper implements ExceptionMapper<ValidationExce
         return builder.build();
     }
  
+    /**
+     *
+     * @param t
+     * @return
+     */
     protected String unwrapException(Throwable t) {
         StringBuffer sb = new StringBuffer();
         doUnwrapException(sb, t);

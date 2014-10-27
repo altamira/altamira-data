@@ -25,6 +25,7 @@ import javax.ws.rs.ext.Provider;
 /**
  *
  * 
+ * @author Alessandro
  */
 @Provider
 public class ConstraintViolationExceptionMapper implements ExceptionMapper<ConstraintViolationException> {
@@ -35,6 +36,11 @@ public class ConstraintViolationExceptionMapper implements ExceptionMapper<Const
     @Context
     HttpHeaders headers;
     
+    /**
+     *
+     * @param exception
+     * @return
+     */
     @Override
     public Response toResponse(ConstraintViolationException exception) {
         Set<ConstraintViolation<?>> violations = exception.getConstraintViolations();

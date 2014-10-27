@@ -63,6 +63,9 @@ public class BOMItem extends Resource {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "bomItem", fetch = FetchType.LAZY, orphanRemoval = true)
     private List<BOMItemPart> parts;
 
+    /**
+     *
+     */
     public BOMItem() {
         this.parts = new ArrayList<>();
     }

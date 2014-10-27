@@ -25,6 +25,7 @@ import javax.persistence.SequenceGenerator;
 /**
  *
  * 
+ * @author Alessandro
  */
 @Entity
 @Table(name = "MN_BOM")
@@ -87,21 +88,42 @@ public class BOM extends Resource {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "bom", fetch = FetchType.LAZY, orphanRemoval = true)
     private List<BOMItem> items;
 
+    /**
+     *
+     */
     public BOM() {
         this.items = new ArrayList<>();
     }
     
+    /**
+     *
+     * @param number
+     * @param customer
+     */
     public BOM(Long number, String customer) {
         this.number = number;
         this.customer = customer;
     }
 
+    /**
+     *
+     * @param number
+     * @param customer
+     * @param checked
+     */
     public BOM(Long number, String customer, Date checked) {
         this.number = number;
         this.customer = customer;
         this.checked = checked;
     }
     
+    /**
+     *
+     * @param id
+     * @param number
+     * @param customer
+     * @param checked
+     */
     public BOM(Long id, Long number, String customer, Date checked) {
     	this.id = id;
         this.number = number;

@@ -9,13 +9,10 @@ import br.com.altamira.data.dao.manufacturing.process.ProduceDao;
 import br.com.altamira.data.dao.manufacturing.process.OperationDao;
 import br.com.altamira.data.model.manufacturing.process.Produce;
 import br.com.altamira.data.model.manufacturing.process.Operation;
-import br.com.altamira.data.model.manufacturing.process.Produce;
 import br.com.altamira.data.rest.BaseEndpoint;
-import static br.com.altamira.data.rest.BaseEndpoint.ENTITY_VALIDATION;
-import static br.com.altamira.data.rest.BaseEndpoint.ID_VALIDATION;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.IOException;
-import javax.inject.Inject;
+import javax.ejb.EJB;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
@@ -38,12 +35,16 @@ import javax.ws.rs.core.UriBuilderException;
  */
 public class ProduceEndpoint  extends BaseEndpoint<Produce> {
 
-    @Inject
+    @EJB
     private OperationDao operationDao;
 
-    @Inject
+    @EJB
     private ProduceDao produceDao;
 
+    public ProduceEndpoint() {
+        this.type = ProduceEndpoint.class;
+    }
+    
     /**
      *
      * @param id

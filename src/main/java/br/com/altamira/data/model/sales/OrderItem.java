@@ -62,6 +62,9 @@ public class OrderItem extends Resource {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "orderItem", fetch = FetchType.LAZY, orphanRemoval = true)
     private List<OrderItemPart> parts;
 
+    /**
+     *
+     */
     public OrderItem() {
         this.parts = new ArrayList<>();
     }

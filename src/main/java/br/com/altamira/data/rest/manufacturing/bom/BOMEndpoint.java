@@ -11,7 +11,7 @@ import br.com.altamira.data.rest.BaseEndpoint;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.IOException;
 import java.util.Date;
-import javax.inject.Inject;
+import javax.ejb.EJB;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -37,9 +37,16 @@ import javax.ws.rs.core.UriBuilderException;
 public class BOMEndpoint
         extends BaseEndpoint<BOM> /*implements Endpoint<Process> See https://issues.jboss.org/browse/WFLY-2724*/ {
 
-    @Inject
+    @EJB
     private BOMDao bomDao;
 
+    /**
+     *
+     */
+    public BOMEndpoint() {
+    	this.type = BOMEndpoint.class;
+    }
+    
     /**
      *
      * @param startPosition

@@ -8,6 +8,7 @@ import javax.ejb.Stateless;
 /**
  *
  *
+ * @author Alessandro
  */
 @Stateless
 public class ConsumeDao extends BaseDao<Consume> {

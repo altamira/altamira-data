@@ -10,6 +10,7 @@ import java.io.Serializable;
 /**
  *
  * 
+ * @author Alessandro
  */
 public class RESTEasyConstraintViolation implements Serializable
 {

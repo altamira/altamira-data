@@ -25,6 +25,7 @@ import javax.ws.rs.ext.Provider;
 /**
  *
  *
+ * @author Alessandro
  */
 @Provider
 public class EJBExceptionMapper implements ExceptionMapper<javax.ejb.EJBException> {
@@ -35,6 +36,11 @@ public class EJBExceptionMapper implements ExceptionMapper<javax.ejb.EJBExceptio
     @Context
     HttpHeaders headers;
 
+    /**
+     *
+     * @param exception
+     * @return
+     */
     @Override
     public Response toResponse(EJBException exception) {
         Response.ResponseBuilder responseBuilder;

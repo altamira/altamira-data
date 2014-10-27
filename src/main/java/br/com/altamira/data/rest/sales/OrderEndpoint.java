@@ -31,6 +31,7 @@ import javax.validation.constraints.NotNull;
 /**
  *
  * 
+ * @author Alessandro
  */
 @RequestScoped
 @Path("/sales/order")

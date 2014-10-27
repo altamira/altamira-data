@@ -1,9 +1,6 @@
 package br.com.altamira.data.rest.manufacturing.process;
 
 import java.io.IOException;
-import java.util.List;
-
-import javax.inject.Inject;
 import javax.validation.constraints.Size;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -25,7 +22,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 
 import br.com.altamira.data.dao.manufacturing.process.ProcessDao;
 import br.com.altamira.data.rest.BaseEndpoint;
+import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -33,17 +32,22 @@ import javax.validation.constraints.NotNull;
 /**
  *
  *
+ * @author Alessandro
  */
 @Path("manufacturing/process")
 @RequestScoped
 public class ProcessEndpoint extends BaseEndpoint<Process> /*implements Endpoint<Process> See https://issues.jboss.org/browse/WFLY-2724*/ {
 
-    @Inject
+    @EJB
     private ProcessDao processDao;
     
     @Inject
     private OperationEndpoint operationEndpoint;
 
+    public ProcessEndpoint() {
+        this.type = ProcessEndpoint.class;
+    }
+    
     /**
      *
      * @param startPosition

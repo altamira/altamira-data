@@ -32,12 +32,21 @@ import javax.validation.constraints.NotNull;
  */
 public abstract class BaseDao<T extends br.com.altamira.data.model.Entity> implements Dao<T> {
 
+    /**
+     *
+     */
     @Inject
     protected Logger log;
 
+    /**
+     *
+     */
     @Inject
     protected EntityManager entityManager;
 
+    /**
+     *
+     */
     @Inject
     protected Validator validator;
 

@@ -2,7 +2,6 @@ package br.com.altamira.data.rest.manufacturing.process;
 
 import java.io.IOException;
 
-import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -22,8 +21,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import br.com.altamira.data.dao.manufacturing.process.OperationDao;
 import br.com.altamira.data.model.manufacturing.process.Operation;
 import br.com.altamira.data.rest.BaseEndpoint;
-import static br.com.altamira.data.rest.BaseEndpoint.ENTITY_VALIDATION;
+import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -35,7 +35,7 @@ import javax.validation.constraints.NotNull;
 @RequestScoped
 public class OperationEndpoint extends BaseEndpoint<Operation> {
 
-    @Inject
+    @EJB
     private OperationDao operationDao;
 
     @Inject
@@ -44,6 +44,10 @@ public class OperationEndpoint extends BaseEndpoint<Operation> {
     @Inject
     private ProduceEndpoint produceEndpoint;
 
+    public OperationEndpoint() {
+        this.type = OperationEndpoint.class;
+    }
+    
     /**
      *
      * @param id
