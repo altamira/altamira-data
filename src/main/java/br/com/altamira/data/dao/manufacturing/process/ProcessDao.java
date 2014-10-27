@@ -128,6 +128,7 @@ public class ProcessDao {
         String searchCriteria = "%" + search.toLowerCase().trim() + "%";
 
         q.select(cb.construct(Process.class,
+        		entity.get("id"),
                 entity.get("code"),
                 entity.get("description")));
 
