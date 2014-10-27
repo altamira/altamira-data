@@ -5,11 +5,14 @@
  */
 package br.com.altamira.data.dao;
 
-
+import static br.com.altamira.data.dao.Dao.PAGE_SIZE_VALIDATION;
+import static br.com.altamira.data.dao.Dao.SEARCH_VALIDATION;
+import static br.com.altamira.data.dao.Dao.START_PAGE_VALIDATION;
 import java.lang.reflect.ParameterizedType;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.inject.Inject;
@@ -24,6 +27,7 @@ import javax.validation.ValidationException;
 import javax.validation.Validator;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  *
@@ -52,6 +56,11 @@ public abstract class BaseDao<T extends br.com.altamira.data.model.Entity> imple
 
     /**
      *
+     */
+    protected Class<T> type;
+    
+    /**
+     *
      * @param startPage
      * @param pageSize
      * @return
@@ -63,15 +72,55 @@ public abstract class BaseDao<T extends br.com.altamira.data.model.Entity> imple
             throws ConstraintViolationException {
 
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<T> q = cb.createQuery(getTypeClass());
-        Root<T> entity = q.from(getTypeClass());
+        CriteriaQuery<T> criteriaQuery = cb.createQuery(type);
+        
+        Root<T> entity = criteriaQuery.from(type);
 
-        q.select(entity);
+        criteriaQuery.select(entity);
+        criteriaQuery.orderBy(cb.desc(entity.get("lastModified")));
+
+        return entityManager.createQuery(criteriaQuery)
+                .setFirstResult(startPage * pageSize)
+                .setMaxResults(pageSize)
+                .getResultList();
+    }
+
+    /**
+     *
+     * @param search
+     * @param startPage
+     * @param pageSize
+     * @return
+     * @throws ConstraintViolationException
+     */
+    @Override
+    public List<T> search(
+            @NotNull @Size(min = 2, message = SEARCH_VALIDATION) String search,
+            @Min(value = 0, message = START_PAGE_VALIDATION) int startPage,
+            @Min(value = 1, message = PAGE_SIZE_VALIDATION) int pageSize)
+            throws ConstraintViolationException, NoResultException {
+
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<T> q = cb.createQuery(type);
+        Root<T> entity = q.from(type);
+
+        String searchCriteria = "%" + search.toLowerCase().trim() + "%";
+
+        // TODO: get fields from Entity<T>
+        /*q.select(cb.construct(type, entity.get("number"),
+         entity.get("customer"),
+         entity.get("checked")));*/
+        // TODO: pass criteria query as parameter
+        /*q.where(cb.or(
+         cb.like(cb.lower(entity.get("number").as(String.class)), searchCriteria),
+         cb.like(cb.lower(entity.get("customer")), searchCriteria)));*/
+        log.log(Level.INFO, "Searching for {0}...", searchCriteria);
 
         return entityManager.createQuery(q)
                 .setFirstResult(startPage * pageSize)
                 .setMaxResults(pageSize)
                 .getResultList();
+
     }
 
     /**
@@ -81,10 +130,10 @@ public abstract class BaseDao<T extends br.com.altamira.data.model.Entity> imple
      */
     @Override
     public T find(
-            @Min(value = 1, message = NUMBER_VALIDATION) long id)
+            @Min(value = 1, message = ID_NOT_NULL_VALIDATION) long id)
             throws ConstraintViolationException, NoResultException {
 
-        T entity = entityManager.find(getTypeClass(), id);
+        T entity = entityManager.find(type, id);
 
         return entity;
     }
@@ -111,7 +160,7 @@ public abstract class BaseDao<T extends br.com.altamira.data.model.Entity> imple
         entityManager.flush();
 
         // Reload to update child references
-        return entityManager.find(getTypeClass(), entity.getId());
+        return entity;
     }
 
     /**
@@ -130,11 +179,11 @@ public abstract class BaseDao<T extends br.com.altamira.data.model.Entity> imple
 
         validate(entity);
 
-        entityManager.merge(entity);
+        entity = entityManager.merge(entity);
         entityManager.flush();
 
         // Reload to update child references
-        return entityManager.find(getTypeClass(), entity.getId());
+        return entityManager.find(type, entity.getId());
     }
 
     /**
@@ -159,7 +208,7 @@ public abstract class BaseDao<T extends br.com.altamira.data.model.Entity> imple
      */
     @Override
     public void remove(
-            @Min(value = 1, message = NUMBER_VALIDATION) long id)
+            @Min(value = 1, message = ID_NOT_NULL_VALIDATION) long id)
             throws ConstraintViolationException, NoResultException {
 
         remove(find(id));
@@ -191,9 +240,9 @@ public abstract class BaseDao<T extends br.com.altamira.data.model.Entity> imple
         }
     }
 
-    private Class<T> getTypeClass() {
+    /*private Class<T> getTypeClass() {
         Class<T> clazz = (Class<T>) ((ParameterizedType) this.getClass()
                 .getGenericSuperclass()).getActualTypeArguments()[0];
         return clazz;
-    }
+    }*/
 }

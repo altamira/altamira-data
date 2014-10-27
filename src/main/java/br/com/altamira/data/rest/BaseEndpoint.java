@@ -93,7 +93,7 @@ public abstract class BaseEndpoint<T extends Entity> /* implements Endpoint<T> *
      * @return
      * @throws IOException
      */
-	// @GET
+    // @GET
     // @Produces(value = MediaType.APPLICATION_JSON)
     // public Response list(
     // @DefaultValue(value = "0") @QueryParam(value = "start") Integer
@@ -109,7 +109,7 @@ public abstract class BaseEndpoint<T extends Entity> /* implements Endpoint<T> *
      * @return
      * @throws JsonProcessingException
      */
-	// @GET
+    // @GET
     // @Path(value = "{id:[0-9]*}")
     // @Produces(value = MediaType.APPLICATION_JSON)
     // public Response find(
@@ -146,7 +146,7 @@ public abstract class BaseEndpoint<T extends Entity> /* implements Endpoint<T> *
      * @throws UriBuilderException
      * @throws JsonProcessingException
      */
-	// @POST
+    // @POST
     // @Consumes(value = MediaType.APPLICATION_JSON)
     // @Produces(value = MediaType.APPLICATION_JSON)
     // public Response create(
@@ -181,7 +181,7 @@ public abstract class BaseEndpoint<T extends Entity> /* implements Endpoint<T> *
      * @return
      * @throws JsonProcessingException
      */
-	// @DELETE
+    // @DELETE
     // @Path(value = "{id:[0-9]*}")
     // public Response delete(
     // @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long
@@ -206,7 +206,6 @@ public abstract class BaseEndpoint<T extends Entity> /* implements Endpoint<T> *
     // throws JsonProcessingException {
     // throw new UnsupportedOperationException("Not supported yet.");
     // }
-    
     private Response getCORSHeaders(String origin) {
         return Response
                 .ok()
@@ -294,9 +293,12 @@ public abstract class BaseEndpoint<T extends Entity> /* implements Endpoint<T> *
         mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, true);
 
         ResponseBuilder responseBuilder = Response.created(
-                UriBuilder.fromResource(type)
-                .path(String.valueOf(entity.getId())).build()).entity(
-                        mapper.writeValueAsString(entity));
+                UriBuilder.fromPath("/")
+                //UriBuilder.fromMethod(type, "create")
+                .path(String.valueOf(entity.getId())).build())
+                //                UriBuilder.fromResource(type)
+                //                .path(String.valueOf(entity.getId())).build())
+                .entity(mapper.writeValueAsString(entity));
 
         if (headers.getHeaderString("Origin") != null
                 && !headers.getHeaderString("Origin").isEmpty()) {
@@ -310,8 +312,7 @@ public abstract class BaseEndpoint<T extends Entity> /* implements Endpoint<T> *
 
     /**
      *
-     * @return
-     * @throws JsonProcessingException
+     * @return @throws JsonProcessingException
      */
     protected Response.ResponseBuilder createNoContentResponse()
             throws JsonProcessingException {

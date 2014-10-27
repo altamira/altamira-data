@@ -44,14 +44,14 @@ import br.com.altamira.data.serialize.JSonViews;
 @Stateless
 @Path("sales/product")
 public class ProductEndpoint {
-	
+
     @Inject
     private Logger log;
 
     @Inject
     private Validator validator;
-    
-    @Inject 
+
+    @Inject
     private ProductDao productDao;
 
     /**
@@ -62,28 +62,28 @@ public class ProductEndpoint {
      * @throws IOException
      */
     @GET
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response list(
-			@DefaultValue("0") @QueryParam("start") Integer startPosition,
-			@DefaultValue("10") @QueryParam("max") Integer maxResult)
-			throws IOException {
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response list(
+            @DefaultValue("0") @QueryParam("start") Integer startPosition,
+            @DefaultValue("10") @QueryParam("max") Integer maxResult)
+            throws IOException {
 
-		List<Product> list;
-		
-		try {
-			list = productDao.list(startPosition, maxResult);
-		} catch (Exception e) {
-    		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
-    	}
-		
-		ObjectMapper mapper = new ObjectMapper();
-		
-		mapper.registerModule(new Hibernate4Module());
-		ObjectWriter writer = mapper.writerWithView(JSonViews.ListView.class);
+        List<Product> list;
 
-		return Response.ok(writer.writeValueAsString(list)).build();
-	}
-	
+        try {
+            list = productDao.list(startPosition, maxResult);
+        } catch (Exception e) {
+            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+        }
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        mapper.registerModule(new Hibernate4Module());
+        ObjectWriter writer = mapper.writerWithView(JSonViews.ListView.class);
+
+        return Response.ok(writer.writeValueAsString(list)).build();
+    }
+
     /**
      *
      * @param code
@@ -93,18 +93,18 @@ public class ProductEndpoint {
     @Path("/{code:[a-zA-Z0-9]*}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response findByNumber(@PathParam("code") String code) {
-    	Product entity = null;
-    	
-    	try {
-    		entity = productDao.findByCode(code);
-    	} catch (Exception e) {
-    		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
-    	}
+        Product entity = null;
 
-		if (entity == null) {
-			return Response.status(Status.NOT_FOUND).build();
-		}
-		
+        try {
+            entity = productDao.findByCode(code);
+        } catch (Exception e) {
+            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+        }
+
+        if (entity == null) {
+            return Response.status(Status.NOT_FOUND).build();
+        }
+
         return Response.ok(entity).build();
     }
 
@@ -117,20 +117,20 @@ public class ProductEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response create(Product entity) {
 
-    	if (entity == null) {
-    		return Response.status(Status.BAD_REQUEST).build();
-    	}
-    	
-    	if (entity.getId() != null && entity.getId() > 0) {
-    		return Response.status(Status.BAD_REQUEST).build();
-    	}
-    	
-    	try {
-    		// Validates member using bean validation
+        if (entity == null) {
+            return Response.status(Status.BAD_REQUEST).build();
+        }
+
+        if (entity.getId() != null && entity.getId() > 0) {
+            return Response.status(Status.BAD_REQUEST).build();
+        }
+
+        try {
+            // Validates member using bean validation
             validate(entity);
-            
-    		entity = productDao.create(entity);
-    	} catch (ConstraintViolationException ce) {
+
+            entity = productDao.create(entity);
+        } catch (ConstraintViolationException ce) {
             // Handle bean validation issues
             createViolationResponse(ce.getConstraintViolations()).build();
         } catch (ValidationException e) {
@@ -139,16 +139,16 @@ public class ProductEndpoint {
             responseObj.put("error", e.getMessage());
             return Response.status(Response.Status.CONFLICT).entity(responseObj).build();
         } catch (Exception e) {
-        	Map<String, String> responseObj = new HashMap<String, String>();
+            Map<String, String> responseObj = new HashMap<String, String>();
             responseObj.put("error", e.getMessage());
-    		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(responseObj).build();
-    	}
+            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(responseObj).build();
+        }
 
-		return Response.created(
-		        UriBuilder.fromResource(ProductEndpoint.class)
-		        .path(String.valueOf(entity.getId())).build())
-		        .entity(entity)
-		        .build();
+        return Response.created(
+                UriBuilder.fromResource(ProductEndpoint.class)
+                .path(String.valueOf(entity.getId())).build())
+                .entity(entity)
+                .build();
     }
 
     /**
@@ -162,19 +162,19 @@ public class ProductEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response update(@PathParam("code") long code, Product entity) {
-    	
-    	if (entity.getId() != code) {
-			return Response.status(Status.CONFLICT)
-					.entity("entity id doesn't match with resource path id")
-					.build();
-		}
-    	
-    	try {
-    		// Validates member using bean validation
+
+        if (entity.getId() != code) {
+            return Response.status(Status.CONFLICT)
+                    .entity("entity id doesn't match with resource path id")
+                    .build();
+        }
+
+        try {
+            // Validates member using bean validation
             validate(entity);
-            
-    		entity = productDao.update(entity);
-    	} catch (ConstraintViolationException ce) {
+
+            entity = productDao.update(entity);
+        } catch (ConstraintViolationException ce) {
             // Handle bean validation issues
             return createViolationResponse(ce.getConstraintViolations()).build();
         } catch (ValidationException e) {
@@ -183,19 +183,19 @@ public class ProductEndpoint {
             responseObj.put("error", e.getMessage());
             return Response.status(Response.Status.CONFLICT).entity(entity).build();
         } catch (Exception e) {
-        	Map<String, String> responseObj = new HashMap<String, String>();
+            Map<String, String> responseObj = new HashMap<String, String>();
             responseObj.put("error", e.getMessage());
-    		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(responseObj).build();
-    	}
+            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(responseObj).build();
+        }
 
-		if (entity == null) {
-			return Response.status(Status.NOT_FOUND).build();
-		}
+        if (entity == null) {
+            return Response.status(Status.NOT_FOUND).build();
+        }
 
-		return Response
-				.ok(UriBuilder.fromResource(ProductEndpoint.class)
-						.path(String.valueOf(entity.getId())).build())
-				.entity(entity).build();
+        return Response
+                .ok(UriBuilder.fromResource(ProductEndpoint.class)
+                        .path(String.valueOf(entity.getId())).build())
+                .entity(entity).build();
     }
 
     /**
@@ -206,10 +206,10 @@ public class ProductEndpoint {
     @DELETE
     @Path("/{code:[a-zA-Z0-9]*}")
     public Response deleteById(@PathParam("code") String code) {
-    	Product entity = null;
-    	try {
-    		entity = productDao.remove(code);
-    	} catch (ConstraintViolationException ce) {
+        Product entity = null;
+        try {
+            entity = productDao.remove(code);
+        } catch (ConstraintViolationException ce) {
             // Handle bean validation issues
             return createViolationResponse(ce.getConstraintViolations()).build();
         } catch (ValidationException e) {
@@ -218,27 +218,30 @@ public class ProductEndpoint {
             responseObj.put("error", e.getMessage());
             return Response.status(Response.Status.CONFLICT).entity(responseObj).build();
         } catch (Exception e) {
-        	Map<String, String> responseObj = new HashMap<String, String>();
+            Map<String, String> responseObj = new HashMap<String, String>();
             responseObj.put("error", e.getMessage());
-    		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
-    	}
-    	
-		if (entity == null) {
-			return Response.noContent().status(Status.NOT_FOUND).build();
-		}
-		return Response.noContent().build();
+            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+        }
+
+        if (entity == null) {
+            return Response.noContent().status(Status.NOT_FOUND).build();
+        }
+        return Response.noContent().build();
     }
 
     /**
      * <p>
-     * Validates the given Member variable and throws validation exceptions based on the type of error. If the error is standard
-     * bean validation errors then it will throw a ConstraintValidationException with the set of the constraints violated.
+     * Validates the given Member variable and throws validation exceptions
+     * based on the type of error. If the error is standard bean validation
+     * errors then it will throw a ConstraintValidationException with the set of
+     * the constraints violated.
      * </p>
      * <p>
-     * If the error is caused because an existing member with the same email is registered it throws a regular validation
-     * exception so that it can be interpreted separately.
+     * If the error is caused because an existing member with the same email is
+     * registered it throws a regular validation exception so that it can be
+     * interpreted separately.
      * </p>
-     * 
+     *
      * @param member Member to be validated
      * @throws ConstraintViolationException If Bean Validation errors exist
      * @throws ValidationException If member with the same email already exists
@@ -253,9 +256,10 @@ public class ProductEndpoint {
     }
 
     /**
-     * Creates a JAX-RS "Bad Request" response including a map of all violation fields, and their message. This can then be used
-     * by clients to show violations.
-     * 
+     * Creates a JAX-RS "Bad Request" response including a map of all violation
+     * fields, and their message. This can then be used by clients to show
+     * violations.
+     *
      * @param violations A set of violations that needs to be reported
      * @return JAX-RS response containing all violations
      */

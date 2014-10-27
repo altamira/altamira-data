@@ -77,9 +77,9 @@ public class BOMEndpoint
     @Path("/search")
     @Produces(MediaType.APPLICATION_JSON)
     public Response search(
+            @Size(min = 2) @QueryParam("search") String search,
             @DefaultValue("0") @QueryParam("start") Integer startPosition,
-            @DefaultValue("10") @QueryParam("max") Integer maxResult,
-            @Size(min = 2) @QueryParam("search") String search)
+            @DefaultValue("10") @QueryParam("max") Integer maxResult)
             throws IOException {
 
         return createOkResponse(

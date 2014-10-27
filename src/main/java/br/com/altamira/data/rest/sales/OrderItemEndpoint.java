@@ -48,18 +48,18 @@ import javax.enterprise.context.RequestScoped;
 @RequestScoped
 @Path("sales/orderitem/{number:[0-9]*}")
 public class OrderItemEndpoint {
-	
+
     @Inject
     private Logger log;
 
     @Inject
     private Validator validator;
-    	
-	@Inject
-	private OrderDao orderDao;
-	
-	@Inject
-	private OrderItemDao orderItemDao;
+
+    @Inject
+    private OrderDao orderDao;
+
+    @Inject
+    private OrderItemDao orderItemDao;
 
     /**
      *
@@ -70,29 +70,29 @@ public class OrderItemEndpoint {
      * @throws IOException
      */
     @GET
-	@Path("item")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response list(@PathParam("number") long number,
-			@DefaultValue("0") @QueryParam("start") Integer startPosition,
-			@DefaultValue("10") @QueryParam("max") Integer maxResult)
-			throws IOException {
+    @Path("item")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response list(@PathParam("number") long number,
+            @DefaultValue("0") @QueryParam("start") Integer startPosition,
+            @DefaultValue("10") @QueryParam("max") Integer maxResult)
+            throws IOException {
 
-		List<OrderItem> list;
-		
-		try {
-			list = orderItemDao.list(number, startPosition, maxResult);
-		} catch (Exception e) {
-    		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
-    	}
-		
-		ObjectMapper mapper = new ObjectMapper();
-		
-		mapper.registerModule(new Hibernate4Module());
-		ObjectWriter writer = mapper.writerWithView(JSonViews.ListView.class);
+        List<OrderItem> list;
 
-		return Response.ok(writer.writeValueAsString(list)).build();
-	}
-	
+        try {
+            list = orderItemDao.list(number, startPosition, maxResult);
+        } catch (Exception e) {
+            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+        }
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        mapper.registerModule(new Hibernate4Module());
+        ObjectWriter writer = mapper.writerWithView(JSonViews.ListView.class);
+
+        return Response.ok(writer.writeValueAsString(list)).build();
+    }
+
     /**
      *
      * @param number
@@ -101,28 +101,28 @@ public class OrderItemEndpoint {
      * @throws IOException
      */
     @GET
-	@Path("{id:[0-9]*}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response findById(@PathParam("number") long number, @PathParam("id") long id) throws IOException {
-		OrderItem entity = null;
-		
-		try {
-			entity = orderItemDao.find(id);
-		} catch (Exception e) {
-    		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
-    	}
+    @Path("{id:[0-9]*}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response findById(@PathParam("number") long number, @PathParam("id") long id) throws IOException {
+        OrderItem entity = null;
 
-		if (entity == null) {
-			return Response.status(Status.NOT_FOUND).build();
-		}
+        try {
+            entity = orderItemDao.find(id);
+        } catch (Exception e) {
+            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+        }
 
-		ObjectMapper mapper = new ObjectMapper();
-		
-		mapper.registerModule(new Hibernate4Module());
-		
-		return Response.ok(mapper.writeValueAsString(entity)).build();
-	}
-	
+        if (entity == null) {
+            return Response.status(Status.NOT_FOUND).build();
+        }
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        mapper.registerModule(new Hibernate4Module());
+
+        return Response.ok(mapper.writeValueAsString(entity)).build();
+    }
+
     /**
      *
      * @param number
@@ -133,25 +133,25 @@ public class OrderItemEndpoint {
      * @throws JsonProcessingException
      */
     @POST
-	@Path("item")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response create(@PathParam("number") long number,  OrderItem entity) throws IllegalArgumentException, UriBuilderException, JsonProcessingException {
-		Order order = null;
-		
-		if (entity == null) {
-			return Response.status(Status.BAD_REQUEST).build();
-		}
-		
-		if (entity.getId() != null) {
-			return Response.status(Status.BAD_REQUEST)
-					.entity("expecting empty id")
-					.build();
-		}
+    @Path("item")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response create(@PathParam("number") long number, OrderItem entity) throws IllegalArgumentException, UriBuilderException, JsonProcessingException {
+        Order order = null;
 
-		try {
-			order = orderDao.findByNumber(number);
-		} catch (ConstraintViolationException ce) {
+        if (entity == null) {
+            return Response.status(Status.BAD_REQUEST).build();
+        }
+
+        if (entity.getId() != null) {
+            return Response.status(Status.BAD_REQUEST)
+                    .entity("expecting empty id")
+                    .build();
+        }
+
+        try {
+            order = orderDao.findByNumber(number);
+        } catch (ConstraintViolationException ce) {
             // Handle bean validation issues
             //return createViolationResponse(ce.getConstraintViolations()).build();
             return Response.status(Response.Status.BAD_REQUEST).entity(ce.getMessage()).build();
@@ -161,26 +161,25 @@ public class OrderItemEndpoint {
             //responseObj.put("email", "Email taken");
             return Response.status(Response.Status.CONFLICT).entity(entity).build();
         } catch (Exception e) {
-    		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
-    	}
-		
-		if (order == null) {
-			return Response.status(Status.BAD_REQUEST).build();
-		}
-		
-		/*if (order.getId() == null || order.getId().longValue() != number) {
-			return Response.status(Status.CONFLICT)
-					.entity("entity id doesn't match with resource path id")
-					.build();
-		}*/
-		
-		try {
-			// Validates member using bean validation
+            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+        }
+
+        if (order == null) {
+            return Response.status(Status.BAD_REQUEST).build();
+        }
+
+        /*if (order.getId() == null || order.getId().longValue() != number) {
+         return Response.status(Status.CONFLICT)
+         .entity("entity id doesn't match with resource path id")
+         .build();
+         }*/
+        try {
+            // Validates member using bean validation
             validate(entity);
-            
-			entity.setOrder(order);
-			orderItemDao.create(order, entity);
-    	} catch (ConstraintViolationException ce) {
+
+            entity.setOrder(order);
+            orderItemDao.create(order, entity);
+        } catch (ConstraintViolationException ce) {
             // Handle bean validation issues
             createViolationResponse(ce.getConstraintViolations()).build();
         } catch (ValidationException e) {
@@ -189,20 +188,20 @@ public class OrderItemEndpoint {
             responseObj.put("error", e.getMessage());
             return Response.status(Response.Status.CONFLICT).entity(responseObj).build();
         } catch (Exception e) {
-        	Map<String, String> responseObj = new HashMap<String, String>();
+            Map<String, String> responseObj = new HashMap<String, String>();
             responseObj.put("error", e.getMessage());
-    		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(responseObj).build();
-    	}
+            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(responseObj).build();
+        }
 
-		ObjectMapper mapper = new ObjectMapper();
-		
-		mapper.registerModule(new Hibernate4Module());
-		
-		return Response
-				.created(UriBuilder.fromResource(OrderItemEndpoint.class)
-				.path(String.valueOf(entity.getId())).build(number))
-				.entity(mapper.writeValueAsString(entity)).build();
-	}
+        ObjectMapper mapper = new ObjectMapper();
+
+        mapper.registerModule(new Hibernate4Module());
+
+        return Response
+                .created(UriBuilder.fromResource(OrderItemEndpoint.class)
+                        .path(String.valueOf(entity.getId())).build(number))
+                .entity(mapper.writeValueAsString(entity)).build();
+    }
 
     /**
      *
@@ -215,28 +214,28 @@ public class OrderItemEndpoint {
      * @throws JsonProcessingException
      */
     @PUT
-	@Path("{id:[0-9]*}")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response update(@PathParam("number") long number, @PathParam("id") long id, OrderItem entity) throws IllegalArgumentException, UriBuilderException, JsonProcessingException {
-		Order order = null;
-		
-		if (entity == null) {
-			return Response.status(Status.BAD_REQUEST).build();
-		}
-		
-		if (entity.getId() == null || entity.getId().longValue() != id) {
-			return Response.status(Status.CONFLICT)
-					.entity("entity id doesn't match with resource path id")
-					.build();
-		}
+    @Path("{id:[0-9]*}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response update(@PathParam("number") long number, @PathParam("id") long id, OrderItem entity) throws IllegalArgumentException, UriBuilderException, JsonProcessingException {
+        Order order = null;
 
-		try {
-			// Validates member using bean validation
+        if (entity == null) {
+            return Response.status(Status.BAD_REQUEST).build();
+        }
+
+        if (entity.getId() == null || entity.getId().longValue() != id) {
+            return Response.status(Status.CONFLICT)
+                    .entity("entity id doesn't match with resource path id")
+                    .build();
+        }
+
+        try {
+            // Validates member using bean validation
             validate(entity);
-            
-			order = orderDao.findByNumber(number);
-		} catch (ConstraintViolationException ce) {
+
+            order = orderDao.findByNumber(number);
+        } catch (ConstraintViolationException ce) {
             // Handle bean validation issues
             //return createViolationResponse(ce.getConstraintViolations()).build();
             return Response.status(Response.Status.BAD_REQUEST).entity(ce.getMessage()).build();
@@ -246,23 +245,23 @@ public class OrderItemEndpoint {
             //responseObj.put("email", "Email taken");
             return Response.status(Response.Status.CONFLICT).entity(entity).build();
         } catch (Exception e) {
-    		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
-    	}
-		
-		if (order == null) {
-			return Response.status(Status.BAD_REQUEST).build();
-		}
-		
-		if (order.getId() == null || order.getId().longValue() != number) {
-			return Response.status(Status.CONFLICT)
-					.entity("entity id doesn't match with resource path id")
-					.build();
-		}
-		
-		try {
-			entity.setOrder(order);
-			entity = orderItemDao.update(order, entity);
-    	} catch (ConstraintViolationException ce) {
+            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+        }
+
+        if (order == null) {
+            return Response.status(Status.BAD_REQUEST).build();
+        }
+
+        if (order.getId() == null || order.getId().longValue() != number) {
+            return Response.status(Status.CONFLICT)
+                    .entity("entity id doesn't match with resource path id")
+                    .build();
+        }
+
+        try {
+            entity.setOrder(order);
+            entity = orderItemDao.update(order, entity);
+        } catch (ConstraintViolationException ce) {
             // Handle bean validation issues
             createViolationResponse(ce.getConstraintViolations()).build();
         } catch (ValidationException e) {
@@ -271,24 +270,24 @@ public class OrderItemEndpoint {
             responseObj.put("error", e.getMessage());
             return Response.status(Response.Status.CONFLICT).entity(responseObj).build();
         } catch (Exception e) {
-        	Map<String, String> responseObj = new HashMap<String, String>();
+            Map<String, String> responseObj = new HashMap<String, String>();
             responseObj.put("error", e.getMessage());
-    		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(responseObj).build();
-    	}
+            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(responseObj).build();
+        }
 
-		if (entity == null) {
-			return Response.status(Status.NOT_FOUND).build();
-		}
+        if (entity == null) {
+            return Response.status(Status.NOT_FOUND).build();
+        }
 
-		ObjectMapper mapper = new ObjectMapper();
-		
-		mapper.registerModule(new Hibernate4Module());
-		
-		return Response
-				.ok(UriBuilder.fromResource(OrderItemEndpoint.class)
-				.path(String.valueOf(entity.getId())).build(number))
-				.entity(mapper.writeValueAsString(entity)).build();
-	}
+        ObjectMapper mapper = new ObjectMapper();
+
+        mapper.registerModule(new Hibernate4Module());
+
+        return Response
+                .ok(UriBuilder.fromResource(OrderItemEndpoint.class)
+                        .path(String.valueOf(entity.getId())).build(number))
+                .entity(mapper.writeValueAsString(entity)).build();
+    }
 
     /**
      *
@@ -297,13 +296,13 @@ public class OrderItemEndpoint {
      * @return
      */
     @DELETE
-	@Path("{id:[0-9]*}")
-	public Response removeById(@PathParam("number") long number, @PathParam("id") long id) {
-		OrderItem entity = null;
-		
-		try {
-			entity = orderItemDao.remove(id);
-    	} catch (ConstraintViolationException ce) {
+    @Path("{id:[0-9]*}")
+    public Response removeById(@PathParam("number") long number, @PathParam("id") long id) {
+        OrderItem entity = null;
+
+        try {
+            entity = orderItemDao.remove(id);
+        } catch (ConstraintViolationException ce) {
             // Handle bean validation issues
             createViolationResponse(ce.getConstraintViolations()).build();
         } catch (ValidationException e) {
@@ -312,27 +311,30 @@ public class OrderItemEndpoint {
             responseObj.put("error", e.getMessage());
             return Response.status(Response.Status.CONFLICT).entity(responseObj).build();
         } catch (Exception e) {
-        	Map<String, String> responseObj = new HashMap<String, String>();
+            Map<String, String> responseObj = new HashMap<String, String>();
             responseObj.put("error", e.getMessage());
-    		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(responseObj).build();
-    	}
-		
-		if (entity == null) {
-			return Response.noContent().status(Status.NOT_FOUND).build();
-		}
-		return Response.noContent().build();
-	}
+            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(responseObj).build();
+        }
+
+        if (entity == null) {
+            return Response.noContent().status(Status.NOT_FOUND).build();
+        }
+        return Response.noContent().build();
+    }
 
     /**
      * <p>
-     * Validates the given Member variable and throws validation exceptions based on the type of error. If the error is standard
-     * bean validation errors then it will throw a ConstraintValidationException with the set of the constraints violated.
+     * Validates the given Member variable and throws validation exceptions
+     * based on the type of error. If the error is standard bean validation
+     * errors then it will throw a ConstraintValidationException with the set of
+     * the constraints violated.
      * </p>
      * <p>
-     * If the error is caused because an existing member with the same email is registered it throws a regular validation
-     * exception so that it can be interpreted separately.
+     * If the error is caused because an existing member with the same email is
+     * registered it throws a regular validation exception so that it can be
+     * interpreted separately.
      * </p>
-     * 
+     *
      * @param member Member to be validated
      * @throws ConstraintViolationException If Bean Validation errors exist
      * @throws ValidationException If member with the same email already exists
@@ -347,9 +349,10 @@ public class OrderItemEndpoint {
     }
 
     /**
-     * Creates a JAX-RS "Bad Order" response including a map of all violation fields, and their message. This can then be used
-     * by clients to show violations.
-     * 
+     * Creates a JAX-RS "Bad Order" response including a map of all violation
+     * fields, and their message. This can then be used by clients to show
+     * violations.
+     *
      * @param violations A set of violations that needs to be reported
      * @return JAX-RS response containing all violations
      */

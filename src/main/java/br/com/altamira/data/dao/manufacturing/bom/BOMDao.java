@@ -43,7 +43,8 @@ public class BOMDao extends BaseDao<BOM> {
         q.select(cb.construct(BOM.class,
                 entity.get("id"),
                 entity.get("number"),
-                entity.get("customer")));
+                entity.get("customer"),
+                entity.get("checked")));
 
         return entityManager.createQuery(q)
                 .setFirstResult(startPage * pageSize)
@@ -66,7 +67,8 @@ public class BOMDao extends BaseDao<BOM> {
         CriteriaQuery<BOM> q = cb.createQuery(BOM.class);
         Root<BOM> entity = q.from(BOM.class);
 
-        q.select(cb.construct(BOM.class, entity.get("id"),
+        q.select(cb.construct(BOM.class, 
+                entity.get("id"),
                 entity.get("number"),
                 entity.get("customer"),
                 entity.get("checked")));
@@ -81,7 +83,8 @@ public class BOMDao extends BaseDao<BOM> {
 
     @Override
     public BOM find(
-            @Min(value = 1, message = NUMBER_VALIDATION) long id) {
+            @Min(value = 1, message = ID_NOT_NULL_VALIDATION) long id)
+            throws ConstraintViolationException, NoResultException {
 
         BOM entity = super.find(id);
 
@@ -131,6 +134,7 @@ public class BOMDao extends BaseDao<BOM> {
      * @param pageSize
      * @return
      */
+    @Override
     public List<BOM> search(
             @NotNull @Size(min = 2, message = SEARCH_VALIDATION) String search,
             @Min(value = 0, message = START_PAGE_VALIDATION) int startPage,
@@ -143,7 +147,8 @@ public class BOMDao extends BaseDao<BOM> {
 
         String searchCriteria = "%" + search.toLowerCase().trim() + "%";
 
-        q.select(cb.construct(BOM.class, entity.get("number"),
+        q.select(cb.construct(BOM.class, 
+                entity.get("number"),
                 entity.get("customer"),
                 entity.get("checked")));
 

@@ -30,7 +30,7 @@ import javax.validation.constraints.NotNull;
 
 /**
  *
- * 
+ *
  * @author Alessandro
  */
 @RequestScoped
@@ -57,7 +57,6 @@ public class OrderEndpoint extends BaseEndpoint<Order> {
         return createOkResponse(
                 orderDao.list(startPosition, maxResult)).build();
     }
-
 
     /**
      *
@@ -121,12 +120,12 @@ public class OrderEndpoint extends BaseEndpoint<Order> {
     @DELETE
     @Path("/{id:[0-9]*}")
     public Response delete(
-            @Min(1) @PathParam("id") long id) 
+            @Min(1) @PathParam("id") long id)
             throws JsonProcessingException {
 
         orderDao.remove(id);
 
         return createNoContentResponse().build();
     }
-    
+
 }

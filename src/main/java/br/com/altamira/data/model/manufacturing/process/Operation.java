@@ -35,20 +35,14 @@ public class Operation extends br.com.altamira.data.model.Operation {
      */
     private static final long serialVersionUID = 4778350055794788171L;
 
-//    @Id
-//    @SequenceGenerator(name = "OperationSequence", sequenceName = "MN_OPERATION_SEQ", allocationSize = 1)
-//    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "OperationSequence")
-//    @Column(name = "ID")
-//    private Long id;
-
     @JsonIgnore
     @JoinColumn(name = "PROCESS", referencedColumnName = "ID")
-    @ManyToOne(optional = true, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Process process;
 
     @NotNull
     @Min(1)
-    @Column(name = "SEQ")
+    @Column(name = "SEQ", unique = true)
     private int sequence;
 
     @NotNull
@@ -91,20 +85,6 @@ public class Operation extends br.com.altamira.data.model.Operation {
         this.sequence = sequence;
         this.name = name;
     }
-
-    /**
-     * @return the id
-     */
-//    public Long getId() {
-//        return id;
-//    }
-
-    /**
-     * @param id the id to set
-     */
-//    public void setId(Long id) {
-//        this.id = id;
-//    }
     
     /**
      *

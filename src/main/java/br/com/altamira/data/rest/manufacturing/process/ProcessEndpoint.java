@@ -52,11 +52,30 @@ public class ProcessEndpoint extends BaseEndpoint<Process> /*implements Endpoint
      *
      * @param startPosition
      * @param maxResult
+     * @return
+     * @throws IOException
+     */
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response list(
+            @DefaultValue("0") @QueryParam("start") Integer startPosition,
+            @DefaultValue("10") @QueryParam("max") Integer maxResult)
+            throws IOException {
+
+        return createOkResponse(
+                processDao.list(startPosition, maxResult)).build();
+    }
+    
+    /**
+     *
+     * @param startPosition
+     * @param maxResult
      * @param search
      * @return
      * @throws IOException
      */
     @GET
+    @Path("/search")
     @Produces(MediaType.APPLICATION_JSON)
     public Response search(
             @DefaultValue("0") @QueryParam("start") Integer startPosition,
@@ -91,9 +110,9 @@ public class ProcessEndpoint extends BaseEndpoint<Process> /*implements Endpoint
      * @return
      * @throws JsonProcessingException
      */
-    @Path("/{process:[0-9]*}/operation")
+    @Path("/{process:[0-9]*}")
     @Produces(MediaType.APPLICATION_JSON)
-    public java.lang.Object listOperation(
+    public java.lang.Object operation(
             @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "process") long id)
             throws JsonProcessingException, NoResultException {
 
@@ -132,7 +151,7 @@ public class ProcessEndpoint extends BaseEndpoint<Process> /*implements Endpoint
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response update(
-            @NotNull @Size(min = 1, message = ID_VALIDATION) @PathParam("id") long id,
+            @Min(value = 1, message = ID_VALIDATION) @PathParam("id") long id,
             @NotNull(message = ENTITY_VALIDATION) Process entity)
             throws JsonProcessingException {
 

@@ -10,7 +10,6 @@ import br.com.altamira.data.dao.manufacturing.process.OperationDao;
 import br.com.altamira.data.model.manufacturing.process.Consume;
 import br.com.altamira.data.model.manufacturing.process.Operation;
 import br.com.altamira.data.rest.BaseEndpoint;
-import br.com.altamira.data.rest.manufacturing.bom.BOMEndpoint;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.IOException;
 import javax.ejb.EJB;
@@ -60,6 +59,7 @@ public class ConsumeEndpoint extends BaseEndpoint<br.com.altamira.data.model.man
      * @throws IOException
      */
     @GET
+    @Path("/consume")
     @Produces(MediaType.APPLICATION_JSON)
     public Response list(
             @Min(value = 1, message = ID_VALIDATION) @PathParam("operation") long operation,
@@ -80,10 +80,10 @@ public class ConsumeEndpoint extends BaseEndpoint<br.com.altamira.data.model.man
      * @throws JsonProcessingException
      */
     @GET
-    @Path(value = "{consume:[0-9]*}")
+    @Path("/consume/{id:[0-9]*}")
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response find(
-            @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "consume") long id)
+            @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long id)
             throws JsonProcessingException {
 
         return createOkResponse(
@@ -99,6 +99,7 @@ public class ConsumeEndpoint extends BaseEndpoint<br.com.altamira.data.model.man
      * @throws JsonProcessingException
      */
     @POST
+    @Path("/consume")
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response create(
@@ -111,19 +112,23 @@ public class ConsumeEndpoint extends BaseEndpoint<br.com.altamira.data.model.man
 
     /**
      *
+     * @param operation
      * @param id
      * @param entity
      * @return
      * @throws JsonProcessingException
      */
     @PUT
-    @Path(value = "{id:[0-9]*}")
+    @Path("/consume/{id:[0-9]*}")
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response update(
+            @Min(value = 1, message = ID_VALIDATION) @PathParam("operation") long operation,
             @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long id,
             @NotNull(message = ENTITY_VALIDATION) Consume entity)
             throws JsonProcessingException {
+        
+        entity.setOperation(operationDao.find(operation));
         
         return createOkResponse(
                 consumeDao.update(entity)).build();
@@ -136,7 +141,7 @@ public class ConsumeEndpoint extends BaseEndpoint<br.com.altamira.data.model.man
      * @throws JsonProcessingException
      */
     @DELETE
-    @Path(value = "{id:[0-9]*}")
+    @Path("/consume/{id:[0-9]*}")
     public Response delete(
             @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long id)
             throws JsonProcessingException {

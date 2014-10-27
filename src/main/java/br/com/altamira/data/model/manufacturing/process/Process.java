@@ -32,12 +32,6 @@ public class Process extends br.com.altamira.data.model.Process {
      */
     private static final long serialVersionUID = 5549369785798723928L;
     
-//    @Id
-//    @SequenceGenerator(name = "ProcessSequence", sequenceName = "MN_PROCESS_SEQ", allocationSize = 1)
-//    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ProcessSequence")
-//    @Column(name = "ID")
-//    private Long id;
-    
     @NotNull
     @Size(min = 10)
     @Column(name = "CODE", columnDefinition = "nvarchar2(255)", unique=true, nullable=false)

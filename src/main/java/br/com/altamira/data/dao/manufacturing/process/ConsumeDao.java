@@ -13,4 +13,7 @@ import javax.ejb.Stateless;
 @Stateless
 public class ConsumeDao extends BaseDao<Consume> {
 
+    public ConsumeDao() {
+        this.type = Consume.class;
+    }
 }

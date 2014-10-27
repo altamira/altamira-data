@@ -7,9 +7,12 @@ package br.com.altamira.data.dao;
 
 import java.util.List;
 import javax.persistence.NoResultException;
+import javax.persistence.criteria.CriteriaQuery;
 import javax.validation.ConstraintViolationException;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import javax.ws.rs.DefaultValue;
 
 /**
  *
@@ -17,7 +20,7 @@ import javax.validation.constraints.NotNull;
  * @param <T>
  */
 public interface Dao<T extends br.com.altamira.data.model.Entity> {
-    
+
     /**
      *
      */
@@ -61,15 +64,23 @@ public interface Dao<T extends br.com.altamira.data.model.Entity> {
      * @throws ConstraintViolationException
      */
     public List<T> list(
-            @Min(value = 0, message = START_PAGE_VALIDATION) int startPage, 
-            @Min(value = 1, message = PAGE_SIZE_VALIDATION) int pageSize) 
+            @Min(value = 0, message = START_PAGE_VALIDATION) int startPage,
+            @Min(value = 1, message = PAGE_SIZE_VALIDATION) int pageSize)
             throws ConstraintViolationException;
-    
-    /*public List<T> search (
+
+    /**
+     *
+     * @param search
+     * @param startPage
+     * @param pageSize
+     * @return
+     * @throws ConstraintViolationException
+     */
+    public List<T> search(
             @NotNull @Size(min = 2, message = SEARCH_VALIDATION) String search,
-            @Min(value = 0, message = START_PAGE_VALIDATION) int startPage, 
-            @Min(value = 1, message = PAGE_SIZE_VALIDATION) int pageSize) 
-        throws ConstraintViolationException, NoResultException;*/
+            @Min(value = 0, message = START_PAGE_VALIDATION) int startPage,
+            @Min(value = 1, message = PAGE_SIZE_VALIDATION) int pageSize)
+            throws ConstraintViolationException, NoResultException;
 
     /**
      *
@@ -78,12 +89,10 @@ public interface Dao<T extends br.com.altamira.data.model.Entity> {
      * @throws ConstraintViolationException
      * @throws NoResultException
      */
-    
-    
     public T find(
-            @Min(value = 1, message = NUMBER_VALIDATION) long id) 
+            @Min(value = 1, message = ID_NOT_NULL_VALIDATION) long id)
             throws ConstraintViolationException, NoResultException;
-    
+
     /**
      *
      * @param entity
@@ -91,9 +100,9 @@ public interface Dao<T extends br.com.altamira.data.model.Entity> {
      * @throws ConstraintViolationException
      */
     public T create(
-            @NotNull(message = ENTITY_VALIDATION) T entity) 
+            @NotNull(message = ENTITY_VALIDATION) T entity)
             throws ConstraintViolationException;
-    
+
     /**
      *
      * @param entity
@@ -104,7 +113,7 @@ public interface Dao<T extends br.com.altamira.data.model.Entity> {
     public T update(
             @NotNull(message = ENTITY_VALIDATION) T entity)
             throws ConstraintViolationException, IllegalArgumentException;
-    
+
     /**
      *
      * @param entity
@@ -112,9 +121,9 @@ public interface Dao<T extends br.com.altamira.data.model.Entity> {
      * @throws IllegalArgumentException
      */
     public void remove(
-            @NotNull(message = ENTITY_VALIDATION) T entity) 
+            @NotNull(message = ENTITY_VALIDATION) T entity)
             throws ConstraintViolationException, IllegalArgumentException;
-    
+
     /**
      *
      * @param id
@@ -122,7 +131,7 @@ public interface Dao<T extends br.com.altamira.data.model.Entity> {
      * @throws NoResultException
      */
     public void remove(
-            @Min(value = 1, message = NUMBER_VALIDATION) long id) 
+            @Min(value = 1, message = ID_NOT_NULL_VALIDATION) long id)
             throws ConstraintViolationException, NoResultException;
-    
+
 }
