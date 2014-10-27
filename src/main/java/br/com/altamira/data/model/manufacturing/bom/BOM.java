@@ -101,6 +101,13 @@ public class BOM extends Resource {
         this.customer = customer;
         this.checked = checked;
     }
+    
+    public BOM(Long id, Long number, String customer, Date checked) {
+    	this.id = id;
+        this.number = number;
+        this.customer = customer;
+        this.checked = checked;
+    }
 
     /**
      * @return the id
