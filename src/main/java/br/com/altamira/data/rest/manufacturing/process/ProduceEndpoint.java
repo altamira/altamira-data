@@ -13,6 +13,7 @@ import br.com.altamira.data.rest.BaseEndpoint;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.IOException;
 import javax.ejb.EJB;
+import javax.enterprise.context.RequestScoped;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
@@ -33,6 +34,8 @@ import javax.ws.rs.core.UriBuilderException;
  *
  * @author alessandro.holanda
  */
+@RequestScoped
+@Path("manufacturing/process/{process:[0-9]*}/operation/{operation:[0-9]*}/produce")
 public class ProduceEndpoint  extends BaseEndpoint<Produce> {
 
     @EJB
@@ -54,7 +57,6 @@ public class ProduceEndpoint  extends BaseEndpoint<Produce> {
      * @throws IOException
      */
     @GET
-    @Path("/produce")
     @Produces(MediaType.APPLICATION_JSON)
     public Response list(
             @Min(value = 1, message = ID_VALIDATION) @PathParam("operation") long id,
@@ -75,7 +77,7 @@ public class ProduceEndpoint  extends BaseEndpoint<Produce> {
      * @throws JsonProcessingException
      */
     @GET
-    @Path("/produce/{id:[0-9]*}")
+    @Path("{id:[0-9]*}")
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response find(
             @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long id)
@@ -94,7 +96,6 @@ public class ProduceEndpoint  extends BaseEndpoint<Produce> {
      * @throws JsonProcessingException
      */
     @POST
-    @Path("/produce")
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response create(
@@ -114,7 +115,7 @@ public class ProduceEndpoint  extends BaseEndpoint<Produce> {
      * @throws JsonProcessingException
      */
     @PUT
-    @Path("/produce/{id:[0-9]*}")
+    @Path("{id:[0-9]*}")
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response update(
@@ -136,7 +137,7 @@ public class ProduceEndpoint  extends BaseEndpoint<Produce> {
      * @throws JsonProcessingException
      */
     @DELETE
-    @Path("/produce/{id:[0-9]*}")
+    @Path("{id:[0-9]*}")
     public Response delete(
             @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long id)
             throws JsonProcessingException {

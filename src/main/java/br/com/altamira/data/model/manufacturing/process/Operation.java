@@ -21,13 +21,14 @@ import br.com.altamira.data.serialize.NullCollectionSerializer;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import javax.persistence.UniqueConstraint;
 
 /**
  *
  * @author alessandro.holanda
  */
 @Entity
-@Table(name = "MN_OPERATION")
+@Table(name = "MN_OPERATION", uniqueConstraints={@UniqueConstraint(columnNames={"PROCESS", "SEQ"})})
 public class Operation extends br.com.altamira.data.model.Operation {
 
     /**
@@ -42,7 +43,7 @@ public class Operation extends br.com.altamira.data.model.Operation {
 
     @NotNull
     @Min(1)
-    @Column(name = "SEQ", unique = true)
+    @Column(name = "SEQ")
     private int sequence;
 
     @NotNull

@@ -102,22 +102,23 @@ public abstract class BaseEndpoint<T extends Entity> /* implements Endpoint<T> *
     // throws IOException {
     // throw new UnsupportedOperationException("Not supported yet.");
     // }
+    
     /**
      *
      * @param id
-     * @param headers
      * @return
      * @throws JsonProcessingException
      */
-    // @GET
-    // @Path(value = "{id:[0-9]*}")
-    // @Produces(value = MediaType.APPLICATION_JSON)
-    // public Response find(
-    // @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long
-    // id)
-    // throws JsonProcessingException {
-    // throw new UnsupportedOperationException("Not supported yet.");
-    // }
+    /*@GET
+    @Path(value = "{id:[0-9]*}")
+    @Produces(value = MediaType.APPLICATION_JSON)
+    public Response find(
+            @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long id)
+            throws JsonProcessingException {
+        
+        return createOkResponse(dao.find(id)).build();
+    }*/
+    
     /**
      *
      * @param startPosition
@@ -137,6 +138,7 @@ public abstract class BaseEndpoint<T extends Entity> /* implements Endpoint<T> *
     // throws IOException {
     // throw new UnsupportedOperationException("Not supported yet.");
     // }
+    
     /**
      *
      * @param entity
@@ -155,6 +157,7 @@ public abstract class BaseEndpoint<T extends Entity> /* implements Endpoint<T> *
     // JsonProcessingException {
     // throw new UnsupportedOperationException("Not supported yet.");
     // }
+    
     /**
      *
      * @param id
@@ -174,6 +177,7 @@ public abstract class BaseEndpoint<T extends Entity> /* implements Endpoint<T> *
     // throws JsonProcessingException {
     // throw new UnsupportedOperationException("Not supported yet.");
     // }
+    
     /**
      *
      * @param id
@@ -189,6 +193,7 @@ public abstract class BaseEndpoint<T extends Entity> /* implements Endpoint<T> *
     // throws JsonProcessingException {
     // throw new UnsupportedOperationException("Not supported yet.");
     // }
+    
     /**
      *
      * @param id
@@ -225,7 +230,19 @@ public abstract class BaseEndpoint<T extends Entity> /* implements Endpoint<T> *
     public Response corsPreflight(@HeaderParam("Origin") String origin) {
         return getCORSHeaders(origin);
     }
-
+    
+    @OPTIONS
+    @Path("/{id:[0-9]*}")
+    public Response corsPreflightForIdPath(@HeaderParam("Origin") String origin) {
+        return getCORSHeaders(origin);
+    }
+    
+    @OPTIONS
+    @Path("/search")
+    public Response corsPreflightForSearchPath(@HeaderParam("Origin") String origin) {
+        return getCORSHeaders(origin);
+    }
+    
     /**
      *
      * @param origin

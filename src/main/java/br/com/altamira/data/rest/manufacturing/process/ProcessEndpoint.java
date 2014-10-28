@@ -24,7 +24,6 @@ import br.com.altamira.data.dao.manufacturing.process.ProcessDao;
 import br.com.altamira.data.rest.BaseEndpoint;
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -40,14 +39,11 @@ public class ProcessEndpoint extends BaseEndpoint<Process> /*implements Endpoint
 
     @EJB
     private ProcessDao processDao;
-    
-    @Inject
-    private OperationEndpoint operationEndpoint;
 
     public ProcessEndpoint() {
         this.type = ProcessEndpoint.class;
     }
-    
+
     /**
      *
      * @param startPosition
@@ -65,7 +61,7 @@ public class ProcessEndpoint extends BaseEndpoint<Process> /*implements Endpoint
         return createOkResponse(
                 processDao.list(startPosition, maxResult)).build();
     }
-    
+
     /**
      *
      * @param startPosition
@@ -104,22 +100,6 @@ public class ProcessEndpoint extends BaseEndpoint<Process> /*implements Endpoint
                 processDao.find(id)).build();
     }
 
-    /**
-     *
-     * @param id
-     * @return
-     * @throws JsonProcessingException
-     */
-    @Path("/{process:[0-9]*}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public java.lang.Object operation(
-            @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "process") long id)
-            throws JsonProcessingException, NoResultException {
-
-        return operationEndpoint;
-
-    }
-    
     /**
      *
      * @param entity
@@ -168,12 +148,12 @@ public class ProcessEndpoint extends BaseEndpoint<Process> /*implements Endpoint
     @DELETE
     @Path("/{id:[0-9]*}")
     public Response delete(
-            @Min(1) @PathParam("id") long id)
+            @Min(value = 1, message = ID_VALIDATION) @PathParam("id") long id)
             throws JsonProcessingException {
 
         processDao.remove(id);
 
         return createNoContentResponse().build();
     }
-    
+
 }

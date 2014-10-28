@@ -22,10 +22,8 @@ import br.com.altamira.data.dao.manufacturing.process.OperationDao;
 import br.com.altamira.data.dao.manufacturing.process.ProcessDao;
 import br.com.altamira.data.model.manufacturing.process.Operation;
 import br.com.altamira.data.rest.BaseEndpoint;
-import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.persistence.NoResultException;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
@@ -34,24 +32,19 @@ import javax.validation.constraints.NotNull;
  * @author alessandro.holanda
  */
 @RequestScoped
+@Path("manufacturing/process/{process:[0-9]*}/operation")
 public class OperationEndpoint extends BaseEndpoint<Operation> {
 
-    @EJB
+    @Inject
     private ProcessDao processDao;
-    
-    @EJB
-    private OperationDao operationDao;
 
     @Inject
-    private ConsumeEndpoint consumeEndpoint;
-    
-    @Inject
-    private ProduceEndpoint produceEndpoint;
+    private OperationDao operationDao;
 
     public OperationEndpoint() {
         this.type = OperationEndpoint.class;
     }
-    
+
     /**
      *
      * @param id
@@ -61,7 +54,6 @@ public class OperationEndpoint extends BaseEndpoint<Operation> {
      * @throws IOException
      */
     @GET
-    @Path("/operation")
     @Produces(MediaType.APPLICATION_JSON)
     public Response list(
             @Min(value = 1, message = ID_VALIDATION) @PathParam("process") long id,
@@ -79,47 +71,17 @@ public class OperationEndpoint extends BaseEndpoint<Operation> {
      * @return
      * @throws JsonProcessingException
      */
-    @Path("/operation/{operation:[0-9]*}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public java.lang.Object consume(
-            @Min(value = 1, message = ID_VALIDATION) @PathParam("operation") long id)
-            throws JsonProcessingException, NoResultException {
-
-        return consumeEndpoint;
-
-    }
-
-    /**
-     *
-     * @param id
-     * @return
-     * @throws JsonProcessingException
-     */
-    @Path("/operation/{operation:[0-9]*}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public java.lang.Object produce(
-            @Min(value = 1, message = ID_VALIDATION) @PathParam("operation") long id)
-            throws JsonProcessingException, NoResultException {
-
-        return produceEndpoint;
-    }
-
-    /**
-     *
-     * @param id
-     * @return
-     * @throws JsonProcessingException
-     */
     @GET
-    @Path("/operation/{id:[0-9]*}")
+    @Path("{id:[0-9]*}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response find(
-            @Min(value = 1, message = ID_VALIDATION) @PathParam("id") long id) 
+            @Min(value = 1, message = ID_VALIDATION) @PathParam("id") long id)
             throws JsonProcessingException {
 
         return createOkResponse(
                 operationDao.find(id)).build();
     }
+
     /**
      *
      * @param id
@@ -130,7 +92,6 @@ public class OperationEndpoint extends BaseEndpoint<Operation> {
      * @throws JsonProcessingException
      */
     @POST
-    @Path("/operation")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response create(
@@ -139,7 +100,7 @@ public class OperationEndpoint extends BaseEndpoint<Operation> {
             throws IllegalArgumentException, UriBuilderException, JsonProcessingException {
 
         entity.setProcess(processDao.find(id));
-        
+
         return createCreatedResponse(
                 operationDao.create(entity)).build();
     }
@@ -153,7 +114,7 @@ public class OperationEndpoint extends BaseEndpoint<Operation> {
      * @throws JsonProcessingException
      */
     @PUT
-    @Path("/operation/{id:[0-9]*}")
+    @Path("{id:[0-9]*}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response update(
@@ -163,7 +124,7 @@ public class OperationEndpoint extends BaseEndpoint<Operation> {
             throws JsonProcessingException {
 
         entity.setProcess(processDao.find(process));
-        
+
         return createOkResponse(
                 operationDao.update(entity)).build();
     }
@@ -175,7 +136,7 @@ public class OperationEndpoint extends BaseEndpoint<Operation> {
      * @throws com.fasterxml.jackson.core.JsonProcessingException
      */
     @DELETE
-    @Path("/operation/{id:[0-9]*}")
+    @Path("{id:[0-9]*}")
     public Response delete(
             @Min(value = 1, message = ID_VALIDATION) @PathParam("id") long id)
             throws JsonProcessingException {

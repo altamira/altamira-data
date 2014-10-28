@@ -7,12 +7,10 @@ package br.com.altamira.data.dao;
 
 import java.util.List;
 import javax.persistence.NoResultException;
-import javax.persistence.criteria.CriteriaQuery;
 import javax.validation.ConstraintViolationException;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import javax.ws.rs.DefaultValue;
 
 /**
  *

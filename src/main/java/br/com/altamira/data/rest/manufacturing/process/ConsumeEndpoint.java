@@ -35,6 +35,7 @@ import javax.ws.rs.core.UriBuilderException;
  * @author Alessandro
  */
 @RequestScoped
+@Path("manufacturing/process/{process:[0-9]*}/operation/{operation:[0-9]*}/consume")
 public class ConsumeEndpoint extends BaseEndpoint<br.com.altamira.data.model.manufacturing.process.Consume> {
 
     @EJB
@@ -42,14 +43,14 @@ public class ConsumeEndpoint extends BaseEndpoint<br.com.altamira.data.model.man
 
     @EJB
     private ConsumeDao consumeDao;
-    
+
     /**
      *
      */
     public ConsumeEndpoint() {
-    	this.type = ConsumeEndpoint.class;
+        this.type = ConsumeEndpoint.class;
     }
-    
+
     /**
      *
      * @param operation
@@ -59,7 +60,6 @@ public class ConsumeEndpoint extends BaseEndpoint<br.com.altamira.data.model.man
      * @throws IOException
      */
     @GET
-    @Path("/consume")
     @Produces(MediaType.APPLICATION_JSON)
     public Response list(
             @Min(value = 1, message = ID_VALIDATION) @PathParam("operation") long operation,
@@ -80,7 +80,7 @@ public class ConsumeEndpoint extends BaseEndpoint<br.com.altamira.data.model.man
      * @throws JsonProcessingException
      */
     @GET
-    @Path("/consume/{id:[0-9]*}")
+    @Path("{id:[0-9]*}")
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response find(
             @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long id)
@@ -92,6 +92,7 @@ public class ConsumeEndpoint extends BaseEndpoint<br.com.altamira.data.model.man
 
     /**
      *
+     * @param id
      * @param entity
      * @return
      * @throws IllegalArgumentException
@@ -99,16 +100,17 @@ public class ConsumeEndpoint extends BaseEndpoint<br.com.altamira.data.model.man
      * @throws JsonProcessingException
      */
     @POST
-    @Path("/consume")
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response create(
-    		@Min(value = 1, message = ID_VALIDATION) @PathParam("operation") long id,
+            @Min(value = 1, message = ID_VALIDATION) @PathParam("operation") long id,
             @NotNull(message = ENTITY_VALIDATION) Consume entity)
             throws IllegalArgumentException, UriBuilderException, JsonProcessingException {
-    	entity.setOperation(operationDao.find(id));
+        
+        entity.setOperation(operationDao.find(id));
+        
         return createCreatedResponse(
-            consumeDao.create(entity)).build();
+                consumeDao.create(entity)).build();
     }
 
     /**
@@ -120,7 +122,7 @@ public class ConsumeEndpoint extends BaseEndpoint<br.com.altamira.data.model.man
      * @throws JsonProcessingException
      */
     @PUT
-    @Path("/consume/{id:[0-9]*}")
+    @Path("{id:[0-9]*}")
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response update(
@@ -128,9 +130,9 @@ public class ConsumeEndpoint extends BaseEndpoint<br.com.altamira.data.model.man
             @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long id,
             @NotNull(message = ENTITY_VALIDATION) Consume entity)
             throws JsonProcessingException {
-        
+
         entity.setOperation(operationDao.find(operation));
-        
+
         return createOkResponse(
                 consumeDao.update(entity)).build();
     }
@@ -142,13 +144,13 @@ public class ConsumeEndpoint extends BaseEndpoint<br.com.altamira.data.model.man
      * @throws JsonProcessingException
      */
     @DELETE
-    @Path("/consume/{id:[0-9]*}")
+    @Path("{id:[0-9]*}")
     public Response delete(
             @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long id)
             throws JsonProcessingException {
-        
+
         consumeDao.remove(id);
-        
+
         return createNoContentResponse().build();
     }
 
