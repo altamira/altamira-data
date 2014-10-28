@@ -24,6 +24,10 @@ import javax.validation.constraints.Size;
 @Stateless
 public class BOMDao extends BaseDao<BOM> {
 
+	public BOMDao() {
+		this.type = BOM.class;
+	}
+	
     /**
      *
      * @param startPage
