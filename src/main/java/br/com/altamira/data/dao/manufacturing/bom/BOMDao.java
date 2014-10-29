@@ -152,6 +152,7 @@ public class BOMDao extends BaseDao<BOM> {
         String searchCriteria = "%" + search.toLowerCase().trim() + "%";
 
         q.select(cb.construct(BOM.class,
+                entity.get("id"),
                 entity.get("number"),
                 entity.get("customer"),
                 entity.get("checked")));
