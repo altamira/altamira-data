@@ -13,6 +13,12 @@ To build this project:
 $ mvn clean install -Parq-wildfly-remote
 ```
 
+To build without run the tests:
+
+```
+mvn clean install -DskipTests
+```
+
 To run the tests with Arquillian is necessary install altamira-data-x.x.x.SNAPSHOT.war in jboss because the rest service tests are make in client perspective.
 
 
