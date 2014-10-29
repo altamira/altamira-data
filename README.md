@@ -19,6 +19,6 @@ To build without run the tests:
 mvn clean install -DskipTests
 ```
 
-To run the tests with Arquillian is necessary deploy altamira-data-x.x.x.SNAPSHOT.war first because the rest service tests are made in client perspective.
+To run the tests with Arquillian is necessary deploy altamira-data-x.x.x.SNAPSHOT.war first because the rest service tests was  made in client perspective.
 
 
