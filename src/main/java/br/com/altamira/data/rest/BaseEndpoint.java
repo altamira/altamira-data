@@ -193,9 +193,10 @@ public abstract class BaseEndpoint<T extends Entity> /* implements Endpoint<T> *
     // throws JsonProcessingException {
     // throw new UnsupportedOperationException("Not supported yet.");
     // }
-    
+
     /**
      *
+     * @param origin
      * @param id
      * @param entity
      * @param headers
@@ -211,7 +212,22 @@ public abstract class BaseEndpoint<T extends Entity> /* implements Endpoint<T> *
     // throws JsonProcessingException {
     // throw new UnsupportedOperationException("Not supported yet.");
     // }
-    private Response getCORSHeaders(String origin) {
+    
+    /**
+     *
+     * @param origin
+     * @return
+     */
+    // @DELETE
+    // @Path(value = "{id:[0-9]*}")
+    // public Response delete(
+    // @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long
+    // id,
+    // @NotNull(message = ENTITY_VALIDATION) T entity)
+    // throws JsonProcessingException {
+    // throw new UnsupportedOperationException("Not supported yet.");
+    // }
+    protected Response getCORSHeaders(String origin) {
         return Response
                 .ok()
                 .header("Access-Control-Allow-Origin", origin)

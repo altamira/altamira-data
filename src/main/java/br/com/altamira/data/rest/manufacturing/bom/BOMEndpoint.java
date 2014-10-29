@@ -20,6 +20,8 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.OPTIONS;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -130,7 +132,7 @@ public class BOMEndpoint
      * @throws JsonProcessingException
      */
     @PUT
-    @Path(value = "{id:[0-9]*}")
+    @Path("/{id:[0-9]*}")
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response update(
@@ -148,7 +150,7 @@ public class BOMEndpoint
      * @throws JsonProcessingException
      */
     @PUT
-    @Path(value = "{id:[0-9]*}/checked")
+    @Path("/{id:[0-9]*}/checked")
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response updateToChecked(
@@ -165,14 +167,14 @@ public class BOMEndpoint
      * @throws JsonProcessingException
      */
     @PUT
-    @Path(value = "{id:[0-9]*}/unchecked")
+    @Path("/{id:[0-9]*}/unchecked")
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response updateToUnchecked(
             @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long id)
             throws JsonProcessingException {
         
-        return createOkResponse(bomDao.updateToChecked(id)).build();
+        return createOkResponse(bomDao.updateToUnchecked(id)).build();
     }
     
     /**
@@ -191,5 +193,16 @@ public class BOMEndpoint
 
         return createNoContentResponse().build();
     }
-
+        
+    @OPTIONS
+    @Path("/{id:[0-9]*}/checked")
+    public Response corsPreflightForCheckedPath(@HeaderParam("Origin") String origin) {
+        return getCORSHeaders(origin);
+    }
+    
+    @OPTIONS
+    @Path("/{id:[0-9]*}/unchecked")
+    public Response corsPreflightForUncheckedPath(@HeaderParam("Origin") String origin) {
+        return getCORSHeaders(origin);
+    }
 }
