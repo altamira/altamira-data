@@ -109,7 +109,7 @@ public class BOMDao extends BaseDao<BOM> {
      * @return
      */
     public BOM findByNumber(
-            @Min(value = 1, message = NUMBER_VALIDATION) long number)
+            @Min(value = 1, message = ID_NOT_NULL_VALIDATION) long number)
             throws ConstraintViolationException, NoResultException {
 
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
@@ -232,30 +232,32 @@ public class BOMDao extends BaseDao<BOM> {
     /**
      *
      * @param id
+     * @return 
      */
-    public void updateToUnchecked(
-            @Min(value = 1, message = NUMBER_VALIDATION) long id) {
+    public BOM updateToUnchecked(
+            @Min(value = 1, message = ID_NOT_NULL_VALIDATION) long id) {
 
         BOM bom = find(id);
 
         bom.setChecked(null);
 
-        super.update(bom);
+        return super.update(bom);
 
     }
 
     /**
      *
      * @param id
+     * @return 
      */
-    public void updateToChecked(
-            @Min(value = 1, message = NUMBER_VALIDATION) long id) {
+    public BOM updateToChecked(
+            @Min(value = 1, message = ID_NOT_NULL_VALIDATION) long id) {
 
         BOM bom = find(id);
 
         bom.setChecked(new Date());
 
-        super.update(bom);
+        return super.update(bom);
 
     }
 }

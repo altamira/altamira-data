@@ -151,17 +151,28 @@ public class BOMEndpoint
     @Path(value = "{id:[0-9]*}/checked")
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Produces(value = MediaType.APPLICATION_JSON)
-    public Response update(
+    public Response updateToChecked(
             @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long id)
             throws JsonProcessingException {
         
-        BOM entity = bomDao.find(id);
+        return createOkResponse(bomDao.updateToChecked(id)).build();
+    }
 
-        // Add the current date to checked field
-        Date date = new Date();
-        entity.setChecked(date);
-
-        return createOkResponse(bomDao.update(entity)).build();
+    /**
+     *
+     * @param id
+     * @return
+     * @throws JsonProcessingException
+     */
+    @PUT
+    @Path(value = "{id:[0-9]*}/unchecked")
+    @Consumes(value = MediaType.APPLICATION_JSON)
+    @Produces(value = MediaType.APPLICATION_JSON)
+    public Response updateToUnchecked(
+            @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long id)
+            throws JsonProcessingException {
+        
+        return createOkResponse(bomDao.updateToChecked(id)).build();
     }
     
     /**
