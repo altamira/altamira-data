@@ -1,4 +1,4 @@
-package br.com.altamira.data.model.sales;
+package br.com.altamira.data.model.manufacturing.order;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -20,8 +20,8 @@ import br.com.altamira.data.model.Resource;
  *
  * @author alessandro.holanda
  */
-@Entity(name = "br.com.altamira.data.model.sales.Order")
-@Table(name = "SL_ORDER")
+@Entity(name = "br.com.altamira.data.model.manufacturing.order.Order")
+@Table(name = "MN_ORDER")
 public class Order extends Resource {
 
     /**

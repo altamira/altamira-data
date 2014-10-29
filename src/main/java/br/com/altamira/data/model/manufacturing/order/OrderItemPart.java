@@ -1,48 +1,57 @@
-package br.com.altamira.data.model.sales;
+package br.com.altamira.data.model.manufacturing.order;
 
 import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import br.com.altamira.data.model.Resource;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  *
  * @author alessandro.holanda
  */
-@Entity(name = "br.com.altamira.data.model.sales")
-@Table(name = "SL_PRODUCT", uniqueConstraints = @UniqueConstraint(columnNames = {"CODE", "DESCRIPTION"}))
-public class Product extends Resource {
+@Entity(name = "br.com.altamira.data.model.manufacturing.order.OrderItemPart")
+@Table(name = "MN_ORDER_ITEM_PART")
+public class OrderItemPart extends Resource {
 
     /**
-     *
+     * Serial version ID
      */
     private static final long serialVersionUID = -4871377387938455032L;
 
 //    @Id
-//    @SequenceGenerator(name = "ProductSequence", sequenceName = "SL_PRODUCT_SEQ", allocationSize = 1)
-//    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ProductSequence")
+//    @SequenceGenerator(name = "OrderItemPartSequence", sequenceName = "SL_ORDER_ITEM_PART_SEQ", allocationSize = 1)
+//    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "OrderItemPartSequence")
 //    @Column(name = "ID")
 //    private Long id;
 
     @NotNull
     @Size(min = 10)
-    @Column(name = "CODE", unique = true, nullable = false)
+    @Column(name = "CODE")
     private String code = "";
 
     @NotNull
     @Size(min = 10)
-    @Column(name = "DESCRIPTION", unique = true, nullable = false)
+    @Column(name = "DESCRIPTION")
     private String description = "";
 
     @Column(name = "COLOR")
     private String color = "";
+
+    @NotNull
+    @Min(0)
+    @Column(name = "QUANTITY")
+    private BigDecimal quantity = BigDecimal.valueOf(0);
 
     @NotNull
     @Min(0)
@@ -64,36 +73,17 @@ public class Product extends Resource {
     @Column(name = "WEIGHT")
     private BigDecimal weight = BigDecimal.valueOf(0);
 
-    /**
-     *
+    @JsonIgnore
+    @JoinColumn(name = "ORDER_ITEM", referencedColumnName = "ID")
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private OrderItem orderItem;
+
+    /*
+     @JoinColumn(name = "CODE", referencedColumnName = "CODE", insertable=false, updatable=false)
+     @JoinColumn(name = "PRODUCT", referencedColumnName = "ID", insertable = false, updatable = false)
+     @ManyToOne(optional = false, fetch = FetchType.LAZY)
+     private Product product;
      */
-    public Product() {
-
-    }
-
-    /**
-     *
-     * @param code
-     * @param description
-     * @param color
-     * @param width
-     * @param height
-     * @param length
-     * @param weight
-     */
-    public Product(String code, String description, String color,
-            BigDecimal width, BigDecimal height, BigDecimal length,
-            BigDecimal weight) {
-        super();
-        this.code = code;
-        this.description = description;
-        this.color = color;
-        this.width = width;
-        this.height = height;
-        this.length = length;
-        this.weight = weight;
-    }
-
     /**
      * @return the id
      */
@@ -160,6 +150,22 @@ public class Product extends Resource {
      *
      * @return
      */
+    public BigDecimal getQuantity() {
+        return quantity;
+    }
+
+    /**
+     *
+     * @param quantity
+     */
+    public void setQuantity(BigDecimal quantity) {
+        this.quantity = quantity;
+    }
+
+    /**
+     *
+     * @return
+     */
     public BigDecimal getWidth() {
         return width;
     }
@@ -220,4 +226,29 @@ public class Product extends Resource {
         this.weight = weight;
     }
 
+    /**
+     *
+     * @return
+     */
+    @JsonIgnore
+    public OrderItem getOrderItem() {
+        return orderItem;
+    }
+
+    /**
+     *
+     * @param orderItem
+     */
+    @JsonIgnore
+    public void setOrderItem(OrderItem orderItem) {
+        this.orderItem = orderItem;
+    }
+
+    /*public Product getProduct() {
+     return product;
+     }
+
+     public void setProduct(Product product) {
+     this.product = product;
+     }*/
 }

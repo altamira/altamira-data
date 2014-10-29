@@ -24,10 +24,10 @@ import javax.validation.constraints.Size;
 @Stateless
 public class BOMDao extends BaseDao<BOM> {
 
-	public BOMDao() {
-		this.type = BOM.class;
-	}
-	
+    public BOMDao() {
+        this.type = BOM.class;
+    }
+
     /**
      *
      * @param startPage
@@ -71,7 +71,7 @@ public class BOMDao extends BaseDao<BOM> {
         CriteriaQuery<BOM> q = cb.createQuery(BOM.class);
         Root<BOM> entity = q.from(BOM.class);
 
-        q.select(cb.construct(BOM.class, 
+        q.select(cb.construct(BOM.class,
                 entity.get("id"),
                 entity.get("number"),
                 entity.get("customer"),
@@ -151,7 +151,7 @@ public class BOMDao extends BaseDao<BOM> {
 
         String searchCriteria = "%" + search.toLowerCase().trim() + "%";
 
-        q.select(cb.construct(BOM.class, 
+        q.select(cb.construct(BOM.class,
                 entity.get("number"),
                 entity.get("customer"),
                 entity.get("checked")));

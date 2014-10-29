@@ -160,7 +160,7 @@ public abstract class BaseDao<T extends br.com.altamira.data.model.Entity> imple
         entityManager.flush();
 
         // Reload to update child references
-        return entity;
+        return find(entity.getId());
     }
 
     /**
@@ -183,7 +183,7 @@ public abstract class BaseDao<T extends br.com.altamira.data.model.Entity> imple
         entityManager.flush();
 
         // Reload to update child references
-        return entityManager.find(type, entity.getId());
+        return find(entity.getId());
     }
 
     /**

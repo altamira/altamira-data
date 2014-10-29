@@ -1,0 +1,65 @@
+{
+    "code": "PPLCOL00113000000000",
+    "description": "COLUNA NORMAL CH12 2800MM",
+    "date": "10/09/14",
+    "sector": "ESTAMPARIA",
+    "issuedBy": "HELIO",
+    "operation": "10 - PERFILAMENTO",
+    "components": [
+        {
+            "code": "ALPRFQ30 - KG20000F330",
+            "name": "ACO FINA QUENTE PRETO ROLO 2,00 MM 330 MM"
+        },
+        {
+            "code": "PERF - PPLTUBO 113",
+            "name": "FERFILADEIRA "
+        }
+    ],
+    "materials": [
+        {
+            "amount": 40,
+            "material": "COLUNA NORMAL CH12 2800MM",
+            "color": "CZ-PAD",
+            "request": 12234,
+            "client": "MULT",
+            "delivery": "10/09/14",
+            "weightTotal": 432000
+        },
+        {
+            "amount": 40,
+            "material": "COLUNA NORMAL CH12 6000MM",
+            "color": "CZ-PAD",
+            "request": 72243,
+            "client": "AMA",
+            "delivery": "10/09/14",
+            "weightTotal": 349900
+        },
+        {
+            "amount": 50,
+            "material": "COLUNA NORMAL CH12 5800MM",
+            "color": "CZ-PAD",
+            "request": 76654,
+            "client": "SENAI",
+            "delivery": "10/09/14",
+            "weightTotal": 898204
+        },
+        {
+            "amount": 10,
+            "material": "COLUNA NORMAL CH12 6800MM",
+            "color": "CZ-PAD",
+            "request": 56678,
+            "client": "BWF",
+            "delivery": "10/09/14",
+            "weightTotal": 1218234
+        },
+        {
+            "amount": 10,
+            "material": "COLUNA NORMAL CH12 3800MM",
+            "color": "CZ-PAD",
+            "request": 76654,
+            "client": "ZENSUL",
+            "delivery": "10/09/14",
+            "weightTotal": 568520
+        }
+    ]
+}

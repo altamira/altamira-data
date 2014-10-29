@@ -3,13 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package br.com.altamira.data.rest.manufacturing.process;
+package br.com.altamira.data.rest.manufacturing.bom;
 
-import br.com.altamira.data.dao.manufacturing.process.ConsumeDao;
-import br.com.altamira.data.dao.manufacturing.process.OperationDao;
-import br.com.altamira.data.model.manufacturing.process.Consume;
-import br.com.altamira.data.model.manufacturing.process.Operation;
+import br.com.altamira.data.dao.manufacturing.bom.BOMItemDao;
+import br.com.altamira.data.dao.manufacturing.bom.BOMItemPartDao;
+import br.com.altamira.data.model.manufacturing.bom.BOMItemPart;
 import br.com.altamira.data.rest.BaseEndpoint;
+import static br.com.altamira.data.rest.BaseEndpoint.ENTITY_VALIDATION;
+import static br.com.altamira.data.rest.BaseEndpoint.ID_VALIDATION;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.IOException;
 import javax.ejb.EJB;
@@ -35,25 +36,25 @@ import javax.ws.rs.core.UriBuilderException;
  * @author Alessandro
  */
 @RequestScoped
-@Path("manufacturing/process/{process:[0-9]*}/operation/{operation:[0-9]*}/consume")
-public class ConsumeEndpoint extends BaseEndpoint<br.com.altamira.data.model.manufacturing.process.Consume> {
+@Path("/manufacturing/bom/{bom:[0-9]*}/item/{item:[0-9]*}/part")
+public class BOMItemPartEndpoint  extends BaseEndpoint<BOMItemPart> {
 
     @EJB
-    private OperationDao operationDao;
-
+    private BOMItemDao bomItemDao;
+    
     @EJB
-    private ConsumeDao consumeDao;
+    private BOMItemPartDao bomItemPartDao;
 
     /**
      *
      */
-    public ConsumeEndpoint() {
-        this.type = ConsumeEndpoint.class;
+    public BOMItemPartEndpoint() {
+    	this.type = BOMItemPartEndpoint.class;
     }
-
+    
     /**
      *
-     * @param operation
+     * @param id
      * @param startPosition
      * @param maxResult
      * @return
@@ -62,15 +63,13 @@ public class ConsumeEndpoint extends BaseEndpoint<br.com.altamira.data.model.man
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response list(
-            @Min(value = 1, message = ID_VALIDATION) @PathParam("operation") long operation,
+            @Min(value = 1, message = ID_VALIDATION) @PathParam("item") long id,
             @DefaultValue("0") @QueryParam("start") Integer startPosition,
             @DefaultValue("10") @QueryParam("max") Integer maxResult)
             throws IOException {
 
-        Operation entity = operationDao.find(operation);
-
         return createOkResponse(
-                entity.getConsume()).build();
+                bomItemPartDao.list(id, startPosition, maxResult)).build();
     }
 
     /**
@@ -80,19 +79,19 @@ public class ConsumeEndpoint extends BaseEndpoint<br.com.altamira.data.model.man
      * @throws JsonProcessingException
      */
     @GET
-    @Path("{id:[0-9]*}")
-    @Produces(value = MediaType.APPLICATION_JSON)
+    @Path("/{id:[0-9]*}")
+    @Produces(MediaType.APPLICATION_JSON)
     public Response find(
-            @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long id)
+            @Min(1) @PathParam("id") long id)
             throws JsonProcessingException {
 
         return createOkResponse(
-                consumeDao.find(id)).build();
+                bomItemPartDao.find(id)).build();
     }
 
     /**
      *
-     * @param operation
+     * @param id
      * @param entity
      * @return
      * @throws IllegalArgumentException
@@ -100,43 +99,43 @@ public class ConsumeEndpoint extends BaseEndpoint<br.com.altamira.data.model.man
      * @throws JsonProcessingException
      */
     @POST
-    @Consumes(value = MediaType.APPLICATION_JSON)
-    @Produces(value = MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response create(
-            @Min(value = 1, message = ID_VALIDATION) @PathParam("operation") long operation,
-            @NotNull(message = ENTITY_VALIDATION) Consume entity)
+            @Min(value = 1, message = ID_VALIDATION) @PathParam("item") long id,
+            @NotNull(message = ENTITY_VALIDATION) BOMItemPart entity)
             throws IllegalArgumentException, UriBuilderException, JsonProcessingException {
-        
-        entity.setOperation(operationDao.find(operation));
+
+        entity.setBOMItem(bomItemDao.find(id));
         
         return createCreatedResponse(
-                consumeDao.create(entity)).build();
+                bomItemPartDao.create(entity)).build();
     }
 
     /**
      *
-     * @param operation
+     * @param item
      * @param id
      * @param entity
      * @return
      * @throws JsonProcessingException
      */
     @PUT
-    @Path("{id:[0-9]*}")
+    @Path(value = "{id:[0-9]*}")
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response update(
-            @Min(value = 1, message = ID_VALIDATION) @PathParam("operation") long operation,
+            @Min(value = 1, message = ID_VALIDATION) @PathParam("item") long item,
             @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long id,
-            @NotNull(message = ENTITY_VALIDATION) Consume entity)
+            @NotNull(message = ENTITY_VALIDATION) BOMItemPart entity)
             throws JsonProcessingException {
 
-        entity.setOperation(operationDao.find(operation));
-
+        entity.setBOMItem(bomItemDao.find(item));
+        
         return createOkResponse(
-                consumeDao.update(entity)).build();
+                bomItemPartDao.update(entity)).build();
     }
-
+    
     /**
      *
      * @param id
@@ -144,14 +143,14 @@ public class ConsumeEndpoint extends BaseEndpoint<br.com.altamira.data.model.man
      * @throws JsonProcessingException
      */
     @DELETE
-    @Path("{id:[0-9]*}")
+    @Path("/{id:[0-9]*}")
     public Response delete(
-            @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long id)
+            @Min(1) @PathParam("id") long id) 
             throws JsonProcessingException {
 
-        consumeDao.remove(id);
+        bomItemPartDao.remove(id);
 
         return createNoContentResponse().build();
     }
-
+    
 }

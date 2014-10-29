@@ -1,19 +1,6 @@
 package br.com.altamira.data.rest.sales;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Logger;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-import javax.validation.ValidationException;
-import javax.validation.Validator;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -26,34 +13,33 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.core.Response.Status;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
 
 import br.com.altamira.data.dao.sales.ProductDao;
 import br.com.altamira.data.model.sales.Product;
-import br.com.altamira.data.serialize.JSonViews;
+import br.com.altamira.data.rest.BaseEndpoint;
+import static br.com.altamira.data.rest.BaseEndpoint.ENTITY_VALIDATION;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import javax.ejb.EJB;
+import javax.enterprise.context.RequestScoped;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.core.UriBuilderException;
 
 /**
  *
- * @author alessandro.holanda
+ * 
  */
-@Stateless
+@RequestScoped
 @Path("sales/product")
-public class ProductEndpoint {
+public class ProductEndpoint extends BaseEndpoint<Product> {
 
-    @Inject
-    private Logger log;
-
-    @Inject
-    private Validator validator;
-
-    @Inject
+    @EJB
     private ProductDao productDao;
 
+    public ProductEndpoint() {
+        this.type = ProductEndpoint.class;
+    }
+    
     /**
      *
      * @param startPosition
@@ -68,35 +54,39 @@ public class ProductEndpoint {
             @DefaultValue("10") @QueryParam("max") Integer maxResult)
             throws IOException {
 
-        List<Product> list;
-
-        try {
-            list = productDao.list(startPosition, maxResult);
-        } catch (Exception e) {
-            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
-        }
-
-        ObjectMapper mapper = new ObjectMapper();
-
-        mapper.registerModule(new Hibernate4Module());
-        ObjectWriter writer = mapper.writerWithView(JSonViews.ListView.class);
-
-        return Response.ok(writer.writeValueAsString(list)).build();
+        return createOkResponse(
+                productDao.list(startPosition, maxResult)).build();
     }
 
+    /**
+     *
+     * @param id
+     * @return
+     * @throws JsonProcessingException
+     */
+    @GET
+    @Path("/{id:[0-9]*}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response find(
+            @Min(1) @PathParam("id") long id)
+            throws JsonProcessingException {
+
+        return createOkResponse(productDao.find(id)).build();
+    }
+    
     /**
      *
      * @param code
      * @return
      */
-    @GET
+    /*@GET
     @Path("/{code:[a-zA-Z0-9]*}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response findByNumber(@PathParam("code") String code) {
+    public Response find(@PathParam("code") String code) {
         Product entity = null;
 
         try {
-            entity = productDao.findByCode(code);
+            entity = productDao.find(code);
         } catch (Exception e) {
             return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
         }
@@ -106,173 +96,61 @@ public class ProductEndpoint {
         }
 
         return Response.ok(entity).build();
-    }
+    }*/
+
 
     /**
      *
      * @param entity
      * @return
+     * @throws IllegalArgumentException
+     * @throws UriBuilderException
+     * @throws JsonProcessingException
      */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response create(Product entity) {
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response create(
+            @NotNull(message = ENTITY_VALIDATION) Product entity)
+            throws IllegalArgumentException, UriBuilderException, JsonProcessingException {
 
-        if (entity == null) {
-            return Response.status(Status.BAD_REQUEST).build();
-        }
-
-        if (entity.getId() != null && entity.getId() > 0) {
-            return Response.status(Status.BAD_REQUEST).build();
-        }
-
-        try {
-            // Validates member using bean validation
-            validate(entity);
-
-            entity = productDao.create(entity);
-        } catch (ConstraintViolationException ce) {
-            // Handle bean validation issues
-            createViolationResponse(ce.getConstraintViolations()).build();
-        } catch (ValidationException e) {
-            // Handle the unique constrain violation
-            Map<String, String> responseObj = new HashMap<String, String>();
-            responseObj.put("error", e.getMessage());
-            return Response.status(Response.Status.CONFLICT).entity(responseObj).build();
-        } catch (Exception e) {
-            Map<String, String> responseObj = new HashMap<String, String>();
-            responseObj.put("error", e.getMessage());
-            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(responseObj).build();
-        }
-
-        return Response.created(
-                UriBuilder.fromResource(ProductEndpoint.class)
-                .path(String.valueOf(entity.getId())).build())
-                .entity(entity)
-                .build();
+        return createCreatedResponse(productDao.create(entity)).build();
     }
+    
 
     /**
      *
-     * @param code
+     * @param id
      * @param entity
      * @return
+     * @throws JsonProcessingException
      */
     @PUT
-    @Path("/{code:[a-zA-Z0-9]*}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response update(@PathParam("code") long code, Product entity) {
+    @Path(value = "{id:[0-9]*}")
+    @Consumes(value = MediaType.APPLICATION_JSON)
+    @Produces(value = MediaType.APPLICATION_JSON)
+    public Response update(
+            @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long id,
+            @NotNull(message = ENTITY_VALIDATION) Product entity)
+            throws JsonProcessingException {
 
-        if (entity.getId() != code) {
-            return Response.status(Status.CONFLICT)
-                    .entity("entity id doesn't match with resource path id")
-                    .build();
-        }
-
-        try {
-            // Validates member using bean validation
-            validate(entity);
-
-            entity = productDao.update(entity);
-        } catch (ConstraintViolationException ce) {
-            // Handle bean validation issues
-            return createViolationResponse(ce.getConstraintViolations()).build();
-        } catch (ValidationException e) {
-            // Handle the unique constrain violation
-            Map<String, String> responseObj = new HashMap<String, String>();
-            responseObj.put("error", e.getMessage());
-            return Response.status(Response.Status.CONFLICT).entity(entity).build();
-        } catch (Exception e) {
-            Map<String, String> responseObj = new HashMap<String, String>();
-            responseObj.put("error", e.getMessage());
-            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(responseObj).build();
-        }
-
-        if (entity == null) {
-            return Response.status(Status.NOT_FOUND).build();
-        }
-
-        return Response
-                .ok(UriBuilder.fromResource(ProductEndpoint.class)
-                        .path(String.valueOf(entity.getId())).build())
-                .entity(entity).build();
+        return createOkResponse(productDao.update(entity)).build();
     }
-
+    
     /**
      *
-     * @param code
+     * @param id
      * @return
+     * @throws JsonProcessingException
      */
     @DELETE
-    @Path("/{code:[a-zA-Z0-9]*}")
-    public Response deleteById(@PathParam("code") String code) {
-        Product entity = null;
-        try {
-            entity = productDao.remove(code);
-        } catch (ConstraintViolationException ce) {
-            // Handle bean validation issues
-            return createViolationResponse(ce.getConstraintViolations()).build();
-        } catch (ValidationException e) {
-            // Handle the unique constrain violation
-            Map<String, String> responseObj = new HashMap<String, String>();
-            responseObj.put("error", e.getMessage());
-            return Response.status(Response.Status.CONFLICT).entity(responseObj).build();
-        } catch (Exception e) {
-            Map<String, String> responseObj = new HashMap<String, String>();
-            responseObj.put("error", e.getMessage());
-            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
-        }
+    @Path("/{id:[0-9]*}")
+    public Response delete(
+            @Min(1) @PathParam("id") long id) 
+            throws JsonProcessingException {
 
-        if (entity == null) {
-            return Response.noContent().status(Status.NOT_FOUND).build();
-        }
-        return Response.noContent().build();
+        productDao.remove(id);
+
+        return createNoContentResponse().build();
     }
-
-    /**
-     * <p>
-     * Validates the given Member variable and throws validation exceptions
-     * based on the type of error. If the error is standard bean validation
-     * errors then it will throw a ConstraintValidationException with the set of
-     * the constraints violated.
-     * </p>
-     * <p>
-     * If the error is caused because an existing member with the same email is
-     * registered it throws a regular validation exception so that it can be
-     * interpreted separately.
-     * </p>
-     *
-     * @param member Member to be validated
-     * @throws ConstraintViolationException If Bean Validation errors exist
-     * @throws ValidationException If member with the same email already exists
-     */
-    private void validate(Product entity) throws ConstraintViolationException {
-        // Create a bean validator and check for issues.
-        Set<ConstraintViolation<Product>> violations = validator.validate(entity);
-
-        if (!violations.isEmpty()) {
-            throw new ConstraintViolationException(new HashSet<ConstraintViolation<?>>(violations));
-        }
-    }
-
-    /**
-     * Creates a JAX-RS "Bad Request" response including a map of all violation
-     * fields, and their message. This can then be used by clients to show
-     * violations.
-     *
-     * @param violations A set of violations that needs to be reported
-     * @return JAX-RS response containing all violations
-     */
-    private Response.ResponseBuilder createViolationResponse(Set<ConstraintViolation<?>> violations) {
-        log.fine("Validation completed. violations found: " + violations.size());
-
-        Map<String, String> responseObj = new HashMap<String, String>();
-
-        for (ConstraintViolation<?> violation : violations) {
-            responseObj.put(violation.getPropertyPath().toString(), violation.getMessage());
-        }
-
-        return Response.status(Response.Status.BAD_REQUEST).entity(responseObj);
-    }
-
 }

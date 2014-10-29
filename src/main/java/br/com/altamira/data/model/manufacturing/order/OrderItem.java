@@ -1,4 +1,4 @@
-package br.com.altamira.data.model.manufacturing.bom;
+package br.com.altamira.data.model.manufacturing.order;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,29 +15,33 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import br.com.altamira.data.model.Resource;
-import br.com.altamira.data.serialize.JSonViews;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonView;
 import javax.persistence.Lob;
 import javax.persistence.UniqueConstraint;
 
 /**
  *
- * Represents a sales bom item
+ * Represents a sales order item
  */
-@Entity
-@Table(name = "MN_BOM_ITEM", uniqueConstraints = @UniqueConstraint(columnNames = {"MN_ORDER", "ITEM"}))
-public class BOMItem extends Resource {
+@Entity(name = "br.com.altamira.data.model.manufacturing.order.OrderItem")
+@Table(name = "MN_ORDER_ITEM", uniqueConstraints = @UniqueConstraint(columnNames = {"MN_ORDER", "ITEM"}))
+public class OrderItem extends Resource {
 
     /**
      * Serial version ID
      */
     private static final long serialVersionUID = 7448803904699786256L;
-    
+
+//    @Id
+//    @SequenceGenerator(name = "OrderItemSequence", sequenceName = "SL_ORDER_ITEM_SEQ", allocationSize = 1)
+//    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "OrderItemSequence")
+//    @Column(name = "ID")
+//    private Long id;
+
     @JsonIgnore
     @JoinColumn(name = "MN_ORDER", referencedColumnName = "ID")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private BOM bom;
+    private Order order;
 
     @NotNull
     @Min(1)
@@ -49,33 +53,46 @@ public class BOMItem extends Resource {
     @Column(name = "DESCRIPTION", length = 100000)
     private String description = "";
 
-    @JsonView(JSonViews.EntityView.class)
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "bomItem", fetch = FetchType.LAZY, orphanRemoval = true)
-    private List<BOMItemPart> parts;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "orderItem", fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<OrderItemPart> parts;
 
     /**
      *
      */
-    public BOMItem() {
+    public OrderItem() {
         this.parts = new ArrayList<>();
     }
-    
+
+    /**
+     * @return the id
+     */
+//    public Long getId() {
+//        return id;
+//    }
+
+    /**
+     * @param id the id to set
+     */
+//    public void setId(Long id) {
+//        this.id = id;
+//    }
+
     /**
      *
      * @return
      */
     @JsonIgnore
-    public BOM getBOM() {
-        return bom;
+    public Order getOrder() {
+        return order;
     }
 
     /**
      *
-     * @param bom
+     * @param order
      */
     @JsonIgnore
-    public void setBOM(BOM bom) {
-        this.bom = bom;
+    public void setOrder(Order order) {
+        this.order = order;
     }
 
     /**
@@ -114,7 +131,7 @@ public class BOMItem extends Resource {
      *
      * @return
      */
-    public List<BOMItemPart> getParts() {
+    public List<OrderItemPart> getParts() {
         return parts;
     }
 
@@ -122,7 +139,7 @@ public class BOMItem extends Resource {
      *
      * @param parts
      */
-    public void setPart(List<BOMItemPart> parts) {
+    public void setPart(List<OrderItemPart> parts) {
         this.parts = parts;
     }
 

@@ -50,7 +50,7 @@ public class ProduceEndpoint  extends BaseEndpoint<Produce> {
     
     /**
      *
-     * @param id
+     * @param operation
      * @param startPosition
      * @param maxResult
      * @return
@@ -59,12 +59,12 @@ public class ProduceEndpoint  extends BaseEndpoint<Produce> {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response list(
-            @Min(value = 1, message = ID_VALIDATION) @PathParam("operation") long id,
+            @Min(value = 1, message = ID_VALIDATION) @PathParam("operation") long operation,
             @DefaultValue("0") @QueryParam("start") Integer startPosition,
             @DefaultValue("10") @QueryParam("max") Integer maxResult)
             throws IOException {
 
-        Operation entity = operationDao.find(id);
+        Operation entity = operationDao.find(operation);
 
         return createOkResponse(
                 entity.getProduce()).build();
@@ -89,6 +89,7 @@ public class ProduceEndpoint  extends BaseEndpoint<Produce> {
 
     /**
      *
+     * @param operation
      * @param entity
      * @return
      * @throws IllegalArgumentException
@@ -99,8 +100,11 @@ public class ProduceEndpoint  extends BaseEndpoint<Produce> {
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response create(
+            @Min(value = 1, message = ID_VALIDATION) @PathParam("operation") long operation,
             @NotNull(message = ENTITY_VALIDATION) Produce entity)
             throws IllegalArgumentException, UriBuilderException, JsonProcessingException {
+        
+        entity.setOperation(operationDao.find(operation));
         
         return createCreatedResponse(
             produceDao.create(entity)).build();

@@ -29,6 +29,11 @@ public class BOMItemPart extends Resource {
      */
     private static final long serialVersionUID = -4871377387938455032L;
     
+    @JsonIgnore
+    @JoinColumn(name = "ORDER_ITEM", referencedColumnName = "ID")
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private BOMItem bomItem;
+
     @NotNull
     @Size(min = 10)
     @Column(name = "CODE")
@@ -66,11 +71,6 @@ public class BOMItemPart extends Resource {
     @Min(0)
     @Column(name = "WEIGHT")
     private BigDecimal weight = BigDecimal.valueOf(0);
-
-    @JsonIgnore
-    @JoinColumn(name = "ORDER_ITEM", referencedColumnName = "ID")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private BOMItem bomItem;
 
     /*
     @JoinColumn(name = "CODE", referencedColumnName = "CODE", insertable=false, updatable=false)

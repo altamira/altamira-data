@@ -15,21 +15,15 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import br.com.altamira.data.model.Resource;
-import br.com.altamira.data.serialize.JSonViews;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonView;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Lob;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.UniqueConstraint;
 
 /**
  *
  * Represents a sales order item
  */
-@Entity
+@Entity(name = "br.com.altamira.data.model.sales.OrderItem")
 @Table(name = "SL_ORDER_ITEM", uniqueConstraints = @UniqueConstraint(columnNames = {"SALES_ORDER", "ITEM"}))
 public class OrderItem extends Resource {
 

@@ -3,16 +3,17 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package br.com.altamira.data.rest.manufacturing.bom;
+package br.com.altamira.data.rest.manufacturing.order;
 
 import br.com.altamira.data.dao.manufacturing.bom.BOMDao;
 import br.com.altamira.data.model.manufacturing.bom.BOM;
 import br.com.altamira.data.rest.BaseEndpoint;
+import static br.com.altamira.data.rest.BaseEndpoint.ENTITY_VALIDATION;
+import static br.com.altamira.data.rest.BaseEndpoint.ID_VALIDATION;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.IOException;
 import java.util.Date;
 import javax.ejb.EJB;
-import javax.enterprise.context.RequestScoped;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -34,9 +35,8 @@ import javax.ws.rs.core.UriBuilderException;
  *
  * Bill of Material rest services
  */
-@RequestScoped
 @Path("/manufacturing/bom")
-public class BOMEndpoint
+public class OrderEndpoint
         extends BaseEndpoint<BOM> /*implements Endpoint<Process> See https://issues.jboss.org/browse/WFLY-2724*/ {
 
     @EJB
@@ -45,8 +45,8 @@ public class BOMEndpoint
     /**
      *
      */
-    public BOMEndpoint() {
-    	this.type = BOMEndpoint.class;
+    public OrderEndpoint() {
+    	this.type = OrderEndpoint.class;
     }
     
     /**

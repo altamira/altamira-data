@@ -15,16 +15,12 @@ import javax.validation.constraints.Size;
 import br.com.altamira.data.model.Resource;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
 
 /**
  *
  * @author alessandro.holanda
  */
-@Entity
+@Entity(name = "br.com.altamira.data.model.sales.OrderItemPart")
 @Table(name = "SL_ORDER_ITEM_PART")
 public class OrderItemPart extends Resource {
 
