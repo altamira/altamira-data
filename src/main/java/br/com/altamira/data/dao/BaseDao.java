@@ -8,7 +8,6 @@ package br.com.altamira.data.dao;
 import static br.com.altamira.data.dao.Dao.PAGE_SIZE_VALIDATION;
 import static br.com.altamira.data.dao.Dao.SEARCH_VALIDATION;
 import static br.com.altamira.data.dao.Dao.START_PAGE_VALIDATION;
-import java.lang.reflect.ParameterizedType;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;

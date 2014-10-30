@@ -7,14 +7,16 @@ package br.com.altamira.data.dao.manufacturing.order;
 
 import br.com.altamira.data.dao.BaseDao;
 import br.com.altamira.data.model.manufacturing.order.Order;
+import javax.ejb.Stateless;
 
 /**
  *
- * @author Alessandro
+ * 
  */
-public class OrderDao extends BaseDao<Order> {
+@Stateless
+public class SalesOrderDao extends BaseDao<Order> {
 
-    public OrderDao() {
+    public SalesOrderDao() {
         this.type = Order.class;
     }
 

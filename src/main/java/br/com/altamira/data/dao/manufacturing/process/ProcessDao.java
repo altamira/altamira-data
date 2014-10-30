@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.logging.Level;
 
 import javax.ejb.Stateless;
-import javax.inject.Named;
 import javax.persistence.NoResultException;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -21,7 +20,6 @@ import br.com.altamira.data.model.manufacturing.process.Process;
  *
  * @author alessandro.holanda
  */
-@Named
 @Stateless
 public class ProcessDao extends BaseDao<Process> {
 

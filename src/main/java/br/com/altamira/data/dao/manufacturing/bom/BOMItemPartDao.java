@@ -20,7 +20,7 @@ import javax.validation.constraints.Min;
 
 /**
  *
- * @author Alessandro
+ * 
  */
 @Stateless
 public class BOMItemPartDao extends BaseDao<BOMItemPart> {

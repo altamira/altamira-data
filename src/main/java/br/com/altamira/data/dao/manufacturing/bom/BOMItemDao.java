@@ -21,7 +21,7 @@ import javax.validation.constraints.NotNull;
 
 /**
  *
- * @author Alessandro
+ * 
  */
 @Stateless
 public class BOMItemDao extends BaseDao<BOMItem> {

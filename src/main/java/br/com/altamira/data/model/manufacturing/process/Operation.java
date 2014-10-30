@@ -21,6 +21,7 @@ import br.com.altamira.data.serialize.NullCollectionSerializer;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import javax.persistence.Lob;
 import javax.persistence.UniqueConstraint;
 
 /**
@@ -56,8 +57,9 @@ public class Operation extends br.com.altamira.data.model.Operation {
     @Column(name = "DESCRIPTION", columnDefinition = "nvarchar2(500)")
     private String description;
 
-    @Column(name = "SKETCH", columnDefinition = "nvarchar2(500)")
-    private String sketch;
+    @Lob
+    @Column(name = "SKETCH")
+    private byte[] sketch;
 
     @JsonView(JSonViews.EntityView.class)
     @JsonSerialize(using = NullCollectionSerializer.class)
@@ -163,7 +165,7 @@ public class Operation extends br.com.altamira.data.model.Operation {
      *
      * @return
      */
-    public String getSketch() {
+    public byte[] getSketch() {
         return sketch;
     }
 
@@ -171,7 +173,7 @@ public class Operation extends br.com.altamira.data.model.Operation {
      *
      * @param sketch
      */
-    public void setSketch(String sketch) {
+    public void setSketch(byte[] sketch) {
         this.sketch = sketch;
     }
 

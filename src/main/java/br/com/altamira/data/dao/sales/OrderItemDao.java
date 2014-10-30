@@ -9,7 +9,6 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
@@ -18,7 +17,6 @@ import javax.persistence.TypedQuery;
  *
  * @author alessandro.holanda
  */
-@Named
 @Stateless
 public class OrderItemDao {
 
@@ -27,6 +25,7 @@ public class OrderItemDao {
 
     /*@Inject
      private ProductDao productDao;*/
+    
     /**
      *
      * @param number
@@ -82,7 +81,7 @@ public class OrderItemDao {
         }
 
         if (entity.getOrder() == null) {
-			//throw new IllegalArgumentException("Order parent not assigned");
+            //throw new IllegalArgumentException("Order parent not assigned");
 
             entity.setOrder(order);
         }
@@ -113,7 +112,7 @@ public class OrderItemDao {
         entityManager.persist(entity);
         entityManager.flush();
 
-		// Reload to update child references
+        // Reload to update child references
         return entityManager.find(OrderItem.class, entity.getId());
     }
 
@@ -134,7 +133,7 @@ public class OrderItemDao {
         }
 
         if (entity.getOrder() == null) {
-			//throw new IllegalArgumentException("Order parent not assigned");
+            //throw new IllegalArgumentException("Order parent not assigned");
 
             entity.setOrder(order);
         }
@@ -149,7 +148,7 @@ public class OrderItemDao {
 
         entityManager.merge(entity);
 
-		// Reload to update child references
+        // Reload to update child references
         return entityManager.find(OrderItem.class, entity.getId());
     }
 
@@ -180,7 +179,7 @@ public class OrderItemDao {
             throw new IllegalArgumentException("Entity id can't be zero.");
         }
 
-		//entityManager.remove(entityManager.contains(entity) ? entity : entityManager.merge(entity));
+        //entityManager.remove(entityManager.contains(entity) ? entity : entityManager.merge(entity));
         OrderItem entity = entityManager.find(OrderItem.class, id);
 
         if (entity == null) {

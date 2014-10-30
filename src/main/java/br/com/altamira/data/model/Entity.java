@@ -6,7 +6,6 @@
 package br.com.altamira.data.model;
 
 import java.io.Serializable;
-import java.lang.reflect.ParameterizedType;
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;

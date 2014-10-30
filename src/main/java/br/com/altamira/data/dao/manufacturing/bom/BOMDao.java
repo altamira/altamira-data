@@ -232,7 +232,7 @@ public class BOMDao extends BaseDao<BOM> {
     /**
      *
      * @param id
-     * @return 
+     * @return
      */
     public BOM updateToUnchecked(
             @Min(value = 1, message = ID_NOT_NULL_VALIDATION) long id) {
@@ -248,7 +248,7 @@ public class BOMDao extends BaseDao<BOM> {
     /**
      *
      * @param id
-     * @return 
+     * @return
      */
     public BOM updateToChecked(
             @Min(value = 1, message = ID_NOT_NULL_VALIDATION) long id) {

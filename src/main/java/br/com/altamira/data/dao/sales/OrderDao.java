@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.annotation.Resource;
 import javax.persistence.NoResultException;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -29,6 +30,7 @@ import javax.validation.constraints.Size;
  *
  */
 @Stateless
+@Resource(name="otherTransferHandler")
 public class OrderDao {
 
     /**
