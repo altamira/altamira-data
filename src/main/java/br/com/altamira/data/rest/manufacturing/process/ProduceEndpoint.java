@@ -12,6 +12,7 @@ import br.com.altamira.data.model.manufacturing.process.Operation;
 import br.com.altamira.data.rest.BaseEndpoint;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.IOException;
+import java.net.URI;
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
 import javax.validation.constraints.Min;
@@ -28,6 +29,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriBuilderException;
 
 /**
@@ -36,7 +38,7 @@ import javax.ws.rs.core.UriBuilderException;
  */
 @RequestScoped
 @Path("manufacturing/process/{process:[0-9]*}/operation/{operation:[0-9]*}/produce")
-public class ProduceEndpoint  extends BaseEndpoint<Produce> {
+public class ProduceEndpoint extends BaseEndpoint<Produce> {
 
     @EJB
     private OperationDao operationDao;
@@ -47,7 +49,7 @@ public class ProduceEndpoint  extends BaseEndpoint<Produce> {
     public ProduceEndpoint() {
         this.type = ProduceEndpoint.class;
     }
-    
+
     /**
      *
      * @param operation
@@ -66,7 +68,7 @@ public class ProduceEndpoint  extends BaseEndpoint<Produce> {
 
         Operation entity = operationDao.find(operation);
 
-        return createOkResponse(
+        return createListResponse(
                 entity.getProduce()).build();
     }
 
@@ -83,7 +85,7 @@ public class ProduceEndpoint  extends BaseEndpoint<Produce> {
             @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long id)
             throws JsonProcessingException {
 
-        return createOkResponse(
+        return createEntityResponse(
                 produceDao.find(id)).build();
     }
 
@@ -103,11 +105,13 @@ public class ProduceEndpoint  extends BaseEndpoint<Produce> {
             @Min(value = 1, message = ID_VALIDATION) @PathParam("operation") long operation,
             @NotNull(message = ENTITY_VALIDATION) Produce entity)
             throws IllegalArgumentException, UriBuilderException, JsonProcessingException {
-        
+
         entity.setOperation(operationDao.find(operation));
-        
+
         return createCreatedResponse(
-            produceDao.create(entity)).build();
+                produceDao.create(entity),
+                UriBuilder.fromResource(type)
+                .path(String.valueOf(entity.getId())).build(operation)).build();
     }
 
     /**
@@ -129,9 +133,10 @@ public class ProduceEndpoint  extends BaseEndpoint<Produce> {
             throws JsonProcessingException {
 
         entity.setOperation(operationDao.find(operation));
-        
-        return createOkResponse(
-                produceDao.update(entity)).build();
+
+        produceDao.update(entity);
+
+        return createNoContentResponse().build();
     }
 
     /**
@@ -145,11 +150,10 @@ public class ProduceEndpoint  extends BaseEndpoint<Produce> {
     public Response delete(
             @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long id)
             throws JsonProcessingException {
-        
+
         produceDao.remove(id);
-        
+
         return createNoContentResponse().build();
     }
 
-    
 }

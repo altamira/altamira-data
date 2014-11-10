@@ -54,7 +54,7 @@ public class ProductEndpoint extends BaseEndpoint<Product> {
             @DefaultValue("10") @QueryParam("max") Integer maxResult)
             throws IOException {
 
-        return createOkResponse(
+        return createListResponse(
                 productDao.list(startPosition, maxResult)).build();
     }
 
@@ -71,7 +71,7 @@ public class ProductEndpoint extends BaseEndpoint<Product> {
             @Min(1) @PathParam("id") long id)
             throws JsonProcessingException {
 
-        return createOkResponse(productDao.find(id)).build();
+        return createEntityResponse(productDao.find(id)).build();
     }
     
     /**
@@ -134,7 +134,9 @@ public class ProductEndpoint extends BaseEndpoint<Product> {
             @NotNull(message = ENTITY_VALIDATION) Product entity)
             throws JsonProcessingException {
 
-        return createOkResponse(productDao.update(entity)).build();
+        productDao.update(entity);
+        
+        return createNoContentResponse().build();
     }
     
     /**

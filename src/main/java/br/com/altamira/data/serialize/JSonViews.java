@@ -9,15 +9,15 @@ public class JSonViews {
     /**
      *
      */
-    public static class DefaultView extends JSonViews { }
-
-    /**
-     *
-     */
-    public static class ListView extends DefaultView { }
+    public static class ListView extends JSonViews { }
 
     /**
      *
      */
     public static class EntityView extends ListView { }
+    
+    /**
+     *
+     */
+    public static class LobView extends ListView { }
 }

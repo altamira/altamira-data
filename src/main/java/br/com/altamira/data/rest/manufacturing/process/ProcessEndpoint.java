@@ -58,7 +58,7 @@ public class ProcessEndpoint extends BaseEndpoint<Process> /*implements Endpoint
             @DefaultValue("10") @QueryParam("max") Integer maxResult)
             throws IOException {
 
-        return createOkResponse(
+        return createListResponse(
                 processDao.list(startPosition, maxResult)).build();
     }
 
@@ -79,7 +79,7 @@ public class ProcessEndpoint extends BaseEndpoint<Process> /*implements Endpoint
             @Size(min = 2) @QueryParam("search") String search)
             throws IOException {
 
-        return createOkResponse(
+        return createListResponse(
                 processDao.search(search, startPosition, maxResult)).build();
     }
 
@@ -96,7 +96,7 @@ public class ProcessEndpoint extends BaseEndpoint<Process> /*implements Endpoint
             @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long id)
             throws JsonProcessingException, NoResultException {
 
-        return createOkResponse(
+        return createEntityResponse(
                 processDao.find(id)).build();
     }
 
@@ -135,8 +135,9 @@ public class ProcessEndpoint extends BaseEndpoint<Process> /*implements Endpoint
             @NotNull(message = ENTITY_VALIDATION) Process entity)
             throws JsonProcessingException {
 
-        return createOkResponse(
-                processDao.update(entity)).build();
+        processDao.update(entity);
+                
+        return createNoContentResponse().build();
     }
 
     /**

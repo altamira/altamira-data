@@ -12,5 +12,10 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class EntityId implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2418150766254671788L;
+
 
 }

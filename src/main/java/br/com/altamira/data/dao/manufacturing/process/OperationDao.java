@@ -6,6 +6,7 @@ import static br.com.altamira.data.dao.Dao.ENTITY_VALIDATION;
 import javax.ejb.Stateless;
 import br.com.altamira.data.model.manufacturing.process.Operation;
 import java.util.List;
+import javax.ejb.EJB;
 import javax.persistence.NoResultException;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -21,6 +22,9 @@ import javax.validation.constraints.NotNull;
  */
 @Stateless
 public class OperationDao extends BaseDao<Operation> {
+    
+    @EJB
+    private ProcessDao processDao;
     
     public OperationDao() {
         this.type = Operation.class;
@@ -67,6 +71,8 @@ public class OperationDao extends BaseDao<Operation> {
 
         Operation entity = super.find(id);
 
+        entity.getSketch();
+        entity.getUse().size();
         entity.getConsume().size();
         entity.getProduce().size();
 
@@ -75,14 +81,25 @@ public class OperationDao extends BaseDao<Operation> {
     
     /**
      *
+     * @param id
      * @param entity
      * @return
      * @throws ConstraintViolationException
      */
-    @Override
     public Operation create(
+            @Min(value = 1, message = ID_NOT_NULL_VALIDATION) long id,
             @NotNull(message = ENTITY_VALIDATION) Operation entity)
             throws ConstraintViolationException {
+        
+        entity.setProcess(processDao.find(id));
+        
+        /*if (entity.getSketch() != null) {
+        	entity.getSketch().setOperation(entity);
+        }*/
+        
+        entity.getUse().stream().forEach((u) -> {
+            u.setOperation(entity);
+        });
         
         entity.getConsume().stream().forEach((c) -> {
             c.setOperation(entity);
@@ -97,15 +114,26 @@ public class OperationDao extends BaseDao<Operation> {
 
     /**
      *
+     * @param id
      * @param entity
      * @return
      * @throws ConstraintViolationException
      * @throws IllegalArgumentException
      */
-    @Override
     public Operation update(
+            @Min(value = 1, message = ID_NOT_NULL_VALIDATION) long id,
             @NotNull(message = ENTITY_VALIDATION) Operation entity)
             throws ConstraintViolationException, IllegalArgumentException {
+        
+        entity.setProcess(processDao.find(id));
+        
+        /*if (entity.getSketch() != null) {
+        	entity.getSketch();
+        }*/
+        
+        entity.getUse().stream().forEach((u) -> {
+            u.setOperation(entity);
+        });
         
         entity.getConsume().stream().forEach((c) -> {
             c.setOperation(entity);

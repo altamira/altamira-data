@@ -56,7 +56,7 @@ public class RevisionEndpoint  extends BaseEndpoint<Revision> {
 
         br.com.altamira.data.model.manufacturing.process.Process entity = processDao.find(id);
         
-        return createOkResponse(
+        return createListResponse(
                 entity.getRevision()).build();
     }    
 }

@@ -21,7 +21,7 @@ import br.com.altamira.data.serialize.NullCollectionSerializer;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import javax.persistence.Lob;
+import javax.persistence.OneToOne;
 import javax.persistence.UniqueConstraint;
 
 /**
@@ -54,13 +54,20 @@ public class Operation extends br.com.altamira.data.model.Operation {
 
     @NotNull
     @Size(min = 1)
-    @Column(name = "DESCRIPTION", columnDefinition = "nvarchar2(500)")
+    @JsonView(JSonViews.EntityView.class)
+    @Column(name = "DESCRIPTION", columnDefinition = "nvarchar2(700)")
     private String description;
 
-    @Lob
-    @Column(name = "SKETCH")
-    private byte[] sketch;
-
+    @JsonView(JSonViews.EntityView.class)
+    @JoinColumn(name = "SKETCH", referencedColumnName = "ID", insertable=true, updatable=true, nullable=true, unique=true)
+    @OneToOne(cascade = CascadeType.ALL, optional = false, fetch = FetchType.EAGER)
+    private Sketch sketch;
+    
+    @JsonView(JSonViews.EntityView.class)
+    @JsonSerialize(using = NullCollectionSerializer.class)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "operation", fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<Use> use = new ArrayList<>();
+    
     @JsonView(JSonViews.EntityView.class)
     @JsonSerialize(using = NullCollectionSerializer.class)
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "operation", fetch = FetchType.LAZY, orphanRemoval = true)
@@ -88,122 +95,114 @@ public class Operation extends br.com.altamira.data.model.Operation {
         this.sequence = sequence;
         this.name = name;
     }
-    
+
     /**
-     *
-     * @return
+     * @return the process
      */
     public Process getProcess() {
         return process;
     }
 
     /**
-     *
-     * @param process
+     * @param process the process to set
      */
     public void setProcess(Process process) {
         this.process = process;
     }
 
     /**
-     *
-     * @param consume
-     */
-    public void setConsume(List<Consume> consume) {
-        this.consume = consume;
-    }
-
-    /**
-     *
-     * @return
+     * @return the sequence
      */
     public int getSequence() {
         return sequence;
     }
 
     /**
-     *
-     * @param sequence
+     * @param sequence the sequence to set
      */
     public void setSequence(int sequence) {
         this.sequence = sequence;
     }
 
     /**
-     *
-     * @return
+     * @return the name
      */
     public String getName() {
         return name;
     }
 
     /**
-     *
-     * @param name
+     * @param name the name to set
      */
     public void setName(String name) {
         this.name = name;
     }
 
     /**
-     *
-     * @return
+     * @return the description
      */
     public String getDescription() {
         return description;
     }
 
     /**
-     *
-     * @param description
+     * @param description the description to set
      */
     public void setDescription(String description) {
         this.description = description;
     }
 
     /**
-     *
-     * @return
+     * @return the sketch
      */
-    public byte[] getSketch() {
+    public Sketch getSketch() {
         return sketch;
     }
 
     /**
-     *
-     * @param sketch
+     * @param sketch the sketch to set
      */
-    public void setSketch(byte[] sketch) {
+    public void setSketch(Sketch sketch) {
         this.sketch = sketch;
     }
 
     /**
-     *
-     * @return
+     * @return the use
+     */
+    public List<Use> getUse() {
+        return use;
+    }
+
+    /**
+     * @param use the use to set
+     */
+    public void setUse(List<Use> use) {
+        this.use = use;
+    }
+
+    /**
+     * @return the consume
      */
     public List<Consume> getConsume() {
         return consume;
     }
 
     /**
-     *
-     * @param useconsume
+     * @param consume the consume to set
      */
-    public void setUseconsume(List<Consume> useconsume) {
-        this.consume = useconsume;
+    public void setConsume(List<Consume> consume) {
+        this.consume = consume;
     }
 
     /**
-     *
-     * @return
+     * @return the produce
      */
     public List<Produce> getProduce() {
         return produce;
     }
 
     /**
-     *
-     * @param produce
+     * @param produce the produce to set
      */
     public void setProduce(List<Produce> produce) {
         this.produce = produce;

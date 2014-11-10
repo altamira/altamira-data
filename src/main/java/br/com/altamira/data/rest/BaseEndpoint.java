@@ -6,14 +6,17 @@
 package br.com.altamira.data.rest;
 
 import br.com.altamira.data.model.Entity;
+import br.com.altamira.data.serialize.JSonViews;
 import br.com.altamira.data.serialize.NullValueSerializer;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
 
 import java.lang.reflect.ParameterizedType;
+import java.net.URI;
 import java.util.logging.Logger;
 import javax.inject.Inject;
 import javax.ws.rs.HeaderParam;
@@ -24,6 +27,7 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.UriInfo;
 
 /**
  *
@@ -84,6 +88,8 @@ public abstract class BaseEndpoint<T extends Entity> /* implements Endpoint<T> *
      *
      */
     protected Class<? extends BaseEndpoint<T>> type;
+    
+    protected UriInfo info;
 
     /**
      *
@@ -102,7 +108,6 @@ public abstract class BaseEndpoint<T extends Entity> /* implements Endpoint<T> *
     // throws IOException {
     // throw new UnsupportedOperationException("Not supported yet.");
     // }
-    
     /**
      *
      * @param id
@@ -110,15 +115,14 @@ public abstract class BaseEndpoint<T extends Entity> /* implements Endpoint<T> *
      * @throws JsonProcessingException
      */
     /*@GET
-    @Path(value = "{id:[0-9]*}")
-    @Produces(value = MediaType.APPLICATION_JSON)
-    public Response find(
-            @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long id)
-            throws JsonProcessingException {
+     @Path(value = "{id:[0-9]*}")
+     @Produces(value = MediaType.APPLICATION_JSON)
+     public Response find(
+     @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long id)
+     throws JsonProcessingException {
         
-        return createOkResponse(dao.find(id)).build();
-    }*/
-    
+     return createOkResponse(dao.find(id)).build();
+     }*/
     /**
      *
      * @param startPosition
@@ -138,7 +142,6 @@ public abstract class BaseEndpoint<T extends Entity> /* implements Endpoint<T> *
     // throws IOException {
     // throw new UnsupportedOperationException("Not supported yet.");
     // }
-    
     /**
      *
      * @param entity
@@ -157,7 +160,6 @@ public abstract class BaseEndpoint<T extends Entity> /* implements Endpoint<T> *
     // JsonProcessingException {
     // throw new UnsupportedOperationException("Not supported yet.");
     // }
-    
     /**
      *
      * @param id
@@ -177,7 +179,6 @@ public abstract class BaseEndpoint<T extends Entity> /* implements Endpoint<T> *
     // throws JsonProcessingException {
     // throw new UnsupportedOperationException("Not supported yet.");
     // }
-    
     /**
      *
      * @param id
@@ -193,7 +194,6 @@ public abstract class BaseEndpoint<T extends Entity> /* implements Endpoint<T> *
     // throws JsonProcessingException {
     // throw new UnsupportedOperationException("Not supported yet.");
     // }
-
     /**
      *
      * @param origin
@@ -215,6 +215,7 @@ public abstract class BaseEndpoint<T extends Entity> /* implements Endpoint<T> *
     
     /**
      *
+     * @param info
      * @param origin
      * @return
      */
@@ -227,6 +228,12 @@ public abstract class BaseEndpoint<T extends Entity> /* implements Endpoint<T> *
     // throws JsonProcessingException {
     // throw new UnsupportedOperationException("Not supported yet.");
     // }
+    
+    @Context
+    public void setInfo(UriInfo info) {
+        this.info = info;
+    }
+    
     protected Response getCORSHeaders(String origin) {
         return Response
                 .ok()
@@ -246,19 +253,19 @@ public abstract class BaseEndpoint<T extends Entity> /* implements Endpoint<T> *
     public Response corsPreflight(@HeaderParam("Origin") String origin) {
         return getCORSHeaders(origin);
     }
-    
+
     @OPTIONS
     @Path("/{id:[0-9]*}")
     public Response corsPreflightForIdPath(@HeaderParam("Origin") String origin) {
         return getCORSHeaders(origin);
     }
-    
+
     @OPTIONS
     @Path("/search")
     public Response corsPreflightForSearchPath(@HeaderParam("Origin") String origin) {
         return getCORSHeaders(origin);
     }
-    
+
     /**
      *
      * @param origin
@@ -273,19 +280,12 @@ public abstract class BaseEndpoint<T extends Entity> /* implements Endpoint<T> *
     /**
      *
      * @param entity
+     * @param writer
      * @return
      * @throws JsonProcessingException
      */
-    protected Response.ResponseBuilder createOkResponse(Object entity)
+    protected Response.ResponseBuilder createOkResponse(Object entity, ObjectWriter writer)
             throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-
-        mapper.registerModule(new Hibernate4Module());
-        mapper.getSerializerProvider().setNullValueSerializer(
-                new NullValueSerializer());
-        mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, true);
-        // ObjectWriter writer =
-        // mapper.writerWithView(JSonViews.EntityView.class);
 
         ResponseBuilder responseBuilder;
 
@@ -298,7 +298,7 @@ public abstract class BaseEndpoint<T extends Entity> /* implements Endpoint<T> *
         // }
         responseBuilder = Response.ok();
 
-        responseBuilder.entity(mapper.writeValueAsString(entity));
+        responseBuilder.entity(writer.writeValueAsString(entity));
 
         if (headers.getHeaderString("Origin") != null
                 && !headers.getHeaderString("Origin").isEmpty()) {
@@ -309,14 +309,22 @@ public abstract class BaseEndpoint<T extends Entity> /* implements Endpoint<T> *
 
         return responseBuilder;
     }
-
+    
+    protected Response.ResponseBuilder createCreatedResponse(T entity) throws JsonProcessingException {
+        URI uri = UriBuilder.fromResource(type)
+                .path(String.valueOf(entity.getId())).build();
+        
+        return createCreatedResponse(entity, uri);
+    }
+    
     /**
      *
      * @param entity
+     * @param uri
      * @return
      * @throws JsonProcessingException
      */
-    protected Response.ResponseBuilder createCreatedResponse(T entity)
+    protected Response.ResponseBuilder createCreatedResponse(T entity, URI uri)
             throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
 
@@ -324,15 +332,14 @@ public abstract class BaseEndpoint<T extends Entity> /* implements Endpoint<T> *
         mapper.getSerializerProvider().setNullValueSerializer(
                 new NullValueSerializer());
         mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, true);
-
-        ResponseBuilder responseBuilder = Response.created(
-                UriBuilder.fromPath("/")
-                //UriBuilder.fromMethod(type, "create")
-                .path(String.valueOf(entity.getId())).build())
-                //                UriBuilder.fromResource(type)
-                //                .path(String.valueOf(entity.getId())).build())
-                .entity(mapper.writeValueAsString(entity));
-
+        
+        if (uri == null) {
+            uri = UriBuilder.fromPath("/").build();
+         }
+                
+        ResponseBuilder responseBuilder = Response.created(uri);
+                //.entity(mapper.writeValueAsString(entity));
+        
         if (headers.getHeaderString("Origin") != null
                 && !headers.getHeaderString("Origin").isEmpty()) {
             responseBuilder.header("Access-Control-Allow-Origin",
@@ -361,7 +368,62 @@ public abstract class BaseEndpoint<T extends Entity> /* implements Endpoint<T> *
 
         return responseBuilder;
     }
+    
+    /**
+     *
+     * @param entity
+     * @return
+     * @throws JsonProcessingException
+     */
+    protected Response.ResponseBuilder createListResponse(Object entity)
+            throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
 
+        mapper.registerModule(new Hibernate4Module());
+        mapper.getSerializerProvider().setNullValueSerializer(new NullValueSerializer());
+        mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, true);
+        ObjectWriter writer = mapper.writerWithView(JSonViews.ListView.class);
+
+        return createOkResponse(entity, writer);
+    }
+    
+    /**
+     *
+     * @param entity
+     * @return
+     * @throws JsonProcessingException
+     */
+    protected Response.ResponseBuilder createEntityResponse(Object entity)
+            throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+
+        mapper.registerModule(new Hibernate4Module());
+        mapper.getSerializerProvider().setNullValueSerializer(new NullValueSerializer());
+        mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, true);
+        ObjectWriter writer = mapper.writerWithView(JSonViews.EntityView.class);
+
+        return createOkResponse(entity, writer);
+    }
+
+        
+    /**
+     *
+     * @param entity
+     * @return
+     * @throws JsonProcessingException
+     */
+    protected Response.ResponseBuilder createLobResponse(Object entity)
+            throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+
+        mapper.registerModule(new Hibernate4Module());
+        mapper.getSerializerProvider().setNullValueSerializer(new NullValueSerializer());
+        mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, true);
+        ObjectWriter writer = mapper.writerWithView(JSonViews.LobView.class);
+
+        return createOkResponse(entity, writer);
+    }
+    
     /**
      *
      * @return

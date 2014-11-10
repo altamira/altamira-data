@@ -43,20 +43,25 @@ public class Process extends br.com.altamira.data.model.Process {
     private String description;
 
     @Column(name = "COLOR", columnDefinition = "nvarchar2(255)")
+    @JsonView(JSonViews.EntityView.class)
     private String color;
 
     @Min(0)
     @Column(name = "WEIGHT")
+    @JsonView(JSonViews.EntityView.class)
     private float weight;
 
     @Min(0)
     @Column(name = "LENGTH")
+    @JsonView(JSonViews.EntityView.class)
     private float length;
 
     @Min(0)
     @Column(name = "WIDTH")
+    @JsonView(JSonViews.EntityView.class)
     private float width;
 
+    @JsonView(JSonViews.EntityView.class)
     @Column(name = "FINISH", columnDefinition = "nvarchar2(255)")
     private String finish;
 

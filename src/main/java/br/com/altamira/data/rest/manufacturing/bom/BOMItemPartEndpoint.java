@@ -13,6 +13,7 @@ import static br.com.altamira.data.rest.BaseEndpoint.ENTITY_VALIDATION;
 import static br.com.altamira.data.rest.BaseEndpoint.ID_VALIDATION;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.IOException;
+import java.net.URI;
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
 import javax.validation.constraints.Min;
@@ -29,6 +30,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriBuilderException;
 
 /**
@@ -68,7 +70,7 @@ public class BOMItemPartEndpoint  extends BaseEndpoint<BOMItemPart> {
             @DefaultValue("10") @QueryParam("max") Integer maxResult)
             throws IOException {
 
-        return createOkResponse(
+        return createListResponse(
                 bomItemPartDao.list(id, startPosition, maxResult)).build();
     }
 
@@ -85,7 +87,7 @@ public class BOMItemPartEndpoint  extends BaseEndpoint<BOMItemPart> {
             @Min(1) @PathParam("id") long id)
             throws JsonProcessingException {
 
-        return createOkResponse(
+        return createEntityResponse(
                 bomItemPartDao.find(id)).build();
     }
 
@@ -106,10 +108,13 @@ public class BOMItemPartEndpoint  extends BaseEndpoint<BOMItemPart> {
             @NotNull(message = ENTITY_VALIDATION) BOMItemPart entity)
             throws IllegalArgumentException, UriBuilderException, JsonProcessingException {
 
+        URI uri = UriBuilder.fromResource(type)
+                .path(String.valueOf(entity.getId())).build(id);
+        
         entity.setBOMItem(bomItemDao.find(id));
         
         return createCreatedResponse(
-                bomItemPartDao.create(entity)).build();
+                bomItemPartDao.create(entity), uri).build();
     }
 
     /**
@@ -131,9 +136,9 @@ public class BOMItemPartEndpoint  extends BaseEndpoint<BOMItemPart> {
             throws JsonProcessingException {
 
         entity.setBOMItem(bomItemDao.find(item));
+        bomItemPartDao.update(entity);
         
-        return createOkResponse(
-                bomItemPartDao.update(entity)).build();
+        return createNoContentResponse().build();
     }
     
     /**

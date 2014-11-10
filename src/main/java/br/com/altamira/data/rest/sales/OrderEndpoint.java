@@ -54,7 +54,7 @@ public class OrderEndpoint extends BaseEndpoint<Order> {
             @DefaultValue("10") @QueryParam("max") Integer maxResult)
             throws IOException {
 
-        return createOkResponse(
+        return createListResponse(
                 orderDao.list(startPosition, maxResult)).build();
     }
 
@@ -71,7 +71,7 @@ public class OrderEndpoint extends BaseEndpoint<Order> {
             @Min(1) @PathParam("number") long number)
             throws JsonProcessingException {
 
-        return createOkResponse(orderDao.findByNumber(number)).build();
+        return createEntityResponse(orderDao.findByNumber(number)).build();
     }
 
     /**
@@ -108,7 +108,9 @@ public class OrderEndpoint extends BaseEndpoint<Order> {
             @NotNull(message = ENTITY_VALIDATION) Order entity)
             throws JsonProcessingException {
 
-        return createOkResponse(orderDao.update(entity)).build();
+        orderDao.update(entity);
+        
+        return createNoContentResponse().build();
     }
 
     /**

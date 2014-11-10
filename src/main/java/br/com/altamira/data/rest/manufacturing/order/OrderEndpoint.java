@@ -63,7 +63,7 @@ public class OrderEndpoint
             @DefaultValue("10") @QueryParam("max") Integer maxResult)
             throws IOException {
 
-        return createOkResponse(
+        return createListResponse(
                 bomDao.listUnchecked(startPosition, maxResult)).build();
     }
 
@@ -84,7 +84,7 @@ public class OrderEndpoint
             @DefaultValue("10") @QueryParam("max") Integer maxResult)
             throws IOException {
 
-        return createOkResponse(
+        return createListResponse(
                 bomDao.search(search, startPosition, maxResult)).build();
     }
 
@@ -101,7 +101,7 @@ public class OrderEndpoint
             @Min(1) @PathParam("id") long id)
             throws JsonProcessingException {
 
-        return createOkResponse(bomDao.find(id)).build();
+        return createEntityResponse(bomDao.find(id)).build();
     }
 
     /**
@@ -138,7 +138,9 @@ public class OrderEndpoint
             @NotNull(message = ENTITY_VALIDATION) BOM entity)
             throws JsonProcessingException {
 
-        return createOkResponse(bomDao.update(entity)).build();
+        bomDao.update(entity);
+        
+        return createNoContentResponse().build();
     }
 
     /**
@@ -161,7 +163,9 @@ public class OrderEndpoint
         Date date = new Date();
         entity.setChecked(date);
 
-        return createOkResponse(bomDao.update(entity)).build();
+        bomDao.update(entity);
+                
+        return createNoContentResponse().build();
     }
     
     /**

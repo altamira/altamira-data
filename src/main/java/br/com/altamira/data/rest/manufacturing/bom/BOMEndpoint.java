@@ -10,7 +10,6 @@ import br.com.altamira.data.model.manufacturing.bom.BOM;
 import br.com.altamira.data.rest.BaseEndpoint;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.IOException;
-import java.util.Date;
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
 import javax.validation.constraints.Min;
@@ -65,7 +64,7 @@ public class BOMEndpoint
             @DefaultValue("10") @QueryParam("max") Integer maxResult)
             throws IOException {
 
-        return createOkResponse(
+        return createListResponse(
                 bomDao.listUnchecked(startPosition, maxResult)).build();
     }
 
@@ -86,7 +85,7 @@ public class BOMEndpoint
             @DefaultValue("10") @QueryParam("max") Integer maxResult)
             throws IOException {
 
-        return createOkResponse(
+        return createListResponse(
                 bomDao.search(search, startPosition, maxResult)).build();
     }
 
@@ -103,7 +102,7 @@ public class BOMEndpoint
             @Min(1) @PathParam("id") long id)
             throws JsonProcessingException {
 
-        return createOkResponse(bomDao.find(id)).build();
+        return createEntityResponse(bomDao.find(id)).build();
     }
 
     /**
@@ -140,7 +139,9 @@ public class BOMEndpoint
             @NotNull(message = ENTITY_VALIDATION) BOM entity)
             throws JsonProcessingException {
 
-        return createOkResponse(bomDao.update(entity)).build();
+        bomDao.update(entity);
+        
+        return createNoContentResponse().build();
     }
 
     /**
@@ -157,7 +158,9 @@ public class BOMEndpoint
             @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long id)
             throws JsonProcessingException {
         
-        return createOkResponse(bomDao.updateToChecked(id)).build();
+        bomDao.updateToChecked(id);
+                
+        return createNoContentResponse().build();
     }
 
     /**
@@ -174,7 +177,9 @@ public class BOMEndpoint
             @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long id)
             throws JsonProcessingException {
         
-        return createOkResponse(bomDao.updateToUnchecked(id)).build();
+        bomDao.updateToUnchecked(id);
+                
+        return createNoContentResponse().build();
     }
     
     /**
@@ -196,13 +201,13 @@ public class BOMEndpoint
         
     @OPTIONS
     @Path("/{id:[0-9]*}/checked")
-    public Response corsPreflightForCheckedPath(@HeaderParam("Origin") String origin) {
+    public Response corsPreflightForCheckedPath(@HeaderParam("Origin") String origin, @PathParam("id") long id) {
         return getCORSHeaders(origin);
     }
     
     @OPTIONS
     @Path("/{id:[0-9]*}/unchecked")
-    public Response corsPreflightForUncheckedPath(@HeaderParam("Origin") String origin) {
+    public Response corsPreflightForUncheckedPath(@HeaderParam("Origin") String origin, @PathParam("id") long id) {
         return getCORSHeaders(origin);
     }
 }

@@ -5,6 +5,8 @@
  */
 package br.com.altamira.data.model;
 
+import br.com.altamira.data.serialize.JSonViews;
+import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
@@ -12,6 +14,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.PreUpdate;
 import javax.persistence.SequenceGenerator;
+import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -27,20 +30,24 @@ public abstract class Entity implements Serializable {
     private static final long serialVersionUID = -73112170881659955L;
 
     // Guarantee unique id for all entities
-
     /**
      *
      */
-        @Id
+    @Id
     @SequenceGenerator(name = "EntitySequence", sequenceName = "ENTITY_SEQUENCE", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "EntitySequence")
     @Column(name = "ID")
     protected Long id;
 
+    @Version
+    @Column(name = "VERSION")
+    @JsonView(JSonViews.EntityView.class)
+    private long version;
+
     @NotNull
     @Column(name = "LAST_MODIFIED")
     private Long lastModified = System.currentTimeMillis();
-    
+
     // TODO: store class name from subclass in an ENTITY table
 //    @NotNull
     @Column(name = "ENTITY_CLASS")
@@ -100,11 +107,24 @@ public abstract class Entity implements Serializable {
         lastModified = System.currentTimeMillis();
         //entityClass = getTypeClass().getName();
     }
-              
-    /*private Class<? extends br.com.altamira.data.model.Entity> getTypeClass() {
-        Class<? extends br.com.altamira.data.model.Entity> clazz = (Class<? extends br.com.altamira.data.model.Entity>) ((ParameterizedType) this.getClass()
-                .getGenericSuperclass()).getActualTypeArguments()[0];
-        return clazz;
-    }*/
 
+    /*private Class<? extends br.com.altamira.data.model.Entity> getTypeClass() {
+     Class<? extends br.com.altamira.data.model.Entity> clazz = (Class<? extends br.com.altamira.data.model.Entity>) ((ParameterizedType) this.getClass()
+     .getGenericSuperclass()).getActualTypeArguments()[0];
+     return clazz;
+     }*/
+
+    /**
+     * @return the version
+     */
+    public long getVersion() {
+        return version;
+    }
+
+    /**
+     * @param version the version to set
+     */
+    public void setVersion(long version) {
+        this.version = version;
+    }
 }

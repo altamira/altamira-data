@@ -22,10 +22,12 @@ import br.com.altamira.data.dao.manufacturing.process.OperationDao;
 import br.com.altamira.data.dao.manufacturing.process.ProcessDao;
 import br.com.altamira.data.model.manufacturing.process.Operation;
 import br.com.altamira.data.rest.BaseEndpoint;
+import java.net.URI;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.ws.rs.core.UriBuilder;
 
 /**
  *
@@ -61,7 +63,7 @@ public class OperationEndpoint extends BaseEndpoint<Operation> {
             @DefaultValue("10") @QueryParam("max") Integer maxResult)
             throws IOException {
 
-        return createOkResponse(
+        return createListResponse(
                 operationDao.list(id, startPosition, maxResult)).build();
     }
 
@@ -78,7 +80,7 @@ public class OperationEndpoint extends BaseEndpoint<Operation> {
             @Min(value = 1, message = ID_VALIDATION) @PathParam("id") long id)
             throws JsonProcessingException {
 
-        return createOkResponse(
+        return createEntityResponse(
                 operationDao.find(id)).build();
     }
 
@@ -99,10 +101,10 @@ public class OperationEndpoint extends BaseEndpoint<Operation> {
             @NotNull(message = ENTITY_VALIDATION) Operation entity)
             throws IllegalArgumentException, UriBuilderException, JsonProcessingException {
 
-        entity.setProcess(processDao.find(id));
-
         return createCreatedResponse(
-                operationDao.create(entity)).build();
+                operationDao.create(id, entity),
+                UriBuilder.fromResource(type)
+                .path(String.valueOf(entity.getId())).build(id)).build();
     }
 
     /**
@@ -125,7 +127,7 @@ public class OperationEndpoint extends BaseEndpoint<Operation> {
 
         entity.setProcess(processDao.find(process));
 
-        return createOkResponse(
+        return createEntityResponse(
                 operationDao.update(entity)).build();
     }
 

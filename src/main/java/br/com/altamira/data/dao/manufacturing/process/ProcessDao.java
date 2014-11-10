@@ -114,6 +114,7 @@ public class ProcessDao extends BaseDao<Process> {
         if (process.getOperation() != null) {
             process.getOperation().size();
             process.getOperation().stream().forEach((operation) -> {
+                operation.getUse().size();
                 operation.getConsume().size();
                 operation.getProduce().size();
             });
@@ -141,12 +142,17 @@ public class ProcessDao extends BaseDao<Process> {
             operation.setProcess(entity);
             return operation;
         }).forEach((operation) -> {
+            
+            operation.getUse().stream().forEach((use) -> {
+                use.setOperation(operation);
+            });
             operation.getConsume().stream().forEach((consume) -> {
                 consume.setOperation(operation);
             });
             operation.getProduce().stream().forEach((produce) -> {
                 produce.setOperation(operation);
             });
+            
         });
 
         return super.create(entity);
@@ -172,12 +178,17 @@ public class ProcessDao extends BaseDao<Process> {
             operation.setProcess(entity);
             return operation;
         }).forEach((operation) -> {
+            
+            operation.getUse().stream().forEach((use) -> {
+                use.setOperation(operation);
+            });
             operation.getConsume().stream().forEach((consume) -> {
                 consume.setOperation(operation);
             });
             operation.getProduce().stream().forEach((produce) -> {
                 produce.setOperation(operation);
             });
+            
         });
 
         return super.update(entity);

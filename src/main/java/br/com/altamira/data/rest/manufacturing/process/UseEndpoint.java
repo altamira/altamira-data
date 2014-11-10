@@ -3,14 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package br.com.altamira.data.rest.manufacturing.bom;
+package br.com.altamira.data.rest.manufacturing.process;
 
-import br.com.altamira.data.dao.manufacturing.bom.BOMDao;
-import br.com.altamira.data.dao.manufacturing.bom.BOMItemDao;
-import br.com.altamira.data.model.manufacturing.bom.BOMItem;
+import br.com.altamira.data.dao.manufacturing.process.UseDao;
+import br.com.altamira.data.dao.manufacturing.process.OperationDao;
+import br.com.altamira.data.model.manufacturing.process.Use;
+import br.com.altamira.data.model.manufacturing.process.Operation;
 import br.com.altamira.data.rest.BaseEndpoint;
-import static br.com.altamira.data.rest.BaseEndpoint.ENTITY_VALIDATION;
-import static br.com.altamira.data.rest.BaseEndpoint.ID_VALIDATION;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.IOException;
 import java.net.URI;
@@ -38,25 +37,25 @@ import javax.ws.rs.core.UriBuilderException;
  * @author Alessandro
  */
 @RequestScoped
-@Path("/manufacturing/bom/{bom:[0-9]*}/item")
-public class BOMItemEndpoint extends BaseEndpoint<BOMItem> {
+@Path("manufacturing/process/{process:[0-9]*}/operation/{operation:[0-9]*}/use")
+public class UseEndpoint extends BaseEndpoint<br.com.altamira.data.model.manufacturing.process.Use> {
 
     @EJB
-    private BOMDao bomDao;
-    
+    private OperationDao operationDao;
+
     @EJB
-    private BOMItemDao bomItemDao;
+    private UseDao useDao;
 
     /**
      *
      */
-    public BOMItemEndpoint() {
-    	this.type = BOMItemEndpoint.class;
+    public UseEndpoint() {
+        this.type = UseEndpoint.class;
     }
-    
+
     /**
      *
-     * @param id
+     * @param operation
      * @param startPosition
      * @param maxResult
      * @return
@@ -65,13 +64,15 @@ public class BOMItemEndpoint extends BaseEndpoint<BOMItem> {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response list(
-            @Min(value = 1, message = ID_VALIDATION) @PathParam("bom") long id,
+            @Min(value = 1, message = ID_VALIDATION) @PathParam("operation") long operation,
             @DefaultValue("0") @QueryParam("start") Integer startPosition,
             @DefaultValue("10") @QueryParam("max") Integer maxResult)
             throws IOException {
 
+        Operation entity = operationDao.find(operation);
+
         return createListResponse(
-                bomItemDao.list(id, startPosition, maxResult)).build();
+                entity.getUse()).build();
     }
 
     /**
@@ -81,19 +82,19 @@ public class BOMItemEndpoint extends BaseEndpoint<BOMItem> {
      * @throws JsonProcessingException
      */
     @GET
-    @Path("/{id:[0-9]*}")
-    @Produces(MediaType.APPLICATION_JSON)
+    @Path("{id:[0-9]*}")
+    @Produces(value = MediaType.APPLICATION_JSON)
     public Response find(
-            @Min(1) @PathParam("id") long id)
+            @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long id)
             throws JsonProcessingException {
 
         return createEntityResponse(
-                bomItemDao.find(id)).build();
+                useDao.find(id)).build();
     }
 
     /**
      *
-     * @param id
+     * @param operation
      * @param entity
      * @return
      * @throws IllegalArgumentException
@@ -101,47 +102,46 @@ public class BOMItemEndpoint extends BaseEndpoint<BOMItem> {
      * @throws JsonProcessingException
      */
     @POST
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(value = MediaType.APPLICATION_JSON)
+    @Produces(value = MediaType.APPLICATION_JSON)
     public Response create(
-            @Min(value = 1, message = ID_VALIDATION) @PathParam("bom") long id,
-            @NotNull(message = ENTITY_VALIDATION) BOMItem entity)
+            @Min(value = 1, message = ID_VALIDATION) @PathParam("operation") long operation,
+            @NotNull(message = ENTITY_VALIDATION) Use entity)
             throws IllegalArgumentException, UriBuilderException, JsonProcessingException {
-
-        URI uri = UriBuilder.fromResource(type)
-                .path(String.valueOf(entity.getId())).build(id);
         
-        entity.setBOM(bomDao.find(id));
+        entity.setOperation(operationDao.find(operation));
         
         return createCreatedResponse(
-                bomItemDao.create(entity), uri).build();
+                useDao.create(entity), 
+                UriBuilder.fromResource(type)
+                .path(String.valueOf(entity.getId())).build(operation)).build();
     }
 
     /**
      *
-     * @param bom
+     * @param operation
      * @param id
      * @param entity
      * @return
      * @throws JsonProcessingException
      */
     @PUT
-    @Path(value = "{id:[0-9]*}")
+    @Path("{id:[0-9]*}")
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response update(
-            @Min(value = 1, message = ID_VALIDATION) @PathParam("bom") long bom,
+            @Min(value = 1, message = ID_VALIDATION) @PathParam("operation") long operation,
             @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long id,
-            @NotNull(message = ENTITY_VALIDATION) BOMItem entity)
+            @NotNull(message = ENTITY_VALIDATION) Use entity)
             throws JsonProcessingException {
 
-        entity.setBOM(bomDao.find(bom));
-        bomItemDao.update(entity);
-        
-        return createNoContentResponse(
-                ).build();
+        entity.setOperation(operationDao.find(operation));
+
+        useDao.update(entity);
+                
+        return createNoContentResponse().build();
     }
-    
+
     /**
      *
      * @param id
@@ -149,14 +149,14 @@ public class BOMItemEndpoint extends BaseEndpoint<BOMItem> {
      * @throws JsonProcessingException
      */
     @DELETE
-    @Path("/{id:[0-9]*}")
+    @Path("{id:[0-9]*}")
     public Response delete(
-            @Min(1) @PathParam("id") long id) 
+            @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long id)
             throws JsonProcessingException {
 
-        bomItemDao.remove(id);
+        useDao.remove(id);
 
         return createNoContentResponse().build();
     }
-    
+
 }

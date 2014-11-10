@@ -12,6 +12,7 @@ import br.com.altamira.data.model.manufacturing.process.Operation;
 import br.com.altamira.data.rest.BaseEndpoint;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.IOException;
+import java.net.URI;
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
 import javax.validation.constraints.Min;
@@ -28,6 +29,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriBuilderException;
 
 /**
@@ -69,7 +71,7 @@ public class ConsumeEndpoint extends BaseEndpoint<br.com.altamira.data.model.man
 
         Operation entity = operationDao.find(operation);
 
-        return createOkResponse(
+        return createListResponse(
                 entity.getConsume()).build();
     }
 
@@ -86,7 +88,7 @@ public class ConsumeEndpoint extends BaseEndpoint<br.com.altamira.data.model.man
             @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long id)
             throws JsonProcessingException {
 
-        return createOkResponse(
+        return createEntityResponse(
                 consumeDao.find(id)).build();
     }
 
@@ -110,7 +112,9 @@ public class ConsumeEndpoint extends BaseEndpoint<br.com.altamira.data.model.man
         entity.setOperation(operationDao.find(operation));
         
         return createCreatedResponse(
-                consumeDao.create(entity)).build();
+                consumeDao.create(entity), 
+                UriBuilder.fromResource(type)
+                .path(String.valueOf(entity.getId())).build(operation)).build();
     }
 
     /**
@@ -133,8 +137,9 @@ public class ConsumeEndpoint extends BaseEndpoint<br.com.altamira.data.model.man
 
         entity.setOperation(operationDao.find(operation));
 
-        return createOkResponse(
-                consumeDao.update(entity)).build();
+        consumeDao.update(entity);
+        
+        return createNoContentResponse().build();
     }
 
     /**
