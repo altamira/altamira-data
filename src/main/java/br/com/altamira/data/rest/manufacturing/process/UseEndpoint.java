@@ -12,7 +12,6 @@ import br.com.altamira.data.model.manufacturing.process.Operation;
 import br.com.altamira.data.rest.BaseEndpoint;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.IOException;
-import java.net.URI;
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
 import javax.validation.constraints.Min;
@@ -108,11 +107,11 @@ public class UseEndpoint extends BaseEndpoint<br.com.altamira.data.model.manufac
             @Min(value = 1, message = ID_VALIDATION) @PathParam("operation") long operation,
             @NotNull(message = ENTITY_VALIDATION) Use entity)
             throws IllegalArgumentException, UriBuilderException, JsonProcessingException {
-        
+
         entity.setOperation(operationDao.find(operation));
-        
+
         return createCreatedResponse(
-                useDao.create(entity), 
+                useDao.create(entity),
                 UriBuilder.fromResource(type)
                 .path(String.valueOf(entity.getId())).build(operation)).build();
     }
@@ -137,9 +136,8 @@ public class UseEndpoint extends BaseEndpoint<br.com.altamira.data.model.manufac
 
         entity.setOperation(operationDao.find(operation));
 
-        useDao.update(entity);
-                
-        return createNoContentResponse().build();
+        return createEntityResponse(
+                useDao.update(entity)).build();
     }
 
     /**

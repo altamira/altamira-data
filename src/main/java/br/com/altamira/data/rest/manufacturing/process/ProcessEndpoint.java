@@ -135,9 +135,8 @@ public class ProcessEndpoint extends BaseEndpoint<Process> /*implements Endpoint
             @NotNull(message = ENTITY_VALIDATION) Process entity)
             throws JsonProcessingException {
 
-        processDao.update(entity);
-                
-        return createNoContentResponse().build();
+        return createEntityResponse(
+                processDao.update(entity)).build();
     }
 
     /**

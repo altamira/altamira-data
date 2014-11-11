@@ -289,13 +289,6 @@ public abstract class BaseEndpoint<T extends Entity> /* implements Endpoint<T> *
 
         ResponseBuilder responseBuilder;
 
-        // if (type.isInstance(entity)) {
-        // responseBuilder = Response.ok(
-        // UriBuilder.fromResource(type)
-        // .path(String.valueOf(((T) entity).getId())));
-        // } else {
-        // responseBuilder = Response.ok(UriBuilder.fromResource(type));
-        // }
         responseBuilder = Response.ok();
 
         responseBuilder.entity(writer.writeValueAsString(entity));
@@ -326,19 +319,21 @@ public abstract class BaseEndpoint<T extends Entity> /* implements Endpoint<T> *
      */
     protected Response.ResponseBuilder createCreatedResponse(T entity, URI uri)
             throws JsonProcessingException {
+        
         ObjectMapper mapper = new ObjectMapper();
 
         mapper.registerModule(new Hibernate4Module());
-        mapper.getSerializerProvider().setNullValueSerializer(
-                new NullValueSerializer());
+        mapper.getSerializerProvider().setNullValueSerializer(new NullValueSerializer());
         mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, true);
+        ObjectWriter writer = mapper.writerWithView(JSonViews.EntityView.class);
         
         if (uri == null) {
             uri = UriBuilder.fromPath("/").build();
          }
                 
         ResponseBuilder responseBuilder = Response.created(uri);
-                //.entity(mapper.writeValueAsString(entity));
+                
+        responseBuilder.entity(writer.writeValueAsString(entity));
         
         if (headers.getHeaderString("Origin") != null
                 && !headers.getHeaderString("Origin").isEmpty()) {
@@ -377,6 +372,7 @@ public abstract class BaseEndpoint<T extends Entity> /* implements Endpoint<T> *
      */
     protected Response.ResponseBuilder createListResponse(Object entity)
             throws JsonProcessingException {
+        
         ObjectMapper mapper = new ObjectMapper();
 
         mapper.registerModule(new Hibernate4Module());
@@ -395,6 +391,7 @@ public abstract class BaseEndpoint<T extends Entity> /* implements Endpoint<T> *
      */
     protected Response.ResponseBuilder createEntityResponse(Object entity)
             throws JsonProcessingException {
+        
         ObjectMapper mapper = new ObjectMapper();
 
         mapper.registerModule(new Hibernate4Module());
@@ -414,6 +411,7 @@ public abstract class BaseEndpoint<T extends Entity> /* implements Endpoint<T> *
      */
     protected Response.ResponseBuilder createLobResponse(Object entity)
             throws JsonProcessingException {
+        
         ObjectMapper mapper = new ObjectMapper();
 
         mapper.registerModule(new Hibernate4Module());

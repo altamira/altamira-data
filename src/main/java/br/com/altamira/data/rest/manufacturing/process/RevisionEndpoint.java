@@ -6,7 +6,6 @@
 package br.com.altamira.data.rest.manufacturing.process;
 
 import br.com.altamira.data.dao.manufacturing.process.ProcessDao;
-import br.com.altamira.data.dao.manufacturing.process.RevisionDao;
 import br.com.altamira.data.model.manufacturing.process.Revision;
 import br.com.altamira.data.rest.BaseEndpoint;
 import static br.com.altamira.data.rest.BaseEndpoint.ID_VALIDATION;

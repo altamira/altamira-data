@@ -22,7 +22,6 @@ import br.com.altamira.data.dao.manufacturing.process.OperationDao;
 import br.com.altamira.data.dao.manufacturing.process.ProcessDao;
 import br.com.altamira.data.model.manufacturing.process.Operation;
 import br.com.altamira.data.rest.BaseEndpoint;
-import java.net.URI;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.validation.constraints.Min;

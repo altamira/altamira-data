@@ -19,5 +19,5 @@ public class JSonViews {
     /**
      *
      */
-    public static class LobView extends ListView { }
+    public static class LobView extends EntityView { }
 }

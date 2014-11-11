@@ -12,7 +12,6 @@ import br.com.altamira.data.model.manufacturing.process.Operation;
 import br.com.altamira.data.rest.BaseEndpoint;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.IOException;
-import java.net.URI;
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
 import javax.validation.constraints.Min;
@@ -134,9 +133,8 @@ public class ProduceEndpoint extends BaseEndpoint<Produce> {
 
         entity.setOperation(operationDao.find(operation));
 
-        produceDao.update(entity);
-
-        return createNoContentResponse().build();
+        return createEntityResponse(
+                produceDao.update(entity)).build();
     }
 
     /**

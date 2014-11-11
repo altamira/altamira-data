@@ -40,7 +40,8 @@ import javax.ws.rs.core.UriBuilderException;
  */
 @RequestScoped
 @Path("manufacturing/process/{process:[0-9]*}/operation/{operation:[0-9]*}/sketch")
-public class SketchEndpoint extends BaseEndpoint<br.com.altamira.data.model.manufacturing.process.Sketch>  {
+public class SketchEndpoint extends BaseEndpoint<br.com.altamira.data.model.manufacturing.process.Sketch> {
+
     @EJB
     private OperationDao operationDao;
 
@@ -111,9 +112,9 @@ public class SketchEndpoint extends BaseEndpoint<br.com.altamira.data.model.manu
             @Min(value = 1, message = ID_VALIDATION) @PathParam("operation") long operation,
             @NotNull(message = ENTITY_VALIDATION) Sketch entity)
             throws IllegalArgumentException, UriBuilderException, JsonProcessingException {
-        
+
         return createCreatedResponse(
-                sketchDao.create(entity), 
+                sketchDao.create(entity),
                 UriBuilder.fromResource(type)
                 .path(String.valueOf(entity.getId())).build(process, operation)).build();
     }
@@ -136,9 +137,8 @@ public class SketchEndpoint extends BaseEndpoint<br.com.altamira.data.model.manu
             @NotNull(message = ENTITY_VALIDATION) Sketch entity)
             throws JsonProcessingException {
 
-        sketchDao.update(entity);
-                
-        return createNoContentResponse().build();
+        return createEntityResponse(
+                sketchDao.update(entity)).build();
     }
 
     /**
@@ -157,5 +157,5 @@ public class SketchEndpoint extends BaseEndpoint<br.com.altamira.data.model.manu
 
         return createNoContentResponse().build();
     }
-    
+
 }

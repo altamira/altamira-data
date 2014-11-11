@@ -42,7 +42,7 @@ public abstract class Entity implements Serializable {
     @Version
     @Column(name = "VERSION")
     @JsonView(JSonViews.EntityView.class)
-    private long version;
+    private java.sql.Timestamp version;
 
     @NotNull
     @Column(name = "LAST_MODIFIED")
@@ -117,14 +117,14 @@ public abstract class Entity implements Serializable {
     /**
      * @return the version
      */
-    public long getVersion() {
+    public java.sql.Timestamp getVersion() {
         return version;
     }
 
     /**
      * @param version the version to set
      */
-    public void setVersion(long version) {
+    public void setVersion(java.sql.Timestamp version) {
         this.version = version;
     }
 }

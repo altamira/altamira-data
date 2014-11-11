@@ -108,11 +108,11 @@ public class ConsumeEndpoint extends BaseEndpoint<br.com.altamira.data.model.man
             @Min(value = 1, message = ID_VALIDATION) @PathParam("operation") long operation,
             @NotNull(message = ENTITY_VALIDATION) Consume entity)
             throws IllegalArgumentException, UriBuilderException, JsonProcessingException {
-        
+
         entity.setOperation(operationDao.find(operation));
-        
+
         return createCreatedResponse(
-                consumeDao.create(entity), 
+                consumeDao.create(entity),
                 UriBuilder.fromResource(type)
                 .path(String.valueOf(entity.getId())).build(operation)).build();
     }
@@ -137,9 +137,8 @@ public class ConsumeEndpoint extends BaseEndpoint<br.com.altamira.data.model.man
 
         entity.setOperation(operationDao.find(operation));
 
-        consumeDao.update(entity);
-        
-        return createNoContentResponse().build();
+        return createEntityResponse(
+                consumeDao.update(entity)).build();
     }
 
     /**
