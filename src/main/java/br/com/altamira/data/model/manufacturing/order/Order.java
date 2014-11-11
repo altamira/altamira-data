@@ -77,7 +77,7 @@ public class Order extends Resource {
     @Column(name = "CHECKLIST")
     private Date checked;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "order", fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "order", fetch = FetchType.LAZY, orphanRemoval = false)
     private List<OrderItem> items;
 
     /**

@@ -59,8 +59,8 @@ public class Operation extends br.com.altamira.data.model.Operation {
     private String description;
 
     @JsonView(JSonViews.EntityView.class)
-    @JoinColumn(name = "SKETCH", referencedColumnName = "ID", insertable=true, updatable=false, nullable=true, unique=true)
-    @OneToOne(cascade = CascadeType.PERSIST, optional = false, fetch = FetchType.EAGER)
+    @JoinColumn(name = "SKETCH", referencedColumnName = "ID", insertable=true, updatable=true, nullable=true, unique=true)
+    @OneToOne(cascade = CascadeType.ALL, optional = false, fetch = FetchType.EAGER)
     private Sketch sketch;
     
     @JsonView(JSonViews.EntityView.class)

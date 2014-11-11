@@ -53,7 +53,7 @@ public class OrderItem extends Resource {
     @Column(name = "DESCRIPTION", length = 100000)
     private String description = "";
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "orderItem", fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "orderItem", fetch = FetchType.LAZY, orphanRemoval = false)
     private List<OrderItemPart> parts;
 
     /**

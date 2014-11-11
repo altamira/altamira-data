@@ -43,7 +43,7 @@ public class Sketch extends br.com.altamira.data.model.Resource {
     private String extension;
 
     @Lob
-    @JsonView(JSonViews.LobView.class)
+    //@JsonView(JSonViews.LobView.class)
     @Column(name = "FILE_BODY")
     private byte[] image;
 
