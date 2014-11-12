@@ -108,9 +108,8 @@ public class BOMItemEndpoint extends BaseEndpoint<BOMItem> {
 
         entity.setBOM(bomDao.find(bomId));
 
-        entity = bomItemDao.create(entity);
-
-        return createCreatedResponse(entity).build();
+        return createCreatedResponse(
+                bomItemDao.create(entity)).build();
     }
 
     /**

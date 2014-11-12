@@ -111,9 +111,8 @@ public class ConsumeEndpoint extends BaseEndpoint<br.com.altamira.data.model.man
 
         entity.setOperation(operationDao.find(operationId));
 
-        entity = consumeDao.create(entity);
-        
-        return createCreatedResponse(entity).build();
+        return createCreatedResponse(
+                consumeDao.create(entity)).build();
     }
 
     /**

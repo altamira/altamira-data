@@ -112,9 +112,8 @@ public class UseEndpoint extends BaseEndpoint<br.com.altamira.data.model.manufac
 
         entity.setOperation(operationDao.find(operationId));
 
-        entity = useDao.create(entity);
-        
-        return createCreatedResponse(entity).build();
+        return createCreatedResponse(
+                useDao.create(entity)).build();
     }
 
     /**

@@ -110,9 +110,8 @@ public class BOMItemPartEndpoint extends BaseEndpoint<BOMItemPart> {
 
         entity.setBOMItem(bomItemDao.find(itemId));
 
-        entity = bomItemPartDao.create(entity);
-
-        return createCreatedResponse(entity).build();
+        return createCreatedResponse(
+                bomItemPartDao.create(entity)).build();
     }
 
     /**
@@ -137,9 +136,8 @@ public class BOMItemPartEndpoint extends BaseEndpoint<BOMItemPart> {
 
         entity.setBOMItem(bomItemDao.find(itemId));
 
-        entity = bomItemPartDao.update(entity);
-
-        return createEntityResponse(entity).build();
+        return createEntityResponse(
+                bomItemPartDao.update(entity)).build();
     }
 
     /**

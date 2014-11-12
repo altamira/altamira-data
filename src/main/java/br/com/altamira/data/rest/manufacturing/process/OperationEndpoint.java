@@ -99,9 +99,8 @@ public class OperationEndpoint extends BaseEndpoint<Operation> {
             @NotNull(message = ENTITY_VALIDATION) Operation entity)
             throws IllegalArgumentException, UriBuilderException, JsonProcessingException {
 
-        entity = operationDao.create(processId, entity);
-        
-        return createCreatedResponse(entity).build();
+        return createCreatedResponse(
+                operationDao.create(processId, entity)).build();
     }
 
     /**

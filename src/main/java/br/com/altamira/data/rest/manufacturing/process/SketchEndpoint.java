@@ -69,10 +69,8 @@ public class SketchEndpoint extends BaseEndpoint<br.com.altamira.data.model.manu
             @DefaultValue("10") @QueryParam("max") Integer maxResult)
             throws IOException {
 
-        Operation entity = operationDao.find(operationId);
-
         return createListResponse(
-                entity.getSketch()).build();
+                operationDao.find(operationId).getSketch()).build();
     }
 
     /**
@@ -111,9 +109,8 @@ public class SketchEndpoint extends BaseEndpoint<br.com.altamira.data.model.manu
             @NotNull(message = ENTITY_VALIDATION) Sketch entity)
             throws IllegalArgumentException, UriBuilderException, JsonProcessingException {
 
-        entity = sketchDao.create(entity);
-        
-        return createCreatedResponse(entity).build();
+        return createCreatedResponse(
+                sketchDao.create(entity)).build();
     }
 
     /**

@@ -64,10 +64,8 @@ public class ProduceEndpoint extends BaseEndpoint<Produce> {
             @DefaultValue("10") @QueryParam("max") Integer maxResult)
             throws IOException {
 
-        Operation entity = operationDao.find(operationId);
-
         return createListResponse(
-                entity.getProduce()).build();
+                operationDao.find(operationId).getProduce()).build();
     }
 
     /**
@@ -108,9 +106,8 @@ public class ProduceEndpoint extends BaseEndpoint<Produce> {
 
         entity.setOperation(operationDao.find(operationId));
 
-        entity = produceDao.create(entity);
-        
-        return createCreatedResponse(entity).build();
+        return createCreatedResponse(
+                produceDao.create(entity)).build();
     }
 
     /**
