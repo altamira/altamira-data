@@ -198,7 +198,8 @@ public abstract class BaseDao<T extends br.com.altamira.data.model.Entity> imple
             throw new IllegalArgumentException(ID_NOT_NULL_VALIDATION);
         }
 
-        entityManager.remove(entityManager.contains(entity) ? entity : entityManager.merge(entity));
+        entity = entityManager.contains(entity) ? entity : entityManager.merge(entity);
+        entityManager.remove(entity);
     }
 
     /**

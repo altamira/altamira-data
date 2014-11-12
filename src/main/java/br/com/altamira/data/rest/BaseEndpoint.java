@@ -89,8 +89,9 @@ public abstract class BaseEndpoint<T extends Entity> /* implements Endpoint<T> *
      */
     protected Class<? extends BaseEndpoint<T>> type;
     
+    @Context
     protected UriInfo info;
-
+    
     /**
      *
      * @param startPosition
@@ -229,10 +230,10 @@ public abstract class BaseEndpoint<T extends Entity> /* implements Endpoint<T> *
     // throw new UnsupportedOperationException("Not supported yet.");
     // }
     
-    @Context
+    /*@Context
     public void setInfo(UriInfo info) {
         this.info = info;
-    }
+    }*/
     
     protected Response getCORSHeaders(String origin) {
         return Response
@@ -291,6 +292,8 @@ public abstract class BaseEndpoint<T extends Entity> /* implements Endpoint<T> *
 
         responseBuilder = Response.ok();
 
+        responseBuilder.header("Location", info.getRequestUri());
+        
         responseBuilder.entity(writer.writeValueAsString(entity));
 
         if (headers.getHeaderString("Origin") != null
@@ -303,13 +306,6 @@ public abstract class BaseEndpoint<T extends Entity> /* implements Endpoint<T> *
         return responseBuilder;
     }
     
-    protected Response.ResponseBuilder createCreatedResponse(T entity) throws JsonProcessingException {
-        URI uri = UriBuilder.fromResource(type)
-                .path(String.valueOf(entity.getId())).build();
-        
-        return createCreatedResponse(entity, uri);
-    }
-    
     /**
      *
      * @param entity
@@ -317,7 +313,7 @@ public abstract class BaseEndpoint<T extends Entity> /* implements Endpoint<T> *
      * @return
      * @throws JsonProcessingException
      */
-    protected Response.ResponseBuilder createCreatedResponse(T entity, URI uri)
+    protected Response.ResponseBuilder createCreatedResponse(T entity)
             throws JsonProcessingException {
         
         ObjectMapper mapper = new ObjectMapper();
@@ -326,12 +322,8 @@ public abstract class BaseEndpoint<T extends Entity> /* implements Endpoint<T> *
         mapper.getSerializerProvider().setNullValueSerializer(new NullValueSerializer());
         mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, true);
         ObjectWriter writer = mapper.writerWithView(JSonViews.EntityView.class);
-        
-        if (uri == null) {
-            uri = UriBuilder.fromPath("/").build();
-         }
                 
-        ResponseBuilder responseBuilder = Response.created(uri);
+        ResponseBuilder responseBuilder = Response.created(UriBuilder.fromUri(info.getRequestUri()).path(String.valueOf(entity.getId())).build());
                 
         responseBuilder.entity(writer.writeValueAsString(entity));
         
@@ -354,6 +346,8 @@ public abstract class BaseEndpoint<T extends Entity> /* implements Endpoint<T> *
 
         ResponseBuilder responseBuilder = Response.noContent();
 
+        responseBuilder.header("Location", info.getRequestUri());
+        
         if (headers.getHeaderString("Origin") != null
                 && !headers.getHeaderString("Origin").isEmpty()) {
             responseBuilder.header("Access-Control-Allow-Origin",

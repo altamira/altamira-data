@@ -39,7 +39,7 @@ public class RevisionEndpoint  extends BaseEndpoint<Revision> {
     
     /**
      *
-     * @param id
+     * @param processId
      * @param startPosition
      * @param maxResult
      * @return
@@ -48,12 +48,12 @@ public class RevisionEndpoint  extends BaseEndpoint<Revision> {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response list(
-            @Min(value = 1, message = ID_VALIDATION) @PathParam("process") long id,
+            @Min(value = 1, message = ID_VALIDATION) @PathParam("process") long processId,
             @DefaultValue("0") @QueryParam("start") Integer startPosition,
             @DefaultValue("10") @QueryParam("max") Integer maxResult)
             throws IOException {
 
-        br.com.altamira.data.model.manufacturing.process.Process entity = processDao.find(id);
+        br.com.altamira.data.model.manufacturing.process.Process entity = processDao.find(processId);
         
         return createListResponse(
                 entity.getRevision()).build();

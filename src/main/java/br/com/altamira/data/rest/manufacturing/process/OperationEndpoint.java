@@ -26,7 +26,6 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import javax.ws.rs.core.UriBuilder;
 
 /**
  *
@@ -48,7 +47,7 @@ public class OperationEndpoint extends BaseEndpoint<Operation> {
 
     /**
      *
-     * @param id
+     * @param processId
      * @param startPosition
      * @param maxResult
      * @return
@@ -57,13 +56,13 @@ public class OperationEndpoint extends BaseEndpoint<Operation> {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response list(
-            @Min(value = 1, message = ID_VALIDATION) @PathParam("process") long id,
+            @Min(value = 1, message = ID_VALIDATION) @PathParam("process") long processId,
             @DefaultValue("0") @QueryParam("start") Integer startPosition,
             @DefaultValue("10") @QueryParam("max") Integer maxResult)
             throws IOException {
 
         return createListResponse(
-                operationDao.list(id, startPosition, maxResult)).build();
+                operationDao.list(processId, startPosition, maxResult)).build();
     }
 
     /**
@@ -85,7 +84,7 @@ public class OperationEndpoint extends BaseEndpoint<Operation> {
 
     /**
      *
-     * @param id
+     * @param processId
      * @param entity
      * @return
      * @throws IllegalArgumentException
@@ -96,19 +95,18 @@ public class OperationEndpoint extends BaseEndpoint<Operation> {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response create(
-            @Min(value = 1, message = ID_VALIDATION) @PathParam("process") long id,
+            @Min(value = 1, message = ID_VALIDATION) @PathParam("process") long processId,
             @NotNull(message = ENTITY_VALIDATION) Operation entity)
             throws IllegalArgumentException, UriBuilderException, JsonProcessingException {
 
-        return createCreatedResponse(
-                operationDao.create(id, entity),
-                UriBuilder.fromResource(type)
-                .path(String.valueOf(entity.getId())).build(id)).build();
+        entity = operationDao.create(processId, entity);
+        
+        return createCreatedResponse(entity).build();
     }
 
     /**
      *
-     * @param process
+     * @param processId
      * @param id
      * @param entity
      * @return
@@ -119,12 +117,12 @@ public class OperationEndpoint extends BaseEndpoint<Operation> {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response update(
-            @Min(value = 1, message = ID_VALIDATION) @PathParam("process") long process,
+            @Min(value = 1, message = ID_VALIDATION) @PathParam("process") long processId,
             @Min(value = 1, message = ID_VALIDATION) @PathParam("id") long id,
             @NotNull(message = ENTITY_VALIDATION) Operation entity)
             throws JsonProcessingException {
 
-        entity.setProcess(processDao.find(process));
+        entity.setProcess(processDao.find(processId));
 
         return createEntityResponse(
                 operationDao.update(entity)).build();

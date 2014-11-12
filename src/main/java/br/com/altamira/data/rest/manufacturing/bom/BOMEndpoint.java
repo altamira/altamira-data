@@ -47,9 +47,9 @@ public class BOMEndpoint
      *
      */
     public BOMEndpoint() {
-    	this.type = BOMEndpoint.class;
+        this.type = BOMEndpoint.class;
     }
-    
+
     /**
      *
      * @param startPosition
@@ -139,9 +139,8 @@ public class BOMEndpoint
             @NotNull(message = ENTITY_VALIDATION) BOM entity)
             throws JsonProcessingException {
 
-        bomDao.update(entity);
-        
-        return createNoContentResponse().build();
+        return createEntityResponse(
+                bomDao.update(entity)).build();
     }
 
     /**
@@ -157,10 +156,9 @@ public class BOMEndpoint
     public Response updateToChecked(
             @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long id)
             throws JsonProcessingException {
-        
-        bomDao.updateToChecked(id);
-                
-        return createNoContentResponse().build();
+
+        return createEntityResponse(
+                bomDao.updateToChecked(id)).build();
     }
 
     /**
@@ -176,12 +174,11 @@ public class BOMEndpoint
     public Response updateToUnchecked(
             @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long id)
             throws JsonProcessingException {
-        
-        bomDao.updateToUnchecked(id);
-                
-        return createNoContentResponse().build();
+
+        return createEntityResponse(
+                bomDao.updateToUnchecked(id)).build();
     }
-    
+
     /**
      *
      * @param id
@@ -191,20 +188,20 @@ public class BOMEndpoint
     @DELETE
     @Path("/{id:[0-9]*}")
     public Response delete(
-            @Min(1) @PathParam("id") long id) 
+            @Min(1) @PathParam("id") long id)
             throws JsonProcessingException {
 
         bomDao.remove(id);
 
         return createNoContentResponse().build();
     }
-        
+
     @OPTIONS
     @Path("/{id:[0-9]*}/checked")
     public Response corsPreflightForCheckedPath(@HeaderParam("Origin") String origin, @PathParam("id") long id) {
         return getCORSHeaders(origin);
     }
-    
+
     @OPTIONS
     @Path("/{id:[0-9]*}/unchecked")
     public Response corsPreflightForUncheckedPath(@HeaderParam("Origin") String origin, @PathParam("id") long id) {

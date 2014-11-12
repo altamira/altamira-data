@@ -28,7 +28,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriBuilderException;
 
 /**
@@ -51,7 +50,7 @@ public class ProduceEndpoint extends BaseEndpoint<Produce> {
 
     /**
      *
-     * @param operation
+     * @param operationId
      * @param startPosition
      * @param maxResult
      * @return
@@ -60,12 +59,12 @@ public class ProduceEndpoint extends BaseEndpoint<Produce> {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response list(
-            @Min(value = 1, message = ID_VALIDATION) @PathParam("operation") long operation,
+            @Min(value = 1, message = ID_VALIDATION) @PathParam("operation") long operationId,
             @DefaultValue("0") @QueryParam("start") Integer startPosition,
             @DefaultValue("10") @QueryParam("max") Integer maxResult)
             throws IOException {
 
-        Operation entity = operationDao.find(operation);
+        Operation entity = operationDao.find(operationId);
 
         return createListResponse(
                 entity.getProduce()).build();
@@ -90,7 +89,8 @@ public class ProduceEndpoint extends BaseEndpoint<Produce> {
 
     /**
      *
-     * @param operation
+     * @param processId
+     * @param operationId
      * @param entity
      * @return
      * @throws IllegalArgumentException
@@ -101,21 +101,21 @@ public class ProduceEndpoint extends BaseEndpoint<Produce> {
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response create(
-            @Min(value = 1, message = ID_VALIDATION) @PathParam("operation") long operation,
+            @Min(value = 1, message = ID_VALIDATION) @PathParam("process") long processId,
+            @Min(value = 1, message = ID_VALIDATION) @PathParam("operation") long operationId,
             @NotNull(message = ENTITY_VALIDATION) Produce entity)
             throws IllegalArgumentException, UriBuilderException, JsonProcessingException {
 
-        entity.setOperation(operationDao.find(operation));
+        entity.setOperation(operationDao.find(operationId));
 
-        return createCreatedResponse(
-                produceDao.create(entity),
-                UriBuilder.fromResource(type)
-                .path(String.valueOf(entity.getId())).build(operation)).build();
+        entity = produceDao.create(entity);
+        
+        return createCreatedResponse(entity).build();
     }
 
     /**
      *
-     * @param operation
+     * @param operationId
      * @param id
      * @param entity
      * @return
@@ -126,12 +126,12 @@ public class ProduceEndpoint extends BaseEndpoint<Produce> {
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response update(
-            @Min(value = 1, message = ID_VALIDATION) @PathParam("operation") long operation,
+            @Min(value = 1, message = ID_VALIDATION) @PathParam("operation") long operationId,
             @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long id,
             @NotNull(message = ENTITY_VALIDATION) Produce entity)
             throws JsonProcessingException {
 
-        entity.setOperation(operationDao.find(operation));
+        entity.setOperation(operationDao.find(operationId));
 
         return createEntityResponse(
                 produceDao.update(entity)).build();

@@ -13,7 +13,6 @@ import static br.com.altamira.data.rest.BaseEndpoint.ENTITY_VALIDATION;
 import static br.com.altamira.data.rest.BaseEndpoint.ID_VALIDATION;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.IOException;
-import java.net.URI;
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
 import javax.validation.constraints.Min;
@@ -30,7 +29,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriBuilderException;
 
 /**
@@ -39,11 +37,11 @@ import javax.ws.rs.core.UriBuilderException;
  */
 @RequestScoped
 @Path("/manufacturing/bom/{bom:[0-9]*}/item/{item:[0-9]*}/part")
-public class BOMItemPartEndpoint  extends BaseEndpoint<BOMItemPart> {
+public class BOMItemPartEndpoint extends BaseEndpoint<BOMItemPart> {
 
     @EJB
     private BOMItemDao bomItemDao;
-    
+
     @EJB
     private BOMItemPartDao bomItemPartDao;
 
@@ -51,9 +49,9 @@ public class BOMItemPartEndpoint  extends BaseEndpoint<BOMItemPart> {
      *
      */
     public BOMItemPartEndpoint() {
-    	this.type = BOMItemPartEndpoint.class;
+        this.type = BOMItemPartEndpoint.class;
     }
-    
+
     /**
      *
      * @param id
@@ -93,7 +91,8 @@ public class BOMItemPartEndpoint  extends BaseEndpoint<BOMItemPart> {
 
     /**
      *
-     * @param id
+     * @param bomId
+     * @param itemId
      * @param entity
      * @return
      * @throws IllegalArgumentException
@@ -104,22 +103,22 @@ public class BOMItemPartEndpoint  extends BaseEndpoint<BOMItemPart> {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response create(
-            @Min(value = 1, message = ID_VALIDATION) @PathParam("item") long id,
+            @Min(value = 1, message = ID_VALIDATION) @PathParam("bom") long bomId,
+            @Min(value = 1, message = ID_VALIDATION) @PathParam("item") long itemId,
             @NotNull(message = ENTITY_VALIDATION) BOMItemPart entity)
             throws IllegalArgumentException, UriBuilderException, JsonProcessingException {
 
-        URI uri = UriBuilder.fromResource(type)
-                .path(String.valueOf(entity.getId())).build(id);
-        
-        entity.setBOMItem(bomItemDao.find(id));
-        
-        return createCreatedResponse(
-                bomItemPartDao.create(entity), uri).build();
+        entity.setBOMItem(bomItemDao.find(itemId));
+
+        entity = bomItemPartDao.create(entity);
+
+        return createCreatedResponse(entity).build();
     }
 
     /**
      *
-     * @param item
+     * @param bomId
+     * @param itemId
      * @param id
      * @param entity
      * @return
@@ -130,17 +129,19 @@ public class BOMItemPartEndpoint  extends BaseEndpoint<BOMItemPart> {
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response update(
-            @Min(value = 1, message = ID_VALIDATION) @PathParam("item") long item,
+            @Min(value = 1, message = ID_VALIDATION) @PathParam("bom") long bomId,
+            @Min(value = 1, message = ID_VALIDATION) @PathParam("item") long itemId,
             @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long id,
             @NotNull(message = ENTITY_VALIDATION) BOMItemPart entity)
             throws JsonProcessingException {
 
-        entity.setBOMItem(bomItemDao.find(item));
-        bomItemPartDao.update(entity);
-        
-        return createNoContentResponse().build();
+        entity.setBOMItem(bomItemDao.find(itemId));
+
+        entity = bomItemPartDao.update(entity);
+
+        return createEntityResponse(entity).build();
     }
-    
+
     /**
      *
      * @param id
@@ -150,12 +151,12 @@ public class BOMItemPartEndpoint  extends BaseEndpoint<BOMItemPart> {
     @DELETE
     @Path("/{id:[0-9]*}")
     public Response delete(
-            @Min(1) @PathParam("id") long id) 
+            @Min(1) @PathParam("id") long id)
             throws JsonProcessingException {
 
         bomItemPartDao.remove(id);
 
         return createNoContentResponse().build();
     }
-    
+
 }

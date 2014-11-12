@@ -12,7 +12,6 @@ import br.com.altamira.data.model.manufacturing.process.Operation;
 import br.com.altamira.data.rest.BaseEndpoint;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.IOException;
-import java.net.URI;
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
 import javax.validation.constraints.Min;
@@ -29,7 +28,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriBuilderException;
 
 /**
@@ -55,7 +53,7 @@ public class ConsumeEndpoint extends BaseEndpoint<br.com.altamira.data.model.man
 
     /**
      *
-     * @param operation
+     * @param operationId
      * @param startPosition
      * @param maxResult
      * @return
@@ -64,12 +62,12 @@ public class ConsumeEndpoint extends BaseEndpoint<br.com.altamira.data.model.man
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response list(
-            @Min(value = 1, message = ID_VALIDATION) @PathParam("operation") long operation,
+            @Min(value = 1, message = ID_VALIDATION) @PathParam("operation") long operationId,
             @DefaultValue("0") @QueryParam("start") Integer startPosition,
             @DefaultValue("10") @QueryParam("max") Integer maxResult)
             throws IOException {
 
-        Operation entity = operationDao.find(operation);
+        Operation entity = operationDao.find(operationId);
 
         return createListResponse(
                 entity.getConsume()).build();
@@ -94,7 +92,8 @@ public class ConsumeEndpoint extends BaseEndpoint<br.com.altamira.data.model.man
 
     /**
      *
-     * @param operation
+     * @param processId
+     * @param operationId
      * @param entity
      * @return
      * @throws IllegalArgumentException
@@ -105,21 +104,21 @@ public class ConsumeEndpoint extends BaseEndpoint<br.com.altamira.data.model.man
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response create(
-            @Min(value = 1, message = ID_VALIDATION) @PathParam("operation") long operation,
+            @Min(value = 1, message = ID_VALIDATION) @PathParam("process") long processId,
+            @Min(value = 1, message = ID_VALIDATION) @PathParam("operation") long operationId,
             @NotNull(message = ENTITY_VALIDATION) Consume entity)
             throws IllegalArgumentException, UriBuilderException, JsonProcessingException {
 
-        entity.setOperation(operationDao.find(operation));
+        entity.setOperation(operationDao.find(operationId));
 
-        return createCreatedResponse(
-                consumeDao.create(entity),
-                UriBuilder.fromResource(type)
-                .path(String.valueOf(entity.getId())).build(operation)).build();
+        entity = consumeDao.create(entity);
+        
+        return createCreatedResponse(entity).build();
     }
 
     /**
      *
-     * @param operation
+     * @param operationId
      * @param id
      * @param entity
      * @return
@@ -130,12 +129,12 @@ public class ConsumeEndpoint extends BaseEndpoint<br.com.altamira.data.model.man
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response update(
-            @Min(value = 1, message = ID_VALIDATION) @PathParam("operation") long operation,
+            @Min(value = 1, message = ID_VALIDATION) @PathParam("operation") long operationId,
             @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long id,
             @NotNull(message = ENTITY_VALIDATION) Consume entity)
             throws JsonProcessingException {
 
-        entity.setOperation(operationDao.find(operation));
+        entity.setOperation(operationDao.find(operationId));
 
         return createEntityResponse(
                 consumeDao.update(entity)).build();

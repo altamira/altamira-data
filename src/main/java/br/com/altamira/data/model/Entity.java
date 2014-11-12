@@ -8,12 +8,14 @@ package br.com.altamira.data.model;
 import br.com.altamira.data.serialize.JSonViews;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
+import java.net.URI;
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.PreUpdate;
 import javax.persistence.SequenceGenerator;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 
@@ -52,7 +54,7 @@ public abstract class Entity implements Serializable {
 //    @NotNull
     @Column(name = "ENTITY_CLASS")
     private String entityClass;
-
+    
     /**
      * @return the id
      */
@@ -127,4 +129,5 @@ public abstract class Entity implements Serializable {
     public void setVersion(java.sql.Timestamp version) {
         this.version = version;
     }
+
 }
