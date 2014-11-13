@@ -5,7 +5,6 @@
  */
 package br.com.altamira.data.rest.manufacturing.bom;
 
-import br.com.altamira.data.dao.manufacturing.bom.BOMItemDao;
 import br.com.altamira.data.dao.manufacturing.bom.BOMItemPartDao;
 import br.com.altamira.data.model.manufacturing.bom.BOMItemPart;
 import br.com.altamira.data.rest.BaseEndpoint;
@@ -40,11 +39,8 @@ import javax.ws.rs.core.UriBuilderException;
 public class BOMItemPartEndpoint extends BaseEndpoint<BOMItemPart> {
 
     @EJB
-    private BOMItemDao bomItemDao;
-
-    @EJB
     private BOMItemPartDao bomItemPartDao;
-
+    
     /**
      *
      */
@@ -54,7 +50,7 @@ public class BOMItemPartEndpoint extends BaseEndpoint<BOMItemPart> {
 
     /**
      *
-     * @param id
+     * @param itemId
      * @param startPosition
      * @param maxResult
      * @return
@@ -63,13 +59,13 @@ public class BOMItemPartEndpoint extends BaseEndpoint<BOMItemPart> {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response list(
-            @Min(value = 1, message = ID_VALIDATION) @PathParam("item") long id,
+            @Min(value = 1, message = ID_VALIDATION) @PathParam("item") long itemId,
             @DefaultValue("0") @QueryParam("start") Integer startPosition,
             @DefaultValue("10") @QueryParam("max") Integer maxResult)
             throws IOException {
 
         return createListResponse(
-                bomItemPartDao.list(id, startPosition, maxResult)).build();
+                bomItemPartDao.list(itemId, startPosition, maxResult)).build();
     }
 
     /**
@@ -108,10 +104,8 @@ public class BOMItemPartEndpoint extends BaseEndpoint<BOMItemPart> {
             @NotNull(message = ENTITY_VALIDATION) BOMItemPart entity)
             throws IllegalArgumentException, UriBuilderException, JsonProcessingException {
 
-        entity.setBOMItem(bomItemDao.find(itemId));
-
         return createCreatedResponse(
-                bomItemPartDao.create(entity)).build();
+                bomItemPartDao.create(itemId, entity)).build();
     }
 
     /**
@@ -134,10 +128,8 @@ public class BOMItemPartEndpoint extends BaseEndpoint<BOMItemPart> {
             @NotNull(message = ENTITY_VALIDATION) BOMItemPart entity)
             throws JsonProcessingException {
 
-        entity.setBOMItem(bomItemDao.find(itemId));
-
         return createEntityResponse(
-                bomItemPartDao.update(entity)).build();
+                bomItemPartDao.update(itemId, entity)).build();
     }
 
     /**

@@ -79,6 +79,24 @@ public class BOMItemPart extends Resource {
     private Product product;
     */
     
+    public BOMItemPart() {
+        this.parentType = BOMItem.class;
+    }
+    
+    @Override
+    public void setParent(br.com.altamira.data.model.Entity parent) {
+        if (!parentType.isInstance(parent)) {
+            throw new IllegalArgumentException("BOMItemPart requires a BOMItem instance object as a parent. You try to assign " + parent.getClass() + " as a parent.");
+        }
+
+        setBOMItem((BOMItem) parent);
+    }
+
+    @Override
+    public br.com.altamira.data.model.Entity getParent() {
+        return getBOMItem();
+    }
+    
     /**
      *
      * @return
@@ -212,8 +230,8 @@ public class BOMItemPart extends Resource {
      * @return
      */
     @JsonIgnore
-    public BOMItem getOrderItem() {
-        return bomItem;
+    public BOMItem getBOMItem() {
+        return getBOMItem();
     }
 
     /**
@@ -232,4 +250,5 @@ public class BOMItemPart extends Resource {
      public void setProduct(Product product) {
      this.product = product;
      }*/
+
 }

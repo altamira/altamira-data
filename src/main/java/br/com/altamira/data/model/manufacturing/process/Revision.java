@@ -43,6 +43,24 @@ public class Revision extends br.com.altamira.data.model.Resource {
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Process process;
     
+    public Revision() {
+        this.parentType = Process.class;
+    }
+
+    @Override
+    public void setParent(br.com.altamira.data.model.Entity parent) {
+        if (!parentType.isInstance(parent)) {
+            throw new IllegalArgumentException("Revision requires a Process instance object as a parent. You try to assign " + parent.getClass() + " as a parent.");
+        }
+
+        setProcess((Process) parent);
+    }
+
+    @Override
+    public br.com.altamira.data.model.Entity getParent() {
+        return getProcess();
+    }
+    
     /**
      *
      * @return

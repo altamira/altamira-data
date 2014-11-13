@@ -1,5 +1,7 @@
 package br.com.altamira.data.rest.manufacturing.process;
 
+import br.com.altamira.data.dao.BaseDao;
+import br.com.altamira.data.dao.Dao;
 import java.io.IOException;
 
 import javax.ws.rs.Consumes;
@@ -19,11 +21,11 @@ import javax.ws.rs.core.UriBuilderException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import br.com.altamira.data.dao.manufacturing.process.OperationDao;
-import br.com.altamira.data.dao.manufacturing.process.ProcessDao;
+import br.com.altamira.data.model.manufacturing.process.Consume;
 import br.com.altamira.data.model.manufacturing.process.Operation;
 import br.com.altamira.data.rest.BaseEndpoint;
+import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
@@ -35,12 +37,9 @@ import javax.validation.constraints.NotNull;
 @Path("manufacturing/process/{process:[0-9]*}/operation")
 public class OperationEndpoint extends BaseEndpoint<Operation> {
 
-    @Inject
-    private ProcessDao processDao;
-
-    @Inject
+    @EJB
     private OperationDao operationDao;
-
+    
     public OperationEndpoint() {
         this.type = OperationEndpoint.class;
     }
@@ -121,10 +120,8 @@ public class OperationEndpoint extends BaseEndpoint<Operation> {
             @NotNull(message = ENTITY_VALIDATION) Operation entity)
             throws JsonProcessingException {
 
-        entity.setProcess(processDao.find(processId));
-
         return createEntityResponse(
-                operationDao.update(entity)).build();
+                operationDao.update(processId, entity)).build();
     }
 
     /**

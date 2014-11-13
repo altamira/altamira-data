@@ -1,8 +1,8 @@
 package br.com.altamira.data.rest.sales;
 
+import br.com.altamira.data.dao.Dao;
 import java.io.IOException;
 
-import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -20,9 +20,12 @@ import javax.ws.rs.core.UriBuilderException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import br.com.altamira.data.dao.sales.OrderDao;
+import br.com.altamira.data.model.manufacturing.bom.BOM;
 import br.com.altamira.data.model.sales.Order;
 import br.com.altamira.data.rest.BaseEndpoint;
 import static br.com.altamira.data.rest.BaseEndpoint.ENTITY_VALIDATION;
+import br.com.altamira.data.rest.manufacturing.process.UseEndpoint;
+import javax.ejb.EJB;
 
 import javax.enterprise.context.RequestScoped;
 import javax.validation.constraints.Min;
@@ -37,97 +40,13 @@ import javax.validation.constraints.NotNull;
 @Path("/sales/order")
 public class OrderEndpoint extends BaseEndpoint<Order> {
 
-    @Inject
+    @EJB
     private OrderDao orderDao;
-
+    
     /**
      *
-     * @param startPosition
-     * @param maxResult
-     * @return
-     * @throws IOException
      */
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response list(
-            @DefaultValue("0") @QueryParam("start") Integer startPosition,
-            @DefaultValue("10") @QueryParam("max") Integer maxResult)
-            throws IOException {
-
-        return createListResponse(
-                orderDao.list(startPosition, maxResult)).build();
+    public OrderEndpoint() {
+        this.type = OrderEndpoint.class;
     }
-
-    /**
-     *
-     * @param number
-     * @return
-     * @throws JsonProcessingException
-     */
-    @GET
-    @Path("/{number:[0-9]*}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response findByNumber(
-            @Min(1) @PathParam("number") long number)
-            throws JsonProcessingException {
-
-        return createEntityResponse(orderDao.findByNumber(number)).build();
-    }
-
-    /**
-     *
-     * @param entity
-     * @return
-     * @throws IllegalArgumentException
-     * @throws UriBuilderException
-     * @throws JsonProcessingException
-     */
-    @POST
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response create(
-            @NotNull(message = ENTITY_VALIDATION) Order entity)
-            throws IllegalArgumentException, UriBuilderException, JsonProcessingException {
-
-        return createCreatedResponse(orderDao.create(entity)).build();
-    }
-
-    /**
-     *
-     * @param number
-     * @param entity
-     * @return
-     * @throws com.fasterxml.jackson.core.JsonProcessingException
-     */
-    @PUT
-    @Path("/{id:[0-9][0-9]*}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response update(
-            @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "number") long number,
-            @NotNull(message = ENTITY_VALIDATION) Order entity)
-            throws JsonProcessingException {
-
-        orderDao.update(entity);
-        
-        return createNoContentResponse().build();
-    }
-
-    /**
-     *
-     * @param id
-     * @return
-     * @throws com.fasterxml.jackson.core.JsonProcessingException
-     */
-    @DELETE
-    @Path("/{id:[0-9]*}")
-    public Response delete(
-            @Min(1) @PathParam("id") long id)
-            throws JsonProcessingException {
-
-        orderDao.remove(id);
-
-        return createNoContentResponse().build();
-    }
-
 }

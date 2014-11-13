@@ -8,6 +8,7 @@ package br.com.altamira.data.dao;
 import static br.com.altamira.data.dao.Dao.PAGE_SIZE_VALIDATION;
 import static br.com.altamira.data.dao.Dao.SEARCH_VALIDATION;
 import static br.com.altamira.data.dao.Dao.START_PAGE_VALIDATION;
+import java.lang.reflect.ParameterizedType;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -83,7 +84,35 @@ public abstract class BaseDao<T extends br.com.altamira.data.model.Entity> imple
                 .setMaxResults(pageSize)
                 .getResultList();
     }
+    
+    /**
+     *
+     * @param parentId
+     * @param startPage
+     * @param pageSize
+     * @return
+     */
+    @Override
+    public List<T> list(
+            @Min(value = 1, message = ID_NOT_NULL_VALIDATION) long parentId,
+            @Min(value = 0, message = START_PAGE_VALIDATION) int startPage,
+            @Min(value = 1, message = PAGE_SIZE_VALIDATION) int pageSize)
+            throws ConstraintViolationException {
 
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<T> criteriaQuery = cb.createQuery(type);
+        
+        Root<T> entity = criteriaQuery.from(type);
+
+        criteriaQuery.select(entity);
+        criteriaQuery.orderBy(cb.desc(entity.get("lastModified")));
+
+        return entityManager.createQuery(criteriaQuery)
+                .setFirstResult(startPage * pageSize)
+                .setMaxResults(pageSize)
+                .getResultList();
+    }
+    
     /**
      *
      * @param search
@@ -162,6 +191,39 @@ public abstract class BaseDao<T extends br.com.altamira.data.model.Entity> imple
         return find(entity.getId());
     }
 
+    
+    /**
+     *
+     * @param entity
+     * @return
+     */
+    @Override
+    public T create(
+            @Min(value = 1, message = ID_NOT_NULL_VALIDATION) long parentId,
+            @NotNull(message = ENTITY_VALIDATION) T entity)
+            throws ConstraintViolationException {
+
+        if (entity.getId() != null && entity.getId() > 0) {
+            throw new IllegalArgumentException(ID_NOT_NULL_VALIDATION);
+        }
+        
+        Object parent = entityManager.find(
+                entity.getParentType(), 
+                parentId);
+        
+        entity.setParent((br.com.altamira.data.model.Entity)parent);
+        
+        entity.setId(null);
+
+        validate(entity);
+
+        entityManager.persist(entity);
+        entityManager.flush();
+
+        // Reload to update child references
+        return find(entity.getId());
+    }
+    
     /**
      *
      * @param entity
@@ -184,7 +246,37 @@ public abstract class BaseDao<T extends br.com.altamira.data.model.Entity> imple
         // Reload to update child references
         return find(entity.getId());
     }
+    
+    /**
+     *
+     * @param entity
+     * @return
+     */
+    @Override
+    public T update(
+            @Min(value = 1, message = ID_NOT_NULL_VALIDATION) long parentId,
+            @NotNull(message = ENTITY_VALIDATION) T entity)
+            throws ConstraintViolationException, IllegalArgumentException {
 
+        if (entity.getId() == null || entity.getId() == 0l) {
+            throw new IllegalArgumentException(ID_NOT_NULL_VALIDATION);
+        }
+
+        Object parent = entityManager.find(
+                entity.getParentType(), 
+                parentId);
+        
+        entity.setParent((br.com.altamira.data.model.Entity)parent);
+        
+        validate(entity);
+
+        entity = entityManager.merge(entity);
+        entityManager.flush();
+
+        // Reload to update child references
+        return find(entity.getId());
+    }
+    
     /**
      *
      * @param entity
@@ -240,9 +332,10 @@ public abstract class BaseDao<T extends br.com.altamira.data.model.Entity> imple
         }
     }
 
-    /*private Class<T> getTypeClass() {
+    private Class<T> getTypeClass() {
         Class<T> clazz = (Class<T>) ((ParameterizedType) this.getClass()
-                .getGenericSuperclass()).getActualTypeArguments()[0];
+                .getGenericSuperclass())
+                .getActualTypeArguments()[0];
         return clazz;
-    }*/
+    }
 }

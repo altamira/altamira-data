@@ -5,10 +5,10 @@
  */
 package br.com.altamira.data.rest.manufacturing.process;
 
+import br.com.altamira.data.dao.BaseDao;
+import br.com.altamira.data.dao.Dao;
 import br.com.altamira.data.dao.manufacturing.process.ProduceDao;
-import br.com.altamira.data.dao.manufacturing.process.OperationDao;
 import br.com.altamira.data.model.manufacturing.process.Produce;
-import br.com.altamira.data.model.manufacturing.process.Operation;
 import br.com.altamira.data.rest.BaseEndpoint;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.IOException;
@@ -39,11 +39,8 @@ import javax.ws.rs.core.UriBuilderException;
 public class ProduceEndpoint extends BaseEndpoint<Produce> {
 
     @EJB
-    private OperationDao operationDao;
-
-    @EJB
     private ProduceDao produceDao;
-
+    
     public ProduceEndpoint() {
         this.type = ProduceEndpoint.class;
     }
@@ -56,7 +53,7 @@ public class ProduceEndpoint extends BaseEndpoint<Produce> {
      * @return
      * @throws IOException
      */
-    @GET
+    /*@GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response list(
             @Min(value = 1, message = ID_VALIDATION) @PathParam("operation") long operationId,
@@ -65,8 +62,8 @@ public class ProduceEndpoint extends BaseEndpoint<Produce> {
             throws IOException {
 
         return createListResponse(
-                operationDao.find(operationId).getProduce()).build();
-    }
+                produceDao.list(operationId)).build();
+    }*/
 
     /**
      *
@@ -104,10 +101,8 @@ public class ProduceEndpoint extends BaseEndpoint<Produce> {
             @NotNull(message = ENTITY_VALIDATION) Produce entity)
             throws IllegalArgumentException, UriBuilderException, JsonProcessingException {
 
-        entity.setOperation(operationDao.find(operationId));
-
         return createCreatedResponse(
-                produceDao.create(entity)).build();
+                produceDao.create(operationId, entity)).build();
     }
 
     /**
@@ -128,10 +123,8 @@ public class ProduceEndpoint extends BaseEndpoint<Produce> {
             @NotNull(message = ENTITY_VALIDATION) Produce entity)
             throws JsonProcessingException {
 
-        entity.setOperation(operationDao.find(operationId));
-
         return createEntityResponse(
-                produceDao.update(entity)).build();
+                produceDao.update(operationId, entity)).build();
     }
 
     /**

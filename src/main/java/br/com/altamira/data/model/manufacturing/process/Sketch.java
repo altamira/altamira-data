@@ -5,8 +5,6 @@
  */
 package br.com.altamira.data.model.manufacturing.process;
 
-import br.com.altamira.data.serialize.JSonViews;
-import com.fasterxml.jackson.annotation.JsonView;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
@@ -47,6 +45,24 @@ public class Sketch extends br.com.altamira.data.model.Resource {
     @Column(name = "FILE_BODY")
     private byte[] image;
 
+    public Sketch() {
+        this.parentType = Operation.class;
+    }
+    
+    /*@Override
+    public void setParent(br.com.altamira.data.model.Entity parent) {
+        if (parentType.isInstance(parent)) {
+            throw new IllegalArgumentException("Consume requires a Operation instance object as a parent.");
+        }
+
+        setOperation((Operation) parent);
+    }
+
+    @Override
+    public br.com.altamira.data.model.Entity getParent() {
+        return getOperation();
+    }*/
+    
     /**
      * @return the type
      */

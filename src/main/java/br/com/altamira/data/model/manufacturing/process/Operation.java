@@ -82,8 +82,23 @@ public class Operation extends br.com.altamira.data.model.Operation {
      *
      */
     public Operation() {
+        this.parentType = Process.class;
+    }
+    
+    @Override
+    public void setParent(br.com.altamira.data.model.Entity parent) {
+        if (!parentType.isInstance(parent)) {
+            throw new IllegalArgumentException("Operation requires a Process instance object as a parent. You try to assign " + parent.getClass() + " as a parent.");
+        }
+
+        setProcess((Process) parent);
     }
 
+    @Override
+    public br.com.altamira.data.model.Entity getParent() {
+        return getProcess();
+    }
+    
     /**
      *
      * @param id

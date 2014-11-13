@@ -68,12 +68,12 @@ public class Process extends br.com.altamira.data.model.Process {
     @JsonView(JSonViews.EntityView.class)
     @JsonSerialize(using = NullCollectionSerializer.class)
     @OneToMany(mappedBy = "process", fetch = FetchType.LAZY, orphanRemoval = true)
-    private List<Revision> revision = new ArrayList<Revision>();
+    private List<Revision> revision = new ArrayList<>();
 
     @JsonView(JSonViews.EntityView.class)
     @JsonSerialize(using = NullCollectionSerializer.class)
     @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "process", fetch = FetchType.LAZY, orphanRemoval = false)
-    private List<Operation> operation = new ArrayList<Operation>();
+    private List<Operation> operation = new ArrayList<>();
     
     /**
      *

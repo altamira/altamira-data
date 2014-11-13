@@ -8,8 +8,10 @@ package br.com.altamira.data.dao.manufacturing.bom;
 import br.com.altamira.data.dao.BaseDao;
 import static br.com.altamira.data.dao.Dao.ENTITY_VALIDATION;
 import static br.com.altamira.data.dao.Dao.ID_NOT_NULL_VALIDATION;
+import br.com.altamira.data.model.manufacturing.bom.BOM;
 import br.com.altamira.data.model.manufacturing.bom.BOMItem;
 import java.util.List;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -26,6 +28,9 @@ import javax.validation.constraints.NotNull;
 @Stateless
 public class BOMItemDao extends BaseDao<BOMItem> {
 
+    @EJB
+    private BOMDao bomDao;
+    
     public BOMItemDao() {
         this.type = BOMItem.class;
     }
@@ -67,21 +72,25 @@ public class BOMItemDao extends BaseDao<BOMItem> {
         // Lazy load of items
         if (entity.getParts() != null) {
             entity.getParts().size();
-        };
+        }
 
         return entity;
     }
 
     /**
      *
+     * @param bomId
      * @param entity
      * @return
      */
-    @Override
     public BOMItem create(
+            @Min(value = 1, message = ID_NOT_NULL_VALIDATION) long bomId,
             @NotNull(message = ENTITY_VALIDATION) BOMItem entity)
             throws ConstraintViolationException {
-
+        
+        // Get reference from parent 
+        entity.setBOM(bomDao.find(bomId));
+        
         // Resolve dependencies
         entity.getParts().stream().forEach((part) -> {
             part.setBOMItem(entity);
@@ -92,14 +101,18 @@ public class BOMItemDao extends BaseDao<BOMItem> {
 
     /**
      *
+     * @param bomId
      * @param entity
      * @return
      */
-    @Override
     public BOMItem update(
+            @Min(value = 1, message = ID_NOT_NULL_VALIDATION) long bomId,
             @NotNull(message = ENTITY_VALIDATION) BOMItem entity)
             throws ConstraintViolationException, IllegalArgumentException {
 
+        // Get reference from parent 
+        entity.setBOM(bomDao.find(bomId));
+        
         // Resolve dependencies
         entity.getParts().stream().forEach((part) -> {
             part.setBOMItem(entity);

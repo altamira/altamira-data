@@ -26,7 +26,7 @@ public class Consume extends br.com.altamira.data.model.Relation {
      *
      */
     private static final long serialVersionUID = -492716374383567653L;
-    
+
     @NotNull
     @Size(min = 10)
     @Column(name = "CODE", columnDefinition = "nvarchar2(255)")
@@ -51,7 +51,25 @@ public class Consume extends br.com.altamira.data.model.Relation {
     @JoinColumn(name = "OPERATION", referencedColumnName = "ID")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private br.com.altamira.data.model.manufacturing.process.Operation operation;
-    
+
+    public Consume() {
+        this.parentType = Operation.class;
+    }
+
+    @Override
+    public void setParent(br.com.altamira.data.model.Entity parent) {
+        if (!parentType.isInstance(parent)) {
+            throw new IllegalArgumentException("Consume requires a Operation instance object as a parent. You try to assign " + parent.getClass() + " as a parent.");
+        }
+
+        setOperation((Operation) parent);
+    }
+
+    @Override
+    public br.com.altamira.data.model.Entity getParent() {
+        return getOperation();
+    }
+
     /**
      *
      * @return

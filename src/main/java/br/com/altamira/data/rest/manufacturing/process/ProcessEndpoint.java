@@ -39,7 +39,7 @@ public class ProcessEndpoint extends BaseEndpoint<Process> /*implements Endpoint
 
     @EJB
     private ProcessDao processDao;
-
+    
     public ProcessEndpoint() {
         this.type = ProcessEndpoint.class;
     }

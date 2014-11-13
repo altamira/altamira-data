@@ -6,9 +6,9 @@
 package br.com.altamira.data.model;
 
 import br.com.altamira.data.serialize.JSonViews;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import java.io.Serializable;
-import java.net.URI;
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -54,6 +54,9 @@ public abstract class Entity implements Serializable {
 //    @NotNull
     @Column(name = "ENTITY_CLASS")
     private String entityClass;
+    
+    @Transient
+    protected Class<? extends br.com.altamira.data.model.Entity> parentType;
     
     /**
      * @return the id
@@ -128,6 +131,32 @@ public abstract class Entity implements Serializable {
      */
     public void setVersion(java.sql.Timestamp version) {
         this.version = version;
+    }
+
+    /**
+     * @return the parent
+     */
+    @JsonIgnore
+    public Class<? extends br.com.altamira.data.model.Entity> getParentType() {
+        return parentType;
+    }
+
+    /**
+     * @param parentType
+     */
+    @JsonIgnore
+    public void setParentType(Class<? extends br.com.altamira.data.model.Entity> parentType) {
+        this.parentType = parentType;
+    }
+
+    @JsonIgnore
+    public void setParent(Entity parent) {
+        throw new UnsupportedOperationException ("You are calling br.com.altamira.data.model.Entity.setParent(). You should override this method in child class.");
+    }
+    
+    @JsonIgnore
+    public Entity getParent() {
+        throw new UnsupportedOperationException ("You are calling br.com.altamira.data.model.Entity.getParent(). You should override this method in child class.");
     }
 
 }

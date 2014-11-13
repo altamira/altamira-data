@@ -58,6 +58,21 @@ public class BOMItem extends Resource {
      */
     public BOMItem() {
         this.parts = new ArrayList<>();
+        this.parentType = BOM.class;
+    }
+    
+    @Override
+    public void setParent(br.com.altamira.data.model.Entity parent) {
+        if (!parentType.isInstance(parent)) {
+            throw new IllegalArgumentException("BOMItem requires a BOM instance object as a parent. You try to assign " + parent.getClass() + " as a parent.");
+        }
+     
+        setBOM((BOM)parent);
+    }
+    
+    @Override
+    public br.com.altamira.data.model.Entity getParent() {
+        return getBOM();
     }
     
     /**

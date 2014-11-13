@@ -5,7 +5,6 @@
  */
 package br.com.altamira.data.rest.manufacturing.bom;
 
-import br.com.altamira.data.dao.manufacturing.bom.BOMDao;
 import br.com.altamira.data.dao.manufacturing.bom.BOMItemDao;
 import br.com.altamira.data.model.manufacturing.bom.BOMItem;
 import br.com.altamira.data.rest.BaseEndpoint;
@@ -40,11 +39,8 @@ import javax.ws.rs.core.UriBuilderException;
 public class BOMItemEndpoint extends BaseEndpoint<BOMItem> {
 
     @EJB
-    private BOMDao bomDao;
-
-    @EJB
     private BOMItemDao bomItemDao;
-
+    
     /**
      *
      */
@@ -106,10 +102,8 @@ public class BOMItemEndpoint extends BaseEndpoint<BOMItem> {
             @NotNull(message = ENTITY_VALIDATION) BOMItem entity)
             throws IllegalArgumentException, UriBuilderException, JsonProcessingException {
 
-        entity.setBOM(bomDao.find(bomId));
-
         return createCreatedResponse(
-                bomItemDao.create(entity)).build();
+                bomItemDao.create(bomId, entity)).build();
     }
 
     /**
@@ -130,10 +124,8 @@ public class BOMItemEndpoint extends BaseEndpoint<BOMItem> {
             @NotNull(message = ENTITY_VALIDATION) BOMItem entity)
             throws JsonProcessingException {
 
-        entity.setBOM(bomDao.find(bomId));
-
         return createEntityResponse(
-                bomItemDao.update(entity)).build();
+                bomItemDao.update(bomId, entity)).build();
     }
 
     /**

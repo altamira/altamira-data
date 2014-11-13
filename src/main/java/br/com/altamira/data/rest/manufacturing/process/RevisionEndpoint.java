@@ -5,7 +5,10 @@
  */
 package br.com.altamira.data.rest.manufacturing.process;
 
-import br.com.altamira.data.dao.manufacturing.process.ProcessDao;
+import br.com.altamira.data.dao.BaseDao;
+import br.com.altamira.data.dao.Dao;
+import br.com.altamira.data.dao.manufacturing.process.RevisionDao;
+import br.com.altamira.data.model.manufacturing.process.Produce;
 import br.com.altamira.data.model.manufacturing.process.Revision;
 import br.com.altamira.data.rest.BaseEndpoint;
 import static br.com.altamira.data.rest.BaseEndpoint.ID_VALIDATION;
@@ -31,8 +34,8 @@ import javax.ws.rs.core.Response;
 public class RevisionEndpoint  extends BaseEndpoint<Revision> {
     
     @EJB
-    private ProcessDao processDao;
-    
+    private RevisionDao revisionDao;
+     
     public RevisionEndpoint() {
         this.type = RevisionEndpoint.class;
     }
@@ -45,7 +48,7 @@ public class RevisionEndpoint  extends BaseEndpoint<Revision> {
      * @return
      * @throws IOException
      */
-    @GET
+    /*@GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response list(
             @Min(value = 1, message = ID_VALIDATION) @PathParam("process") long processId,
@@ -53,9 +56,7 @@ public class RevisionEndpoint  extends BaseEndpoint<Revision> {
             @DefaultValue("10") @QueryParam("max") Integer maxResult)
             throws IOException {
 
-        br.com.altamira.data.model.manufacturing.process.Process entity = processDao.find(processId);
-        
         return createListResponse(
-                entity.getRevision()).build();
-    }    
+                revisionDao.list(processId)).build();
+    } */   
 }

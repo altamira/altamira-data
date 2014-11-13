@@ -5,9 +5,10 @@
  */
 package br.com.altamira.data.rest.manufacturing.process;
 
-import br.com.altamira.data.dao.manufacturing.process.OperationDao;
+import br.com.altamira.data.dao.BaseDao;
+import br.com.altamira.data.dao.Dao;
 import br.com.altamira.data.dao.manufacturing.process.SketchDao;
-import br.com.altamira.data.model.manufacturing.process.Operation;
+import br.com.altamira.data.model.manufacturing.process.Revision;
 import br.com.altamira.data.model.manufacturing.process.Sketch;
 import br.com.altamira.data.rest.BaseEndpoint;
 import static br.com.altamira.data.rest.BaseEndpoint.ENTITY_VALIDATION;
@@ -41,11 +42,8 @@ import javax.ws.rs.core.UriBuilderException;
 public class SketchEndpoint extends BaseEndpoint<br.com.altamira.data.model.manufacturing.process.Sketch> {
 
     @EJB
-    private OperationDao operationDao;
-
-    @EJB
     private SketchDao sketchDao;
-
+    
     /**
      *
      */
@@ -61,7 +59,7 @@ public class SketchEndpoint extends BaseEndpoint<br.com.altamira.data.model.manu
      * @return
      * @throws IOException
      */
-    @GET
+    /*@GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response list(
             @Min(value = 1, message = ID_VALIDATION) @PathParam("operation") long operationId,
@@ -70,8 +68,8 @@ public class SketchEndpoint extends BaseEndpoint<br.com.altamira.data.model.manu
             throws IOException {
 
         return createListResponse(
-                operationDao.find(operationId).getSketch()).build();
-    }
+                sketchDao.list(operationId)).build();
+    }*/
 
     /**
      *
@@ -110,7 +108,7 @@ public class SketchEndpoint extends BaseEndpoint<br.com.altamira.data.model.manu
             throws IllegalArgumentException, UriBuilderException, JsonProcessingException {
 
         return createCreatedResponse(
-                sketchDao.create(entity)).build();
+                sketchDao.create(operationId, entity)).build();
     }
 
     /**
@@ -132,7 +130,7 @@ public class SketchEndpoint extends BaseEndpoint<br.com.altamira.data.model.manu
             throws JsonProcessingException {
 
         return createEntityResponse(
-                sketchDao.update(entity)).build();
+                sketchDao.update(operationId, entity)).build();
     }
 
     /**

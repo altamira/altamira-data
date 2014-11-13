@@ -52,6 +52,24 @@ public class Produce extends br.com.altamira.data.model.Relation {
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Operation operation;
     
+    public Produce() {
+        this.parentType = Operation.class;
+    }
+
+    @Override
+    public void setParent(br.com.altamira.data.model.Entity parent) {
+        if (!parentType.isInstance(parent)) {
+            throw new IllegalArgumentException("Produce requires a Operation instance object as a parent. You try to assign " + parent.getClass() + " as a parent.");
+        }
+
+        setOperation((Operation) parent);
+    }
+
+    @Override
+    public br.com.altamira.data.model.Entity getParent() {
+        return getOperation();
+    }
+    
     /**
      *
      * @return

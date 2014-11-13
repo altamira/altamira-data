@@ -68,6 +68,20 @@ public interface Dao<T extends br.com.altamira.data.model.Entity> {
 
     /**
      *
+     * @param parentId
+     * @param startPage
+     * @param pageSize
+     * @return
+     * @throws ConstraintViolationException
+     */
+    public List<T> list(
+            @Min(value = 1, message = ID_NOT_NULL_VALIDATION) long parentId,
+            @Min(value = 0, message = START_PAGE_VALIDATION) int startPage,
+            @Min(value = 1, message = PAGE_SIZE_VALIDATION) int pageSize)
+            throws ConstraintViolationException;
+    
+    /**
+     *
      * @param search
      * @param startPage
      * @param pageSize
@@ -100,7 +114,19 @@ public interface Dao<T extends br.com.altamira.data.model.Entity> {
     public T create(
             @NotNull(message = ENTITY_VALIDATION) T entity)
             throws ConstraintViolationException;
-
+    
+    /**
+     *
+     * @param parentId
+     * @param entity
+     * @return
+     * @throws ConstraintViolationException
+     */
+    public T create(
+            @Min(value = 1, message = ID_NOT_NULL_VALIDATION) long parentId,
+            @NotNull(message = ENTITY_VALIDATION) T entity)
+            throws ConstraintViolationException;
+    
     /**
      *
      * @param entity
@@ -112,6 +138,20 @@ public interface Dao<T extends br.com.altamira.data.model.Entity> {
             @NotNull(message = ENTITY_VALIDATION) T entity)
             throws ConstraintViolationException, IllegalArgumentException;
 
+        
+    /**
+     *
+     * @param parentId
+     * @param entity
+     * @return
+     * @throws ConstraintViolationException
+     * @throws IllegalArgumentException
+     */
+    public T update(
+            @Min(value = 1, message = ID_NOT_NULL_VALIDATION) long parentId,
+            @NotNull(message = ENTITY_VALIDATION) T entity)
+            throws ConstraintViolationException, IllegalArgumentException;
+    
     /**
      *
      * @param entity

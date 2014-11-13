@@ -5,6 +5,7 @@
  */
 package br.com.altamira.data.rest.manufacturing.order;
 
+import br.com.altamira.data.dao.BaseDao;
 import br.com.altamira.data.dao.manufacturing.bom.BOMDao;
 import br.com.altamira.data.model.manufacturing.bom.BOM;
 import br.com.altamira.data.rest.BaseEndpoint;

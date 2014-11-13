@@ -6,29 +6,23 @@
 package br.com.altamira.data.rest.manufacturing.process;
 
 import br.com.altamira.data.dao.manufacturing.process.UseDao;
-import br.com.altamira.data.dao.manufacturing.process.OperationDao;
 import br.com.altamira.data.model.manufacturing.process.Use;
-import br.com.altamira.data.model.manufacturing.process.Operation;
 import br.com.altamira.data.rest.BaseEndpoint;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import java.io.IOException;
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriBuilderException;
 
 /**
@@ -40,11 +34,8 @@ import javax.ws.rs.core.UriBuilderException;
 public class UseEndpoint extends BaseEndpoint<br.com.altamira.data.model.manufacturing.process.Use> {
 
     @EJB
-    private OperationDao operationDao;
-
-    @EJB
     private UseDao useDao;
-
+    
     /**
      *
      */
@@ -60,7 +51,7 @@ public class UseEndpoint extends BaseEndpoint<br.com.altamira.data.model.manufac
      * @return
      * @throws IOException
      */
-    @GET
+    /*@GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response list(
             @Min(value = 1, message = ID_VALIDATION) @PathParam("operation") long operationId,
@@ -68,11 +59,9 @@ public class UseEndpoint extends BaseEndpoint<br.com.altamira.data.model.manufac
             @DefaultValue("10") @QueryParam("max") Integer maxResult)
             throws IOException {
 
-        Operation entity = operationDao.find(operationId);
-
         return createListResponse(
-                entity.getUse()).build();
-    }
+                useDao.list(operationId)).build();
+    }*/
 
     /**
      *
@@ -110,10 +99,8 @@ public class UseEndpoint extends BaseEndpoint<br.com.altamira.data.model.manufac
             @NotNull(message = ENTITY_VALIDATION) Use entity)
             throws IllegalArgumentException, UriBuilderException, JsonProcessingException {
 
-        entity.setOperation(operationDao.find(operationId));
-
         return createCreatedResponse(
-                useDao.create(entity)).build();
+                useDao.create(operationId, entity)).build();
     }
 
     /**
@@ -134,10 +121,8 @@ public class UseEndpoint extends BaseEndpoint<br.com.altamira.data.model.manufac
             @NotNull(message = ENTITY_VALIDATION) Use entity)
             throws JsonProcessingException {
 
-        entity.setOperation(operationDao.find(operationId));
-
         return createEntityResponse(
-                useDao.update(entity)).build();
+                useDao.update(operationId, entity)).build();
     }
 
     /**

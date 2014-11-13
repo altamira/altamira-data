@@ -49,7 +49,7 @@ public class BOMEndpoint
     public BOMEndpoint() {
         this.type = BOMEndpoint.class;
     }
-
+    
     /**
      *
      * @param startPosition

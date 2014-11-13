@@ -206,6 +206,7 @@ public class BOMDao extends BaseDao<BOM> {
         return super.create(entity);
     }
 
+    
     /**
      *
      * @param entity
