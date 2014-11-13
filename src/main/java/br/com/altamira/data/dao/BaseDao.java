@@ -59,6 +59,27 @@ public abstract class BaseDao<T extends br.com.altamira.data.model.Entity> imple
      */
     protected Class<T> type;
     
+    public void lazyLoad(T entity) {
+        
+    }
+    
+    public void resolveDependencies(T entity) {
+        
+    }
+    
+    public CriteriaQuery<T> getCriteriaQuery(long parentId) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<T> criteriaQuery = cb.createQuery(type);
+        
+        Root<T> entity = criteriaQuery.from(type);
+
+        criteriaQuery.select(entity);
+        
+        criteriaQuery.orderBy(cb.desc(entity.get("lastModified")));
+        
+        return criteriaQuery;
+    }
+    
     /**
      *
      * @param startPage
@@ -71,13 +92,7 @@ public abstract class BaseDao<T extends br.com.altamira.data.model.Entity> imple
             @Min(value = 1, message = PAGE_SIZE_VALIDATION) int pageSize)
             throws ConstraintViolationException {
 
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<T> criteriaQuery = cb.createQuery(type);
-        
-        Root<T> entity = criteriaQuery.from(type);
-
-        criteriaQuery.select(entity);
-        criteriaQuery.orderBy(cb.desc(entity.get("lastModified")));
+        CriteriaQuery<T> criteriaQuery = this.getCriteriaQuery(0l);
 
         return entityManager.createQuery(criteriaQuery)
                 .setFirstResult(startPage * pageSize)
@@ -99,13 +114,7 @@ public abstract class BaseDao<T extends br.com.altamira.data.model.Entity> imple
             @Min(value = 1, message = PAGE_SIZE_VALIDATION) int pageSize)
             throws ConstraintViolationException {
 
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<T> criteriaQuery = cb.createQuery(type);
-        
-        Root<T> entity = criteriaQuery.from(type);
-
-        criteriaQuery.select(entity);
-        criteriaQuery.orderBy(cb.desc(entity.get("lastModified")));
+        CriteriaQuery<T> criteriaQuery = this.getCriteriaQuery(parentId);
 
         return entityManager.createQuery(criteriaQuery)
                 .setFirstResult(startPage * pageSize)
@@ -158,11 +167,22 @@ public abstract class BaseDao<T extends br.com.altamira.data.model.Entity> imple
      */
     @Override
     public T find(
-            @Min(value = 1, message = ID_NOT_NULL_VALIDATION) long id)
+            @Min(value = 0, message = ID_NOT_NULL_VALIDATION) long id)
             throws ConstraintViolationException, NoResultException {
 
+        // Return Entity Model
+        if (id == 0) {
+            try {
+                return type.newInstance();
+            } catch (InstantiationException | IllegalAccessException ex) {
+                Logger.getLogger(BaseDao.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        
         T entity = entityManager.find(type, id);
 
+        this.lazyLoad(entity);
+        
         return entity;
     }
 
@@ -184,6 +204,8 @@ public abstract class BaseDao<T extends br.com.altamira.data.model.Entity> imple
 
         validate(entity);
 
+        this.resolveDependencies(entity);
+        
         entityManager.persist(entity);
         entityManager.flush();
 
@@ -217,6 +239,8 @@ public abstract class BaseDao<T extends br.com.altamira.data.model.Entity> imple
 
         validate(entity);
 
+        this.resolveDependencies(entity);
+        
         entityManager.persist(entity);
         entityManager.flush();
 
@@ -240,6 +264,8 @@ public abstract class BaseDao<T extends br.com.altamira.data.model.Entity> imple
 
         validate(entity);
 
+        this.resolveDependencies(entity);
+        
         entity = entityManager.merge(entity);
         entityManager.flush();
 
@@ -270,6 +296,8 @@ public abstract class BaseDao<T extends br.com.altamira.data.model.Entity> imple
         
         validate(entity);
 
+        this.resolveDependencies(entity);
+        
         entity = entityManager.merge(entity);
         entityManager.flush();
 
@@ -305,7 +333,7 @@ public abstract class BaseDao<T extends br.com.altamira.data.model.Entity> imple
 
         remove(find(id));
     }
-
+    
     /**
      * <p>
      * Validates the given Member variable and throws validation exceptions

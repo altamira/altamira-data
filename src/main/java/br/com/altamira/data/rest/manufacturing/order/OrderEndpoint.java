@@ -5,7 +5,6 @@
  */
 package br.com.altamira.data.rest.manufacturing.order;
 
-import br.com.altamira.data.dao.BaseDao;
 import br.com.altamira.data.dao.manufacturing.bom.BOMDao;
 import br.com.altamira.data.model.manufacturing.bom.BOM;
 import br.com.altamira.data.rest.BaseEndpoint;
@@ -59,6 +58,7 @@ public class OrderEndpoint
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
+    @Override
     public Response list(
             @DefaultValue("0") @QueryParam("start") Integer startPosition,
             @DefaultValue("10") @QueryParam("max") Integer maxResult)
@@ -95,15 +95,16 @@ public class OrderEndpoint
      * @return
      * @throws JsonProcessingException
      */
-    @GET
+    /*@GET
     @Path("/{id:[0-9]*}")
     @Produces(MediaType.APPLICATION_JSON)
+    @Override
     public Response find(
-            @Min(1) @PathParam("id") long id)
+            @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long id)
             throws JsonProcessingException {
 
         return createEntityResponse(bomDao.find(id)).build();
-    }
+    }*/
 
     /**
      *
@@ -116,6 +117,7 @@ public class OrderEndpoint
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    @Override
     public Response create(
             @NotNull(message = ENTITY_VALIDATION) BOM entity)
             throws IllegalArgumentException, UriBuilderException, JsonProcessingException {
@@ -134,6 +136,7 @@ public class OrderEndpoint
     @Path(value = "{id:[0-9]*}")
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Produces(value = MediaType.APPLICATION_JSON)
+    @Override
     public Response update(
             @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long id,
             @NotNull(message = ENTITY_VALIDATION) BOM entity)
@@ -177,8 +180,9 @@ public class OrderEndpoint
      */
     @DELETE
     @Path("/{id:[0-9]*}")
+    @Override
     public Response delete(
-            @Min(1) @PathParam("id") long id) 
+            @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long id)
             throws JsonProcessingException {
 
         bomDao.remove(id);

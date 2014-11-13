@@ -39,7 +39,7 @@ public abstract class Entity implements Serializable {
     @SequenceGenerator(name = "EntitySequence", sequenceName = "ENTITY_SEQUENCE", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "EntitySequence")
     @Column(name = "ID")
-    protected Long id;
+    protected Long id = 0l;
 
     @Version
     @Column(name = "VERSION")

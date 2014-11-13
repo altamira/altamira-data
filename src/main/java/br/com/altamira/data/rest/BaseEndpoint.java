@@ -19,11 +19,18 @@ import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 import java.util.logging.Logger;
 import javax.inject.Inject;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.OPTIONS;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
@@ -32,6 +39,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.UriBuilderException;
 import javax.ws.rs.core.UriInfo;
 
 /**
@@ -114,12 +122,14 @@ public abstract class BaseEndpoint<T extends br.com.altamira.data.model.Entity> 
             @DefaultValue("10") @QueryParam("max") Integer maxResult)
             throws IOException {
 
-        if (info.getPathParameters().isEmpty()) {
+        if (info.getPathParameters().get("id").isEmpty()) {
             return createListResponse(
                     dao.list(startPosition, maxResult)).build();
         } else {
             return createListResponse(
-                    dao.list(startPosition, maxResult)).build();
+                    dao.list(
+                            Long.parseLong(info.getPathParameters().get("id").get(info.getPathParameters().get("id").size() - 1)),
+                            startPosition, maxResult)).build();
         }
     }
 
@@ -129,15 +139,17 @@ public abstract class BaseEndpoint<T extends br.com.altamira.data.model.Entity> 
      * @return
      * @throws JsonProcessingException
      */
-    /*@GET
-     @Path(value = "{id:[0-9]*}")
-     @Produces(value = MediaType.APPLICATION_JSON)
-     public Response find(
-     @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long id)
-     throws JsonProcessingException {
-        
-     return createOkResponse(dao.find(id)).build();
-     }*/
+    @GET
+    @Path(value = "{id:[0-9]*}")
+    @Produces(value = MediaType.APPLICATION_JSON)
+    public Response find(
+            @Min(value = 0, message = ID_VALIDATION) @PathParam(value = "id") long id)
+            throws JsonProcessingException {
+
+        return createEntityResponse(
+                dao.find(id)).build();
+    }
+
     /**
      *
      * @param startPosition
@@ -160,92 +172,64 @@ public abstract class BaseEndpoint<T extends br.com.altamira.data.model.Entity> 
     /**
      *
      * @param entity
-     * @param headers
      * @return
      * @throws IllegalArgumentException
      * @throws UriBuilderException
      * @throws JsonProcessingException
      */
-    // @POST
-    // @Consumes(value = MediaType.APPLICATION_JSON)
-    // @Produces(value = MediaType.APPLICATION_JSON)
-    // public Response create(
-    // @NotNull(message = ENTITY_VALIDATION) T entity)
-    // throws IllegalArgumentException, UriBuilderException,
-    // JsonProcessingException {
-    // throw new UnsupportedOperationException("Not supported yet.");
-    // }
+    @POST
+    @Consumes(value = MediaType.APPLICATION_JSON)
+    @Produces(value = MediaType.APPLICATION_JSON)
+    public Response create(
+            @NotNull(message = ENTITY_VALIDATION) T entity)
+            throws IllegalArgumentException, UriBuilderException,
+            JsonProcessingException {
+
+        return createCreatedResponse(dao.create(entity)).build();
+    }
+
     /**
      *
      * @param id
      * @param entity
-     * @param headers
      * @return
      * @throws JsonProcessingException
      */
-    // @PUT
-    // @Path(value = "{id:[0-9]*}")
-    // @Consumes(value = MediaType.APPLICATION_JSON)
-    // @Produces(value = MediaType.APPLICATION_JSON)
-    // public Response update(
-    // @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long
-    // id,
-    // @NotNull(message = ENTITY_VALIDATION) T entity)
-    // throws JsonProcessingException {
-    // throw new UnsupportedOperationException("Not supported yet.");
-    // }
+    @PUT
+    @Path(value = "{id:[0-9]*}")
+    @Consumes(value = MediaType.APPLICATION_JSON)
+    @Produces(value = MediaType.APPLICATION_JSON)
+    public Response update(
+            @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long id,
+            @NotNull(message = ENTITY_VALIDATION) T entity)
+            throws JsonProcessingException {
+
+        return createEntityResponse(
+                dao.update(entity)).build();
+    }
+
     /**
      *
      * @param id
-     * @param headers
      * @return
      * @throws JsonProcessingException
      */
-    // @DELETE
-    // @Path(value = "{id:[0-9]*}")
-    // public Response delete(
-    // @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long
-    // id)
-    // throws JsonProcessingException {
-    // throw new UnsupportedOperationException("Not supported yet.");
-    // }
+    @DELETE
+    @Path(value = "{id:[0-9]*}")
+    public Response delete(
+            @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long id)
+            throws JsonProcessingException {
+        
+        dao.remove(id);
+
+        return createNoContentResponse().build();
+    }
+
     /**
      *
      * @param origin
-     * @param id
-     * @param entity
-     * @param headers
-     * @return
-     * @throws JsonProcessingException
-     */
-    // @DELETE
-    // @Path(value = "{id:[0-9]*}")
-    // public Response delete(
-    // @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long
-    // id,
-    // @NotNull(message = ENTITY_VALIDATION) T entity)
-    // throws JsonProcessingException {
-    // throw new UnsupportedOperationException("Not supported yet.");
-    // }
-    /**
-     *
-     * @param info
-     * @param origin
      * @return
      */
-    // @DELETE
-    // @Path(value = "{id:[0-9]*}")
-    // public Response delete(
-    // @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long
-    // id,
-    // @NotNull(message = ENTITY_VALIDATION) T entity)
-    // throws JsonProcessingException {
-    // throw new UnsupportedOperationException("Not supported yet.");
-    // }
-    /*@Context
-     public void setInfo(UriInfo info) {
-     this.info = info;
-     }*/
     protected Response getCORSHeaders(String origin) {
         return Response
                 .ok()
@@ -320,7 +304,6 @@ public abstract class BaseEndpoint<T extends br.com.altamira.data.model.Entity> 
     /**
      *
      * @param entity
-     * @param uri
      * @return
      * @throws JsonProcessingException
      */

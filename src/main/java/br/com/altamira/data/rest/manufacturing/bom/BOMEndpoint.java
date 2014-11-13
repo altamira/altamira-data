@@ -95,7 +95,7 @@ public class BOMEndpoint
      * @return
      * @throws JsonProcessingException
      */
-    @GET
+    /*@GET
     @Path("/{id:[0-9]*}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response find(
@@ -103,7 +103,7 @@ public class BOMEndpoint
             throws JsonProcessingException {
 
         return createEntityResponse(bomDao.find(id)).build();
-    }
+    }*/
 
     /**
      *
@@ -116,6 +116,7 @@ public class BOMEndpoint
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    @Override
     public Response create(
             @NotNull(message = ENTITY_VALIDATION) BOM entity)
             throws IllegalArgumentException, UriBuilderException, JsonProcessingException {
@@ -134,6 +135,7 @@ public class BOMEndpoint
     @Path("/{id:[0-9]*}")
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Produces(value = MediaType.APPLICATION_JSON)
+    @Override
     public Response update(
             @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long id,
             @NotNull(message = ENTITY_VALIDATION) BOM entity)
@@ -187,8 +189,9 @@ public class BOMEndpoint
      */
     @DELETE
     @Path("/{id:[0-9]*}")
+    @Override
     public Response delete(
-            @Min(1) @PathParam("id") long id)
+            @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long id)
             throws JsonProcessingException {
 
         bomDao.remove(id);

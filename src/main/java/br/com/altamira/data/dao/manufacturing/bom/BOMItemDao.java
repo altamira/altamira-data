@@ -8,7 +8,6 @@ package br.com.altamira.data.dao.manufacturing.bom;
 import br.com.altamira.data.dao.BaseDao;
 import static br.com.altamira.data.dao.Dao.ENTITY_VALIDATION;
 import static br.com.altamira.data.dao.Dao.ID_NOT_NULL_VALIDATION;
-import br.com.altamira.data.model.manufacturing.bom.BOM;
 import br.com.altamira.data.model.manufacturing.bom.BOMItem;
 import java.util.List;
 import javax.ejb.EJB;
@@ -42,6 +41,7 @@ public class BOMItemDao extends BaseDao<BOMItem> {
      * @param pageSize
      * @return
      */
+    @Override
     public List<BOMItem> list(
             @Min(value = 1, message = ID_NOT_NULL_VALIDATION) long id,
             @Min(value = 0, message = START_PAGE_VALIDATION) int startPage,
@@ -64,7 +64,7 @@ public class BOMItemDao extends BaseDao<BOMItem> {
 
     @Override
     public BOMItem find(
-            @Min(value = 1, message = ID_NOT_NULL_VALIDATION) long id)
+            @Min(value = 0, message = ID_NOT_NULL_VALIDATION) long id)
             throws ConstraintViolationException, NoResultException {
 
         BOMItem entity = super.find(id);

@@ -87,7 +87,7 @@ public class BOMDao extends BaseDao<BOM> {
 
     @Override
     public BOM find(
-            @Min(value = 1, message = ID_NOT_NULL_VALIDATION) long id)
+            @Min(value = 0, message = ID_NOT_NULL_VALIDATION) long id)
             throws ConstraintViolationException, NoResultException {
 
         BOM entity = super.find(id);

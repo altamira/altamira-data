@@ -69,16 +69,17 @@ public class UseEndpoint extends BaseEndpoint<br.com.altamira.data.model.manufac
      * @return
      * @throws JsonProcessingException
      */
-    @GET
+    /*@GET
     @Path("{id:[0-9]*}")
     @Produces(value = MediaType.APPLICATION_JSON)
+    @Override
     public Response find(
             @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long id)
             throws JsonProcessingException {
 
         return createEntityResponse(
                 useDao.find(id)).build();
-    }
+    }*/
 
     /**
      *
@@ -133,6 +134,7 @@ public class UseEndpoint extends BaseEndpoint<br.com.altamira.data.model.manufac
      */
     @DELETE
     @Path("{id:[0-9]*}")
+    @Override
     public Response delete(
             @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long id)
             throws JsonProcessingException {

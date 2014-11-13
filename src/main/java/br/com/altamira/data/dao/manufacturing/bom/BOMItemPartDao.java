@@ -42,6 +42,7 @@ public class BOMItemPartDao extends BaseDao<BOMItemPart> {
      * @param pageSize
      * @return
      */
+    @Override
     public List<BOMItemPart> list(
             @Min(value = 1, message = ID_NOT_NULL_VALIDATION) long itemId,
             @Min(value = 0, message = START_PAGE_VALIDATION) int startPage,
@@ -68,6 +69,7 @@ public class BOMItemPartDao extends BaseDao<BOMItemPart> {
      * @param entity
      * @return
      */
+    @Override
     public BOMItemPart create(
             @Min(value = 1, message = ID_NOT_NULL_VALIDATION) long itemId,
             @NotNull(message = ENTITY_VALIDATION) BOMItemPart entity)
@@ -85,6 +87,7 @@ public class BOMItemPartDao extends BaseDao<BOMItemPart> {
      * @param entity
      * @return
      */
+    @Override
     public BOMItemPart update(
             @Min(value = 1, message = ID_NOT_NULL_VALIDATION) long itemId,
             @NotNull(message = ENTITY_VALIDATION) BOMItemPart entity)

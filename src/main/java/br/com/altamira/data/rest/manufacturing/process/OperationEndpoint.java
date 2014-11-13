@@ -1,7 +1,5 @@
 package br.com.altamira.data.rest.manufacturing.process;
 
-import br.com.altamira.data.dao.BaseDao;
-import br.com.altamira.data.dao.Dao;
 import java.io.IOException;
 
 import javax.ws.rs.Consumes;
@@ -21,7 +19,6 @@ import javax.ws.rs.core.UriBuilderException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import br.com.altamira.data.dao.manufacturing.process.OperationDao;
-import br.com.altamira.data.model.manufacturing.process.Consume;
 import br.com.altamira.data.model.manufacturing.process.Operation;
 import br.com.altamira.data.rest.BaseEndpoint;
 import javax.ejb.EJB;
@@ -70,16 +67,17 @@ public class OperationEndpoint extends BaseEndpoint<Operation> {
      * @return
      * @throws JsonProcessingException
      */
-    @GET
+    /*@GET
     @Path("{id:[0-9]*}")
     @Produces(MediaType.APPLICATION_JSON)
+    @Override
     public Response find(
             @Min(value = 1, message = ID_VALIDATION) @PathParam("id") long id)
             throws JsonProcessingException {
 
         return createEntityResponse(
                 operationDao.find(id)).build();
-    }
+    }*/
 
     /**
      *
@@ -132,6 +130,7 @@ public class OperationEndpoint extends BaseEndpoint<Operation> {
      */
     @DELETE
     @Path("{id:[0-9]*}")
+    @Override
     public Response delete(
             @Min(value = 1, message = ID_VALIDATION) @PathParam("id") long id)
             throws JsonProcessingException {

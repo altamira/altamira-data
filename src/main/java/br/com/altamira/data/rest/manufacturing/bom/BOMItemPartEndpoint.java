@@ -74,16 +74,17 @@ public class BOMItemPartEndpoint extends BaseEndpoint<BOMItemPart> {
      * @return
      * @throws JsonProcessingException
      */
-    @GET
+    /*@GET
     @Path("/{id:[0-9]*}")
     @Produces(MediaType.APPLICATION_JSON)
+    @Override
     public Response find(
-            @Min(1) @PathParam("id") long id)
+            @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long id)
             throws JsonProcessingException {
 
         return createEntityResponse(
                 bomItemPartDao.find(id)).build();
-    }
+    }*/
 
     /**
      *
@@ -140,8 +141,9 @@ public class BOMItemPartEndpoint extends BaseEndpoint<BOMItemPart> {
      */
     @DELETE
     @Path("/{id:[0-9]*}")
+    @Override
     public Response delete(
-            @Min(1) @PathParam("id") long id)
+            @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long id)
             throws JsonProcessingException {
 
         bomItemPartDao.remove(id);

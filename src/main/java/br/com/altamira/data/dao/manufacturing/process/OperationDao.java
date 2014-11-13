@@ -1,19 +1,13 @@
 package br.com.altamira.data.dao.manufacturing.process;
 
 import br.com.altamira.data.dao.BaseDao;
-import static br.com.altamira.data.dao.Dao.ENTITY_VALIDATION;
 
 import javax.ejb.Stateless;
 import br.com.altamira.data.model.manufacturing.process.Operation;
-import java.util.List;
 import javax.ejb.EJB;
-import javax.persistence.NoResultException;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import javax.validation.ConstraintViolationException;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 
 /**
  *
@@ -29,7 +23,45 @@ public class OperationDao extends BaseDao<Operation> {
     public OperationDao() {
         this.type = Operation.class;
     }
+    
+    @Override
+    public CriteriaQuery getCriteriaQuery(long parentId) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Operation> criteriaQuery = cb.createQuery(Operation.class);
+        Root<Operation> entity = criteriaQuery.from(Operation.class);
 
+        criteriaQuery.select(cb.construct(Operation.class,
+                entity.get("id"),
+                entity.get("sequence"),
+                entity.get("name")));
+
+        criteriaQuery.where(cb.equal(entity.get("process"), parentId));
+        
+        return criteriaQuery;
+    }
+
+    @Override
+    public void lazyLoad(Operation entity) {
+        entity.getSketch();
+        entity.getUse().size();
+        entity.getConsume().size();
+        entity.getProduce().size();    
+    }
+    
+    @Override
+    public void resolveDependencies(Operation entity) {
+        entity.getUse().stream().forEach((u) -> {
+            u.setOperation(entity);
+        });
+        
+        entity.getConsume().stream().forEach((c) -> {
+            c.setOperation(entity);
+        });
+        
+        entity.getProduce().stream().forEach((p) -> {
+            p.setOperation(entity);
+        });
+    }
     /**
      *
      * @param id
@@ -37,7 +69,7 @@ public class OperationDao extends BaseDao<Operation> {
      * @param pageSize
      * @return
      */
-    public List<Operation> list(
+    /*public List<Operation> list(
             @Min(value = 1, message = ID_NOT_NULL_VALIDATION) long id,
             @Min(value = 0, message = START_PAGE_VALIDATION) int startPage,
             @Min(value = 1, message = PAGE_SIZE_VALIDATION) int pageSize)
@@ -58,13 +90,13 @@ public class OperationDao extends BaseDao<Operation> {
                 .setFirstResult(startPage * pageSize)
                 .setMaxResults(pageSize)
                 .getResultList();
-    }
+    }*/
 
     /**
      *
      * @return
      */
-    @Override
+    /*@Override
     public Operation find(
             @Min(value = 1, message = ID_NOT_NULL_VALIDATION) long id)
             throws ConstraintViolationException, NoResultException {
@@ -77,7 +109,7 @@ public class OperationDao extends BaseDao<Operation> {
         entity.getProduce().size();
 
         return entity;
-    }
+    }*/
     
     /**
      *
@@ -86,16 +118,16 @@ public class OperationDao extends BaseDao<Operation> {
      * @return
      * @throws ConstraintViolationException
      */
-    public Operation create(
+    /*public Operation create(
             @Min(value = 1, message = ID_NOT_NULL_VALIDATION) long id,
             @NotNull(message = ENTITY_VALIDATION) Operation entity)
             throws ConstraintViolationException {
         
         entity.setProcess(processDao.find(id));
         
-        /*if (entity.getSketch() != null) {
-        	entity.getSketch().setOperation(entity);
-        }*/
+        //if (entity.getSketch() != null) {
+        //	entity.getSketch().setOperation(entity);
+        //}
         
         entity.getUse().stream().forEach((u) -> {
             u.setOperation(entity);
@@ -110,7 +142,7 @@ public class OperationDao extends BaseDao<Operation> {
         });
         
         return super.create(entity);
-    }
+    }*/
 
     /**
      *
@@ -120,16 +152,16 @@ public class OperationDao extends BaseDao<Operation> {
      * @throws ConstraintViolationException
      * @throws IllegalArgumentException
      */
-    public Operation update(
+    /*public Operation update(
             @Min(value = 1, message = ID_NOT_NULL_VALIDATION) long id,
             @NotNull(message = ENTITY_VALIDATION) Operation entity)
             throws ConstraintViolationException, IllegalArgumentException {
         
         entity.setProcess(processDao.find(id));
         
-        /*if (entity.getSketch() != null) {
-        	entity.getSketch();
-        }*/
+        //if (entity.getSketch() != null) {
+        //	entity.getSketch();
+        //}
         
         entity.getUse().stream().forEach((u) -> {
             u.setOperation(entity);
@@ -144,5 +176,5 @@ public class OperationDao extends BaseDao<Operation> {
         });
         
         return super.update(entity);
-    }   
+    } */  
 }

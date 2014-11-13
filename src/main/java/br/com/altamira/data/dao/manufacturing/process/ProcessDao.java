@@ -102,7 +102,7 @@ public class ProcessDao extends BaseDao<Process> {
      */
     @Override
     public Process find(
-            @Min(value = 1, message = ID_NOT_NULL_VALIDATION) long id)
+            @Min(value = 0, message = ID_NOT_NULL_VALIDATION) long id)
             throws ConstraintViolationException, NoResultException {
 
         Process process = super.find(id);

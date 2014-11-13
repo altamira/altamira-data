@@ -89,16 +89,17 @@ public class ProcessEndpoint extends BaseEndpoint<Process> /*implements Endpoint
      * @return
      * @throws JsonProcessingException
      */
-    @GET
+    /*@GET
     @Path("/{id:[0-9]*}")
     @Produces(MediaType.APPLICATION_JSON)
+    @Override
     public Response find(
             @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long id)
             throws JsonProcessingException, NoResultException {
 
         return createEntityResponse(
                 processDao.find(id)).build();
-    }
+    }*/
 
     /**
      *
@@ -111,6 +112,7 @@ public class ProcessEndpoint extends BaseEndpoint<Process> /*implements Endpoint
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    @Override
     public Response create(
             @NotNull(message = ENTITY_VALIDATION) Process entity)
             throws IllegalArgumentException, UriBuilderException, JsonProcessingException {
@@ -130,6 +132,7 @@ public class ProcessEndpoint extends BaseEndpoint<Process> /*implements Endpoint
     @Path("/{id:[0-9]*}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    @Override
     public Response update(
             @Min(value = 1, message = ID_VALIDATION) @PathParam("id") long id,
             @NotNull(message = ENTITY_VALIDATION) Process entity)
@@ -147,6 +150,7 @@ public class ProcessEndpoint extends BaseEndpoint<Process> /*implements Endpoint
      */
     @DELETE
     @Path("/{id:[0-9]*}")
+    @Override
     public Response delete(
             @Min(value = 1, message = ID_VALIDATION) @PathParam("id") long id)
             throws JsonProcessingException {

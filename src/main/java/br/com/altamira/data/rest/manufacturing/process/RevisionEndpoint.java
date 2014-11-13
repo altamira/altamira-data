@@ -5,25 +5,12 @@
  */
 package br.com.altamira.data.rest.manufacturing.process;
 
-import br.com.altamira.data.dao.BaseDao;
-import br.com.altamira.data.dao.Dao;
 import br.com.altamira.data.dao.manufacturing.process.RevisionDao;
-import br.com.altamira.data.model.manufacturing.process.Produce;
 import br.com.altamira.data.model.manufacturing.process.Revision;
 import br.com.altamira.data.rest.BaseEndpoint;
-import static br.com.altamira.data.rest.BaseEndpoint.ID_VALIDATION;
-import java.io.IOException;
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
-import javax.validation.constraints.Min;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
 /**
  *

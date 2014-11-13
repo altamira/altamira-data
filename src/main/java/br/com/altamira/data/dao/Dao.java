@@ -102,7 +102,7 @@ public interface Dao<T extends br.com.altamira.data.model.Entity> {
      * @throws NoResultException
      */
     public T find(
-            @Min(value = 1, message = ID_NOT_NULL_VALIDATION) long id)
+            @Min(value = 0, message = ID_NOT_NULL_VALIDATION) long id)
             throws ConstraintViolationException, NoResultException;
 
     /**

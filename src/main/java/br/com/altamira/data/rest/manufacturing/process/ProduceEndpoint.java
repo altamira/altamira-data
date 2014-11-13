@@ -5,27 +5,22 @@
  */
 package br.com.altamira.data.rest.manufacturing.process;
 
-import br.com.altamira.data.dao.BaseDao;
-import br.com.altamira.data.dao.Dao;
 import br.com.altamira.data.dao.manufacturing.process.ProduceDao;
 import br.com.altamira.data.model.manufacturing.process.Produce;
 import br.com.altamira.data.rest.BaseEndpoint;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import java.io.IOException;
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilderException;
@@ -71,16 +66,17 @@ public class ProduceEndpoint extends BaseEndpoint<Produce> {
      * @return
      * @throws JsonProcessingException
      */
-    @GET
+    /*@GET
     @Path("{id:[0-9]*}")
     @Produces(value = MediaType.APPLICATION_JSON)
+    @Override
     public Response find(
             @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long id)
             throws JsonProcessingException {
 
         return createEntityResponse(
                 produceDao.find(id)).build();
-    }
+    }*/
 
     /**
      *
@@ -135,6 +131,7 @@ public class ProduceEndpoint extends BaseEndpoint<Produce> {
      */
     @DELETE
     @Path("{id:[0-9]*}")
+    @Override
     public Response delete(
             @Min(value = 1, message = ID_VALIDATION) @PathParam(value = "id") long id)
             throws JsonProcessingException {

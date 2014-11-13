@@ -37,7 +37,7 @@ public class BOMItem extends Resource {
     @JsonIgnore
     @JoinColumn(name = "MN_ORDER", referencedColumnName = "ID")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private BOM bom;
+    private BOM bom = new BOM();
 
     @NotNull
     @Min(1)
